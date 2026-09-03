@@ -1,0 +1,205 @@
+.dash {
+  background: var(--forest);
+  padding: 100px 0 130px;
+  position: relative;
+}
+
+.dash__panel {
+  padding: 34px 30px 40px;
+  max-width: 980px;
+  margin: 0 auto;
+}
+
+.dash__panel-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--white);
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid rgba(139, 197, 61, 0.18);
+}
+
+.dash__live-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--apple);
+  box-shadow: 0 0 10px var(--apple);
+  animation: livePulse 1.6s ease-in-out infinite;
+}
+@keyframes livePulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+
+.dash__phase {
+  margin-left: auto;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 6px 14px;
+  border-radius: 100px;
+  background: rgba(139, 197, 61, 0.15);
+  border: 1px solid rgba(139, 197, 61, 0.4);
+  color: var(--apple);
+}
+
+.dash__grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 22px;
+}
+
+.dash__card {
+  background: rgba(1, 18, 7, 0.4);
+  border: 1px solid rgba(139, 197, 61, 0.15);
+  border-radius: var(--radius-md);
+  padding: 22px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.dash__label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+  margin-bottom: 14px;
+}
+
+.gauge {
+  position: relative;
+  width: 120px;
+}
+.gauge__svg {
+  width: 100%;
+  display: block;
+}
+.gauge__arc {
+  stroke-dasharray: 157;
+  stroke-dashoffset: 157;
+  transition: stroke-dashoffset 1.4s var(--ease);
+}
+.dash__panel--active .gauge__arc {
+  stroke-dashoffset: 35;
+}
+.gauge__needle {
+  transform-origin: 60px 65px;
+  transform: rotate(-90deg);
+  transition: transform 1.4s var(--ease);
+}
+.dash__panel--active .gauge__needle {
+  transform: rotate(-20deg);
+}
+.gauge__value {
+  margin-top: 6px;
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--white);
+}
+
+.dash__progress-value {
+  font-family: var(--font-display);
+  font-size: 1.7rem;
+  font-weight: 700;
+  color: var(--white);
+  margin-bottom: 14px;
+}
+.progress-track {
+  width: 100%;
+  height: 10px;
+  border-radius: 100px;
+  background: rgba(226, 240, 204, 0.1);
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  width: 0%;
+  border-radius: 100px;
+  background: linear-gradient(90deg, var(--apple), var(--sage));
+  box-shadow: 0 0 12px rgba(139, 197, 61, 0.6);
+  transition: width 1.6s var(--ease);
+}
+.dash__panel--active .progress-fill {
+  width: 75%;
+}
+
+.dash__score {
+  font-family: var(--font-display);
+  font-size: 2.1rem;
+  font-weight: 700;
+  color: var(--apple);
+}
+.dash__score span {
+  font-size: 1.1rem;
+  margin-left: 2px;
+}
+
+.dash__note {
+  margin-top: 14px;
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+.dash__note--good {
+  color: var(--apple);
+}
+
+.dash__card--phase {
+  align-items: flex-start;
+  text-align: left;
+}
+.dash__phase-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+.dash__phase-step {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.45);
+}
+.dash__phase-step .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.25);
+  flex-shrink: 0;
+}
+.dash__phase-step.done {
+  color: rgba(255, 255, 255, 0.7);
+}
+.dash__phase-step.done .dot {
+  background: var(--sage);
+}
+.dash__phase-step.active {
+  color: var(--apple);
+  font-weight: 600;
+}
+.dash__phase-step.active .dot {
+  background: var(--apple);
+  box-shadow: 0 0 8px var(--apple);
+  animation: livePulse 1.6s ease-in-out infinite;
+}
+
+@media (max-width: 900px) {
+  .dash__grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+@media (max-width: 560px) {
+  .dash__grid {
+    grid-template-columns: 1fr;
+  }
+}

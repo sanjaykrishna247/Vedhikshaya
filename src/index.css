@@ -1,0 +1,220 @@
+:root {
+  --sage: #E2F0CC;
+  --apple: #8BC53D;
+  --forest: #012F13;
+  --near-black: #011207;
+  --white: #FFFFFF;
+
+  --apple-glow: rgba(139, 197, 61, 0.45);
+  --sage-glow: rgba(226, 240, 204, 0.25);
+  --muted: #7A9E82;
+
+  --font-display: 'Poppins', sans-serif;
+  --font-body: 'Inter', sans-serif;
+
+  --container: 1200px;
+  --radius-lg: 28px;
+  --radius-md: 18px;
+  --radius-sm: 12px;
+
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+* { box-sizing: border-box; }
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--near-black);
+  color: var(--white);
+  font-family: var(--font-body);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  margin: 0;
+  line-height: 1.15;
+}
+
+p { margin: 0; }
+
+a { color: inherit; text-decoration: none; }
+
+img { max-width: 100%; display: block; }
+
+button {
+  font-family: var(--font-body);
+  cursor: pointer;
+  border: none;
+}
+
+ul { margin: 0; padding: 0; list-style: none; }
+
+.container {
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+section {
+  position: relative;
+}
+
+/* ---------- Scroll reveal ---------- */
+.reveal {
+  opacity: 0;
+  transform: translateY(36px);
+  transition: opacity 0.8s var(--ease), transform 0.8s var(--ease);
+  will-change: opacity, transform;
+}
+.reveal--visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.reveal--fade {
+  transform: none;
+}
+
+/* ---------- Buttons ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 34px;
+  border-radius: 100px;
+  font-weight: 600;
+  font-size: 1rem;
+  letter-spacing: 0.01em;
+  transition: transform 0.35s var(--ease), box-shadow 0.35s var(--ease), background 0.35s var(--ease);
+}
+
+.btn-primary {
+  background: var(--apple);
+  color: var(--near-black);
+  box-shadow: 0 0 0 0 var(--apple-glow);
+}
+.btn-primary:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 40px var(--apple-glow);
+}
+
+.btn-outline {
+  background: transparent;
+  color: var(--white);
+  border: 1.5px solid rgba(139, 197, 61, 0.5);
+}
+.btn-outline:hover {
+  border-color: var(--apple);
+  box-shadow: 0 0 24px var(--apple-glow);
+  transform: translateY(-3px);
+}
+
+/* ---------- Glass cards ---------- */
+.glass {
+  background: linear-gradient(160deg, rgba(226, 240, 204, 0.08), rgba(139, 197, 61, 0.04));
+  border: 1px solid rgba(139, 197, 61, 0.22);
+  border-radius: var(--radius-lg);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  position: relative;
+  transition: border-color 0.4s var(--ease), box-shadow 0.4s var(--ease), transform 0.4s var(--ease);
+}
+.glass:hover {
+  border-color: rgba(139, 197, 61, 0.55);
+  box-shadow: 0 0 40px rgba(139, 197, 61, 0.18);
+  transform: translateY(-6px);
+}
+
+.glass-light {
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(1, 47, 19, 0.12);
+  border-radius: var(--radius-lg);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  transition: border-color 0.4s var(--ease), box-shadow 0.4s var(--ease), transform 0.4s var(--ease);
+}
+.glass-light:hover {
+  border-color: rgba(1, 47, 19, 0.35);
+  box-shadow: 0 12px 40px rgba(1, 47, 19, 0.12);
+  transform: translateY(-6px);
+}
+
+/* ---------- Section headers ---------- */
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--apple);
+  margin-bottom: 18px;
+}
+.eyebrow::before {
+  content: '';
+  width: 26px;
+  height: 2px;
+  background: var(--apple);
+  display: inline-block;
+}
+
+.section-title {
+  font-size: clamp(1.9rem, 4vw, 2.8rem);
+  font-weight: 700;
+  margin-bottom: 18px;
+}
+
+.section-sub {
+  font-size: 1.05rem;
+  line-height: 1.7;
+  max-width: 640px;
+  opacity: 0.85;
+  font-weight: 300;
+}
+
+.section-head {
+  max-width: 720px;
+  margin: 0 auto 56px;
+  text-align: center;
+}
+.section-head.left {
+  margin: 0 0 56px;
+  text-align: left;
+}
+
+/* ---------- Divider shapes ---------- */
+.divider {
+  display: block;
+  width: 100%;
+  line-height: 0;
+  position: relative;
+  z-index: 2;
+}
+.divider svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* ---------- Scrollbar ---------- */
+::-webkit-scrollbar { width: 10px; }
+::-webkit-scrollbar-track { background: var(--near-black); }
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(var(--apple), var(--forest));
+  border-radius: 10px;
+}
+
+/* ---------- Utility ---------- */
+.glow-text {
+  text-shadow: 0 0 30px rgba(139, 197, 61, 0.5);
+}
+
+@media (max-width: 768px) {
+  .container { padding: 0 18px; }
+}
