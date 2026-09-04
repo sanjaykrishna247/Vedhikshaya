@@ -24,14 +24,26 @@
 }
 
 .navbar__logo {
-  font-family: var(--font-display);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-brand);
   font-weight: 700;
   font-size: 1.4rem;
   color: var(--white);
   letter-spacing: 0.01em;
 }
-.navbar__logo span {
+.navbar__logo span span {
   color: var(--apple);
+}
+.navbar__logo-img {
+  height: 40px;
+  width: auto;
+  display: block;
+  transition: height 0.35s var(--ease);
+}
+.navbar--scrolled .navbar__logo-img {
+  height: 32px;
 }
 
 .navbar__links {

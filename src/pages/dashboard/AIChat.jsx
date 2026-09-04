@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 
 const SEED_MESSAGES = [
   { role: 'bot', text: 'Brew started. Dashamoola Kwatha detected. Estimated time: 14 min.' },
-  { role: 'bot', text: 'Temperature stabilized at 87°C. Reduction at 30%.' },
+  { role: 'bot', text: 'Temperature stabilized at 87°C. Stirring at 30%.' },
   { role: 'user', text: 'Is this brew safe for evening use?' },
   {
     role: 'bot',

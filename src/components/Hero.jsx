@@ -1,3 +1,4 @@
+import logo from '../assets/logo.svg';
 import './Hero.css';
 
 export default function Hero() {
@@ -18,6 +19,12 @@ export default function Hero() {
       </div>
 
       <div className="container hero__content">
+        <div className="hero__brand">
+          <img src={logo} alt="" className="hero__logo-img" aria-hidden="true" />
+          <span className="hero__brand-name">
+            Vediks<span>haya</span>
+          </span>
+        </div>
         <p className="eyebrow hero__eyebrow">Smart Ayurvedic Brewing</p>
         <h1 className="hero__title">
           Vedik<span className="glow-text">shaya</span>

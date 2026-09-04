@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import AIChat from './AIChat';
+import AnimatedDoctor from '../../components/AnimatedDoctor';
 
 export default function FloatingChat() {
   const [open, setOpen] = useState(false);
@@ -17,8 +18,16 @@ export default function FloatingChat() {
         </div>
       )}
 
+      {!open && (
+        <div className="d-floatchat__hint" aria-hidden="true">
+          Ask the AI brew assistant
+        </div>
+      )}
+
       <button
-        className={`d-floatchat__launcher ${open ? 'd-floatchat__launcher--open' : ''}`}
+        className={`d-floatchat__launcher ${
+          open ? 'd-floatchat__launcher--open' : 'd-floatchat__launcher--bot'
+        }`}
         onClick={() => setOpen((v) => !v)}
         aria-label={open ? 'Close Vedikshaya AI chat' : 'Open Vedikshaya AI chat'}
       >
@@ -28,14 +37,7 @@ export default function FloatingChat() {
           </svg>
         ) : (
           <>
-            <svg viewBox="0 0 24 24" fill="none">
-              <path
-                d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v8a2.5 2.5 0 0 1-2.5 2.5H10l-4.5 4v-4H6.5A2.5 2.5 0 0 1 4 13.5v-8Z"
-                stroke="currentColor"
-                strokeWidth="1.8"
-                strokeLinejoin="round"
-              />
-            </svg>
+            <AnimatedDoctor size={96} />
             <span className="d-floatchat__dot" />
           </>
         )}

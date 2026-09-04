@@ -21,7 +21,7 @@ export default function Dashboard() {
           <div className="dash__panel-head">
             <span className="dash__live-dot" />
             Live Brew Session
-            <span className="dash__phase">Reduction Phase</span>
+            <span className="dash__phase">Stirring Phase</span>
           </div>
 
           <div className="dash__grid">
@@ -64,7 +64,7 @@ export default function Dashboard() {
             <div className="dash__card dash__card--phase">
               <div className="dash__label">Current Phase</div>
               <div className="dash__phase-timeline">
-                {['Fill', 'Heat', 'Reduction', 'Dispense'].map((p, i) => (
+                {['Fill', 'Heat', 'Stirring', 'Dispense'].map((p, i) => (
                   <div key={p} className={`dash__phase-step ${i === 2 ? 'active' : i < 2 ? 'done' : ''}`}>
                     <span className="dot" />
                     {p}

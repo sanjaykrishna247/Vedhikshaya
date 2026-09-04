@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../auth/AuthContext';
+import logo from '../assets/logo.svg';
 import './Navbar.css';
 
 const LINKS = [
@@ -14,6 +16,7 @@ const LINKS = [
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const { isAuthenticated } = useAuth();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -27,7 +30,8 @@ export default function Navbar() {
     <header className={`navbar ${scrolled ? 'navbar--scrolled' : ''}`}>
       <div className="container navbar__inner">
         <a href="#hero" className="navbar__logo">
-          Vediks<span>haya</span>
+          <img src={logo} alt="" className="navbar__logo-img" aria-hidden="true" />
+          <span>Vediks<span>haya</span></span>
         </a>
 
         <nav className={`navbar__links ${open ? 'navbar__links--open' : ''}`}>
@@ -36,8 +40,12 @@ export default function Navbar() {
               {link.label}
             </a>
           ))}
-          <Link to="/dashboard" className="btn btn-primary navbar__cta" onClick={handleLinkClick}>
-            Live Dashboard
+          <Link
+            to={isAuthenticated ? '/home' : '/login'}
+            className="btn btn-primary navbar__cta"
+            onClick={handleLinkClick}
+          >
+            {isAuthenticated ? 'Go to App' : 'Login'}
           </Link>
         </nav>
 

@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="676" height="452" viewBox="0 0 676 452">
+  <title>Bell Icon</title>
+  <desc>Minimal black outline notification bell icon.</desc>
+
+  <!-- Top loop -->
+  <path d="M244 135 V116 C244 105 253 99 266 99 C279 99 288 105 288 116 V135"
+        fill="none" stroke="#000" stroke-width="18"
+        stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Bell body -->
+  <path d="M175 363
+           C197 337 213 309 219 274
+           C223 251 223 222 223 193
+           C223 151 241 134 266 134
+           C291 134 309 151 309 193
+           C309 222 309 251 313 274
+           C319 309 335 337 357 363
+           Z"
+        fill="none" stroke="#000" stroke-width="18"
+        stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Bottom clapper -->
+  <path d="M226 364
+           C230 386 246 399 266 399
+           C286 399 302 386 306 364"
+        fill="none" stroke="#000" stroke-width="18"
+        stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Left ringing mark -->
+  <path d="M173 130 C148 155 136 187 135 225"
+        fill="none" stroke="#000" stroke-width="18"
+        stroke-linecap="round"/>
+
+  <!-- Right ringing mark -->
+  <path d="M359 130 C384 155 396 187 397 225"
+        fill="none" stroke="#000" stroke-width="18"
+        stroke-linecap="round"/>
+</svg>

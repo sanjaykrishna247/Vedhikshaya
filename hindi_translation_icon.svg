@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="643" height="451" viewBox="0 0 643 451">
+  <title>Hindi translation icon</title>
+  <desc>Black outline translation speech bubbles with Hindi Devanagari character and English A.</desc>
+
+  <!-- Left speech bubble -->
+  <path d="M133 91
+           C107 91 91 108 91 133
+           L91 188
+           C91 211 105 225 127 227
+           L126 242
+           C125 254 132 259 141 253
+           C153 245 162 236 167 227
+           L250 227
+           C274 227 290 211 290 187
+           L290 133
+           C290 108 273 91 248 91 Z"
+        fill="none" stroke="#000" stroke-width="13"
+        stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Right speech bubble -->
+  <path d="M268 170
+           L356 170
+           C380 170 395 186 395 210
+           L395 268
+           C395 292 380 306 357 306
+           L350 306
+           C351 318 355 329 356 333
+           C358 341 352 344 346 340
+           C333 333 323 321 319 307
+           L268 307
+           C244 307 229 292 229 268
+           L229 209
+           C229 185 244 170 268 170 Z"
+        fill="none" stroke="#000" stroke-width="13"
+        stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Hindi Devanagari character -->
+  <text x="184" y="198"
+        text-anchor="middle"
+        font-family="Noto Sans Devanagari, Mangal, Nirmala UI, sans-serif"
+        font-size="82"
+        font-weight="700"
+        fill="#000">अ</text>
+
+  <!-- English A -->
+  <text x="313" y="270"
+        text-anchor="middle"
+        font-family="Arial, Helvetica, sans-serif"
+        font-size="78"
+        font-weight="700"
+        fill="#000">A</text>
+
+  <!-- Small translation dot -->
+  <circle cx="248" cy="175" r="6.5" fill="#000"/>
+</svg>

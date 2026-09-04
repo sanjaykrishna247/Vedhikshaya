@@ -1,3 +1,4 @@
+import logo from '../assets/logo.svg';
 import './Footer.css';
 
 export default function Footer() {
@@ -5,7 +6,8 @@ export default function Footer() {
     <footer className="footer">
       <div className="container footer__inner">
         <div className="footer__logo">
-          Vediks<span>haya</span>
+          <img src={logo} alt="" className="footer__logo-img" aria-hidden="true" />
+          <span>Vediks<span>haya</span></span>
         </div>
         <p className="footer__tagline">
           Bridging Classical Ayurveda and Modern Precision

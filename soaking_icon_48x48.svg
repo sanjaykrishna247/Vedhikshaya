@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="48" height="48" viewBox="0 0 48 48">
+  <title>Soaking Icon</title>
+  <rect width="48" height="48" fill="#000000"/>
+  <path d="M 6.94 7.06 L 6.88 7.00 L 6.83 7.00 L 6.77 7.06 L 6.77 7.17 L 6.88 7.17 L 6.94 7.11 Z"
+        fill="#FFFFFF"
+        fill-rule="evenodd"
+        clip-rule="evenodd"/>
+</svg>

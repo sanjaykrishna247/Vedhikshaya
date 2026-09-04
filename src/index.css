@@ -9,8 +9,9 @@
   --sage-glow: rgba(226, 240, 204, 0.25);
   --muted: #7A9E82;
 
-  --font-display: 'Poppins', sans-serif;
-  --font-body: 'Inter', sans-serif;
+  --font-display: 'Fraunces', 'Poppins', ui-serif, Georgia, serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-brand: 'Poppins', 'Inter', sans-serif;
 
   --container: 1200px;
   --radius-lg: 28px;
@@ -31,14 +32,21 @@ body {
   background: var(--near-black);
   color: var(--white);
   font-family: var(--font-body);
+  font-feature-settings: 'liga' 1, 'calt' 1, 'ss01' 1, 'cv05' 1;
+  letter-spacing: -0.006em;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 h1, h2, h3, h4 {
   font-family: var(--font-display);
+  font-optical-sizing: auto;
+  font-feature-settings: 'liga' 1, 'dlig' 1, 'ss01' 1;
   margin: 0;
-  line-height: 1.15;
+  line-height: 1.12;
+  letter-spacing: -0.02em;
 }
 
 p { margin: 0; }
