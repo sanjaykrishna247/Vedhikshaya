@@ -3152,3 +3152,64 @@
 .d-topstats--two .d-stat__row {
   justify-content: space-between;
 }
+
+/* ============================================================
+   Real narrow-phone fixes (≤480px) — floating bot, thermometer
+   readout overflow, phase-chevron label truncation, water level
+   ============================================================ */
+@media (max-width: 480px) {
+  /* shrink + tuck in the floating AI-doctor launcher so it stops
+     covering card content */
+  .d-floatchat {
+    right: 12px;
+    bottom: 14px;
+    gap: 8px;
+  }
+  .d-floatchat__launcher--bot {
+    width: 60px;
+    height: 60px;
+  }
+  .d-floatchat__hint {
+    display: none;
+  }
+
+  /* thermometer readout was overflowing off the right edge */
+  .therm__readout {
+    left: auto;
+    right: 2px;
+    text-align: right;
+  }
+  .therm__readout-value {
+    font-size: 1.3rem;
+  }
+
+  /* phase chevrons: labels were being truncated to a single letter —
+     drop the label text on very narrow screens, keep icon + check */
+  .d-hero__phase-label {
+    display: none;
+  }
+  .d-hero__phase {
+    justify-content: center;
+    padding: 12px 8px;
+    gap: 0;
+  }
+  .d-hero__phase:first-child {
+    padding-left: 12px;
+  }
+  .d-hero__phase-check {
+    margin-left: 4px;
+  }
+
+  /* water level: stack the status chip above the chart instead of
+     squeezing everything into one cramped row */
+  .d-card--liquid .liquid-wrap {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding-right: 0;
+    gap: 14px;
+  }
+  .liquid-info__status {
+    order: -1;
+  }
+}
