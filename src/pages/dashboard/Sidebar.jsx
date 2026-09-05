@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
   IconBrewStatus,
   IconSensors,
-  IconChat,
+  IconRobot,
   IconHistory,
   IconPod,
   IconChevronRight,
@@ -14,7 +14,7 @@ import { useAuth } from '../../auth/AuthContext';
 const NAV = [
   { icon: IconBrewStatus, label: 'Brew Status', to: '/dashboard', expandable: true },
   { icon: IconSensors, label: 'Sensors', to: '/sensors', expandable: true },
-  { icon: IconChat, label: 'AI Assistant', to: '/chatbot' },
+  { icon: IconRobot, label: 'AI Assistant', to: '/chatbot' },
   { icon: IconHistory, label: 'Brew History', to: '/brew-history', expandable: true },
 ];
 

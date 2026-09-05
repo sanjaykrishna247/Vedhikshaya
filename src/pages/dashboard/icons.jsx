@@ -30,6 +30,19 @@ export const IconChat = (p) => (
   </svg>
 );
 
+export const IconRobot = (p) => (
+  <svg viewBox="0 0 24 24" fill="none" {...p}>
+    <path d="M12 4v2.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+    <circle cx="12" cy="3.2" r="1.1" fill="currentColor" />
+    <rect x="4" y="6.5" width="16" height="12.5" rx="5" stroke="currentColor" strokeWidth="1.8" />
+    <rect x="1.6" y="11" width="2.2" height="4.2" rx="1.1" stroke="currentColor" strokeWidth="1.8" />
+    <rect x="20.2" y="11" width="2.2" height="4.2" rx="1.1" stroke="currentColor" strokeWidth="1.8" />
+    <circle cx="9" cy="13" r="1.3" fill="currentColor" />
+    <circle cx="15" cy="13" r="1.3" fill="currentColor" />
+    <path d="M9.3 16.3c.9.7 4.5.7 5.4 0" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+  </svg>
+);
+
 export const IconBrewStatus = (p) => (
   <svg viewBox="0 0 48 48" fill="none" {...p}>
     <g stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
