@@ -3,12 +3,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  /* blended greens — a lighter green washed over a deep-green base
-     (no glow, no grid, no black) */
+  /* soft light-green wash */
   background:
-    radial-gradient(130% 90% at 12% -5%, rgba(74, 190, 108, 0.3), transparent 55%),
-    radial-gradient(110% 80% at 100% 108%, rgba(40, 150, 80, 0.22), transparent 55%),
-    linear-gradient(155deg, #12633a 0%, #0d5330 34%, #0a4526 66%, #073a1e 100%);
+    radial-gradient(120% 100% at 50% -8%, #d9f7dc 0%, #a9e4b0 52%, #88d293 100%);
   overflow: hidden;
 }
 
@@ -36,22 +33,29 @@
   font-family: var(--font-brand);
   font-weight: 700;
   font-size: 1.35rem;
-  color: var(--white);
+  color: var(--forest);
   letter-spacing: 0.01em;
 }
 .hero__brand-name span {
-  color: var(--apple);
+  color: #3f6d15;
 }
 
 .hero__eyebrow {
   justify-content: flex-start;
+  color: #3f6d15;
+}
+.hero__eyebrow::before {
+  background: #3f6d15;
 }
 
 .hero__title {
   font-size: clamp(3.2rem, 10vw, 7rem);
   font-weight: 800;
-  color: var(--white);
+  color: var(--forest);
   letter-spacing: -0.02em;
+}
+.hero .glow-text {
+  text-shadow: none;
 }
 
 .hero__subtitle {
@@ -59,7 +63,7 @@
   font-family: var(--font-display);
   font-size: clamp(1.1rem, 2.4vw, 1.5rem);
   font-weight: 500;
-  color: var(--sage);
+  color: #234b13;
 }
 
 .hero__desc {
@@ -68,7 +72,7 @@
   font-size: 1.02rem;
   font-weight: 300;
   line-height: 1.7;
-  color: rgba(255, 255, 255, 0.72);
+  color: rgba(1, 47, 19, 0.72);
 }
 
 .hero__actions {
@@ -77,6 +81,16 @@
   gap: 20px;
   flex-wrap: wrap;
   justify-content: flex-start;
+}
+/* outline button reads on the light background */
+.hero .btn-outline {
+  color: var(--forest);
+  border-color: rgba(1, 47, 19, 0.35);
+}
+.hero .btn-outline:hover {
+  color: var(--forest);
+  border-color: var(--forest);
+  box-shadow: none;
 }
 
 .hero__scroll {
@@ -87,7 +101,7 @@
   width: 26px;
   height: 42px;
   border-radius: 20px;
-  border: 2px solid rgba(139, 197, 61, 0.5);
+  border: 2px solid rgba(1, 47, 19, 0.4);
   z-index: 2;
 }
 .hero__scroll span {
@@ -97,7 +111,7 @@
   width: 4px;
   height: 8px;
   border-radius: 2px;
-  background: var(--apple);
+  background: var(--forest);
   transform: translateX(-50%);
   animation: scrollDot 1.8s ease-in-out infinite;
 }

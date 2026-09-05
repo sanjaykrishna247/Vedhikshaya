@@ -137,3 +137,19 @@
     margin-top: 10px;
   }
 }
+
+/* At the top the navbar sits over the light-green hero, so its text is
+   dark; once scrolled it's over the dark translucent bar again and goes
+   back to light. (Appended last so these win the cascade.) */
+.navbar:not(.navbar--scrolled) .navbar__logo {
+  color: var(--forest);
+}
+.navbar:not(.navbar--scrolled) .navbar__links a {
+  color: rgba(1, 47, 19, 0.78);
+}
+.navbar:not(.navbar--scrolled) .navbar__links a:not(.navbar__cta):hover {
+  color: var(--forest);
+}
+.navbar:not(.navbar--scrolled) .navbar__burger span {
+  background: var(--forest);
+}
