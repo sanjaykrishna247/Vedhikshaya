@@ -4,20 +4,6 @@ import './Hero.css';
 export default function Hero() {
   return (
     <section id="hero" className="hero">
-      <div className="hero__orb" aria-hidden="true" />
-      <div className="hero__grid" aria-hidden="true" />
-
-      <div className="hero__pod hero__pod--left" aria-hidden="true">
-        <div className="pod-shape">
-          <div className="pod-shape__band" />
-        </div>
-      </div>
-      <div className="hero__pod hero__pod--right" aria-hidden="true">
-        <div className="pod-shape pod-shape--alt">
-          <div className="pod-shape__band" />
-        </div>
-      </div>
-
       <div className="container hero__content">
         <div className="hero__brand">
           <img src={logo} alt="" className="hero__logo-img" aria-hidden="true" />

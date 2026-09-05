@@ -3,38 +3,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: radial-gradient(ellipse 80% 60% at 50% 30%, rgba(139, 197, 61, 0.12), transparent),
-    linear-gradient(150deg, #063a1c 0%, #04250f 32%, #02180a 62%, var(--near-black) 100%);
+  /* plain blended green gradient — no glow, no grid, no black */
+  background: linear-gradient(155deg, #0c5029 0%, #0a4322 30%, #083618 60%, #052b14 100%);
   overflow: hidden;
-}
-
-.hero__grid {
-  position: absolute;
-  inset: 0;
-  background-image:
-    linear-gradient(rgba(139, 197, 61, 0.06) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(139, 197, 61, 0.06) 1px, transparent 1px);
-  background-size: 56px 56px;
-  mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, black, transparent 75%);
-  -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, black, transparent 75%);
-}
-
-.hero__orb {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 560px;
-  height: 560px;
-  transform: translate(-50%, -55%);
-  border-radius: 50%;
-  background: radial-gradient(circle at 40% 35%, rgba(139, 197, 61, 0.55), rgba(139, 197, 61, 0.12) 45%, transparent 70%);
-  filter: blur(10px);
-  animation: orbPulse 6s ease-in-out infinite;
-}
-
-@keyframes orbPulse {
-  0%, 100% { transform: translate(-50%, -55%) scale(1); opacity: 0.85; }
-  50% { transform: translate(-50%, -55%) scale(1.12); opacity: 1; }
 }
 
 .hero__content {
@@ -104,55 +75,6 @@
   justify-content: flex-start;
 }
 
-/* Floating pod illustrations */
-.hero__pod {
-  position: absolute;
-  top: 50%;
-  z-index: 1;
-  animation: podFloat 5s ease-in-out infinite;
-}
-.hero__pod--left {
-  left: 6%;
-  transform: translateY(-50%);
-}
-.hero__pod--right {
-  right: 6%;
-  transform: translateY(-50%);
-  animation-delay: 1.4s;
-}
-
-.pod-shape {
-  width: 110px;
-  height: 170px;
-  border-radius: 55px 55px 40px 40px;
-  background: linear-gradient(160deg, rgba(226, 240, 204, 0.16), rgba(139, 197, 61, 0.08));
-  border: 1px solid rgba(139, 197, 61, 0.4);
-  box-shadow: 0 0 50px rgba(139, 197, 61, 0.25), inset 0 0 30px rgba(139, 197, 61, 0.15);
-  backdrop-filter: blur(6px);
-  position: relative;
-  overflow: hidden;
-}
-.pod-shape--alt {
-  width: 80px;
-  height: 130px;
-  border-radius: 40px 40px 30px 30px;
-}
-
-.pod-shape__band {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 38%;
-  height: 22%;
-  background: rgba(139, 197, 61, 0.35);
-  box-shadow: 0 0 20px rgba(139, 197, 61, 0.5);
-}
-
-@keyframes podFloat {
-  0%, 100% { transform: translateY(-50%) rotate(0deg); }
-  50% { transform: translateY(-58%) rotate(4deg); }
-}
-
 .hero__scroll {
   position: absolute;
   bottom: 36px;
@@ -179,8 +101,4 @@
   0% { opacity: 1; top: 8px; }
   70% { opacity: 0; top: 22px; }
   100% { opacity: 0; top: 8px; }
-}
-
-@media (max-width: 900px) {
-  .hero__pod { display: none; }
 }
