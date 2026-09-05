@@ -72,6 +72,9 @@ export default function ScanPod() {
       </header>
 
       <main className="scan__main">
+        <span className="scan__eyebrow">
+          <span className="scan__eyebrow-dot" /> Pod Scanner
+        </span>
         <h1 className="scan__title">Scan the Pod</h1>
         <p className="scan__sub">Center the pod's label inside the frame.</p>
 
@@ -93,7 +96,14 @@ export default function ScanPod() {
             </div>
           )}
 
-          {(status === 'live' || status === 'detected') && <div className="scan__frame" />}
+          {(status === 'live' || status === 'detected') && (
+            <div className="scan__frame">
+              <span className="scan__corner scan__corner--tl" />
+              <span className="scan__corner scan__corner--tr" />
+              <span className="scan__corner scan__corner--bl" />
+              <span className="scan__corner scan__corner--br" />
+            </div>
+          )}
 
           {status === 'detected' && (
             <div className="scan__result">

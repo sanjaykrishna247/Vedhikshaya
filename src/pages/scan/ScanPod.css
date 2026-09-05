@@ -1,10 +1,14 @@
 .scan {
+  position: relative;
   min-height: 100vh;
-  background: #0b0f0c;
+  background:
+    radial-gradient(700px 500px at 50% -10%, rgba(139, 197, 61, 0.14), transparent 60%),
+    #0b0f0c;
   color: #ffffff;
   font-family: var(--font-body);
   display: flex;
   flex-direction: column;
+  overflow-x: hidden;
 }
 
 .scan__header {
@@ -48,36 +52,65 @@
 }
 
 .scan__main {
+  position: relative;
+  z-index: 1;
   flex: 1;
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 0 24px 40px;
+  padding: 8px 24px 48px;
   text-align: center;
+}
+
+.scan__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: rgba(139, 197, 61, 0.1);
+  border: 1px solid rgba(139, 197, 61, 0.28);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--apple);
+}
+.scan__eyebrow-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--apple);
+  box-shadow: 0 0 0 3px rgba(139, 197, 61, 0.25);
 }
 
 .scan__title {
   font-family: var(--font-display);
-  font-size: 1.4rem;
+  font-size: 1.7rem;
   font-weight: 700;
-  margin-top: 8px;
+  letter-spacing: -0.01em;
+  margin-top: 14px;
 }
 .scan__sub {
   margin-top: 6px;
-  font-size: 0.88rem;
+  font-size: 0.92rem;
   color: rgba(255, 255, 255, 0.55);
 }
 
 .scan__viewport {
   position: relative;
   width: 100%;
-  max-width: 420px;
+  max-width: 380px;
   aspect-ratio: 3 / 4;
   margin-top: 26px;
-  border-radius: 20px;
+  border-radius: 24px;
   overflow: hidden;
   background: #14201a;
   border: 1px solid rgba(226, 240, 204, 0.14);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
 }
 
 .scan__video {
@@ -124,9 +157,52 @@
 .scan__frame {
   position: absolute;
   inset: 14%;
-  border: 2.5px solid rgba(139, 197, 61, 0.85);
   border-radius: 18px;
   box-shadow: 0 0 0 2000px rgba(0, 0, 0, 0.35);
+  animation: scanPulse 2.2s ease-in-out infinite;
+}
+@keyframes scanPulse {
+  0%, 100% { box-shadow: 0 0 0 2000px rgba(0, 0, 0, 0.35), 0 0 0 0 rgba(139, 197, 61, 0.35); }
+  50% { box-shadow: 0 0 0 2000px rgba(0, 0, 0, 0.35), 0 0 24px 2px rgba(139, 197, 61, 0.35); }
+}
+.scan__corner {
+  position: absolute;
+  width: 26px;
+  height: 26px;
+  border: 3px solid var(--apple);
+}
+.scan__corner--tl {
+  top: -1px;
+  left: -1px;
+  border-right: none;
+  border-bottom: none;
+  border-radius: 10px 0 0 0;
+}
+.scan__corner--tr {
+  top: -1px;
+  right: -1px;
+  border-left: none;
+  border-bottom: none;
+  border-radius: 0 10px 0 0;
+}
+.scan__corner--bl {
+  bottom: -1px;
+  left: -1px;
+  border-right: none;
+  border-top: none;
+  border-radius: 0 0 0 10px;
+}
+.scan__corner--br {
+  bottom: -1px;
+  right: -1px;
+  border-left: none;
+  border-top: none;
+  border-radius: 0 0 10px 0;
+}
+@media (prefers-reduced-motion: reduce) {
+  .scan__frame {
+    animation: none;
+  }
 }
 
 .scan__result {
@@ -176,19 +252,44 @@
 
 .scan__actions {
   margin-top: 28px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
 }
 .scan__btn {
-  padding: 13px 32px;
+  width: 100%;
+  max-width: 320px;
+  padding: 15px 32px;
   border-radius: 100px;
-  font-size: 0.92rem;
+  font-size: 0.95rem;
   font-weight: 700;
-  transition: background 0.2s ease, transform 0.2s ease;
+  transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
 }
 .scan__btn--primary {
   background: var(--apple);
   color: var(--near-black);
+  box-shadow: 0 10px 30px rgba(139, 197, 61, 0.25);
 }
 .scan__btn--primary:hover {
   background: #79ab34;
   transform: translateY(-1px);
+  box-shadow: 0 14px 36px rgba(139, 197, 61, 0.32);
+}
+.scan__btn--primary:active {
+  transform: translateY(0);
+}
+
+@media (max-width: 420px) {
+  .scan__header {
+    padding: 14px 18px;
+  }
+  .scan__main {
+    padding: 6px 18px 36px;
+  }
+  .scan__title {
+    font-size: 1.4rem;
+  }
+  .scan__viewport {
+    border-radius: 18px;
+  }
 }

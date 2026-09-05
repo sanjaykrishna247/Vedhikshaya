@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import TopBar from './TopBar';
 import Sidebar from './Sidebar';
 import BrewHero from './BrewHero';
@@ -12,6 +12,16 @@ import './DashboardPage.css';
 
 export default function DashboardPage() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  // Lock background scroll while the mobile drawer is open — otherwise the
+  // page underneath fights the drawer for scroll and only part of it is
+  // reachable.
+  useEffect(() => {
+    document.body.style.overflow = sidebarOpen ? 'hidden' : '';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [sidebarOpen]);
 
   return (
     <div className="d-app">

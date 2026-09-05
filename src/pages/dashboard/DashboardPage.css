@@ -931,9 +931,9 @@
   max-width: 34px;
 }
 .d-hero__phase-icon svg.phaseicon--art {
-  height: 54px;
-  max-width: 68px;
-  margin: -16px -6px;
+  height: 30px;
+  max-width: 36px;
+  margin: -1px 0;
 }
 .d-hero__phase-label {
   flex: 1;
@@ -975,8 +975,8 @@
     height: 16px;
   }
   .d-hero__phase-icon svg.phaseicon--art {
-    height: 32px;
-    margin: -12px -4px;
+    height: 18px;
+    margin: 0;
   }
 }
 
@@ -2479,6 +2479,8 @@
 .d-sidebar {
   scrollbar-width: none;
   -ms-overflow-style: none;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
 }
 .d-sidebar::-webkit-scrollbar {
   width: 0;
