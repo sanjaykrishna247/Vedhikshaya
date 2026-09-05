@@ -60,7 +60,7 @@
   text-shadow: 0 2px 14px rgba(0, 0, 0, 0.4);
 }
 .auth__card--glass .auth__field label {
-  color: #1a5c33;
+  color: #3fa34d;
 }
 .auth__card--glass .auth__field input {
   background: rgba(255, 255, 255, 0.6);
@@ -202,7 +202,7 @@
   font-weight: 700;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  color: #1a5c33;
+  color: #3fa34d;
 }
 .auth__field input {
   padding: 12px 14px;
@@ -211,7 +211,7 @@
   background: #f8faf6;
   font-size: 0.98rem;
   font-family: var(--font-body);
-  color: #1a5c33;
+  color: #3fa34d;
   outline: none;
   transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
 }
@@ -297,12 +297,12 @@
   }
   .auth__card--glass .auth__field input {
     background: rgba(255, 255, 255, 0.62);
-    color: #1a5c33;
+    color: #3fa34d;
   }
   .auth__card--glass .auth__field label {
-    color: #1a5c33;
+    color: #3fa34d;
   }
   .auth__card--glass .auth__field input::placeholder {
-    color: rgba(26, 92, 51, 0.6);
+    color: rgba(63, 163, 77, 0.65);
   }
 }
