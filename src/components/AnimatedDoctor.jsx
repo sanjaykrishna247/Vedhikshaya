@@ -25,23 +25,29 @@ export default function AnimatedDoctor({ size = 64, className = '', animated = t
         @keyframes adHeadTilt   { 0%,100% { transform: rotate(0); } 20%,65% { transform: rotate(-3.5deg); } 80% { transform: rotate(1deg); } }
         @keyframes adBlink      { 0%,46%,50%,96%,100% { transform: scaleY(1); } 48%,98% { transform: scaleY(.08); } }
 
-        .ad-doctor #ad-shadow { transform-origin: 300px 542px; animation: adShadow 2.8s ease-in-out infinite; }
-        .ad-doctor #ad-body   { animation: adFloat 2.8s ease-in-out infinite; }
-        .ad-doctor #ad-head   { transform-origin: 300px 280px; animation: adHeadTilt 2.8s ease-in-out infinite; }
+        .ad-doctor .ad-el-shadow { transform-origin: 300px 542px; animation: adShadow 2.8s ease-in-out infinite; }
+        .ad-doctor .ad-el-body   { animation: adFloat 2.8s ease-in-out infinite; }
+        .ad-doctor .ad-el-head   { transform-origin: 300px 280px; animation: adHeadTilt 2.8s ease-in-out infinite; }
         .ad-doctor .ad-eye    { transform-box: fill-box; transform-origin: center; animation: adBlink 3.8s ease-in-out infinite; }
-        .ad-doctor #ad-arm    { transform-origin: 418px 352px; animation: adWave 2.8s ease-in-out infinite; }
+        .ad-doctor .ad-el-arm    { transform-origin: 418px 352px; animation: adWave 2.8s ease-in-out infinite; }
 
         @media (prefers-reduced-motion: reduce) {
-          .ad-doctor #ad-shadow, .ad-doctor #ad-body, .ad-doctor #ad-head,
-          .ad-doctor .ad-eye, .ad-doctor #ad-arm { animation: none; }
+          .ad-doctor .ad-el-shadow, .ad-doctor .ad-el-body, .ad-doctor .ad-el-head,
+          .ad-doctor .ad-eye, .ad-doctor .ad-el-arm { animation: none; }
         }
         ` : ''}
       `}</style>
 
-      <svg viewBox="118 92 424 452" xmlns="http://www.w3.org/2000/svg">
-        <ellipse cx="300" cy="542" fill="#cfe0c0" id="ad-shadow" rx="98" ry="10" />
+      <svg
+        viewBox="118 92 424 452"
+        width="100%"
+        height="100%"
+        preserveAspectRatio="xMidYMid meet"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <ellipse cx="300" cy="542" fill="#cfe0c0" className="ad-el-shadow" rx="98" ry="10" />
 
-        <g id="ad-body">
+        <g className="ad-el-body">
           {/* base pod */}
           <path className="ad-stroke-bold" d="M214 456 C214 515 252 528 300 528 C348 528 386 515 386 456 Z" fill="#F0F4F8" />
 
@@ -80,7 +86,7 @@ export default function AnimatedDoctor({ size = 64, className = '', animated = t
           </g>
 
           {/* waving arm */}
-          <g id="ad-arm">
+          <g className="ad-el-arm">
             <path className="ad-stroke-bold ad-fill-white" d="M416 352 C450 340 482 315 490 262 C494 244 472 238 456 254 C440 270 422 312 402 352 Z" />
             <line className="ad-stroke-bold" x1="482" x2="452" y1="272" y2="284" />
             <path className="ad-stroke-bold ad-fill-white" d="M464 248 C468 226 492 216 508 230 C522 242 516 268 496 276 C482 282 462 268 464 248 Z" />
@@ -92,7 +98,7 @@ export default function AnimatedDoctor({ size = 64, className = '', animated = t
           </g>
 
           {/* head */}
-          <g id="ad-head">
+          <g className="ad-el-head">
             <g>
               <path className="ad-stroke-bold ad-fill-white" d="M152 208 C124 208 124 266 152 266 Z" />
               <path className="ad-stroke-med ad-fill-white" d="M148 218 C134 218 134 256 148 256 Z" />
