@@ -3176,7 +3176,7 @@
   /* thermometer readout was overflowing off the right edge */
   .therm__readout {
     left: auto;
-    right: 2px;
+    right: -12px;
     text-align: right;
   }
   .therm__readout-value {
