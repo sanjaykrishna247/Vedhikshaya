@@ -83,6 +83,13 @@
 
 @media (max-width: 600px) {
   .pod-card {
-    width: 220px;
+    width: 250px;
+  }
+  /* on the narrow card the absolutely-positioned badge collides with the
+     pod illustration — drop it into normal flow above the visual */
+  .pod-card__badge {
+    position: static;
+    display: inline-block;
+    margin-bottom: 16px;
   }
 }

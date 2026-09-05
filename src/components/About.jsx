@@ -3,9 +3,9 @@ import Divider from './Divider';
 import './About.css';
 
 const STATS = [
-  { value: '400 mL → 100 mL', label: 'Perfect 4:1 Reduction' },
+  { value: '4:1 Ratio', label: 'Perfect Reduction' },
   { value: '85–90°C', label: 'Pharmacopoeia-grade Temperature' },
-  { value: '< 15 min', label: 'Fresh Dose, On Demand' },
+  { value: '< 30 min', label: 'Fresh Dose, On Demand' },
 ];
 
 export default function About() {

@@ -3,20 +3,16 @@ import './Catalogue.css';
 
 const PODS = [
   {
-    name: 'Dashamoola Kwatha',
-    tagline: 'Supports joint mobility & anti-inflammatory balance',
+    name: 'Nilavembu Kudineer Chooranam',
+    tagline: 'Classical antipyretic formulation for fever and immunity',
   },
   {
-    name: 'Triphala Kwatha',
-    tagline: 'Classic digestive and detoxifying formulation',
+    name: 'Tulsi Dalchini Sunthi Marich',
+    tagline: 'Warming blend for cold, cough and respiratory comfort',
   },
   {
-    name: 'Guduchi Kwatha',
-    tagline: 'Immunity support with adaptogenic herbs',
-  },
-  {
-    name: 'Ashwagandha Kwatha',
-    tagline: 'Stress resilience and restorative strength',
+    name: 'Tulsi-Dalchini-Sunthi-Marich',
+    tagline: 'Warming blend for cold, cough and respiratory comfort',
   },
 ];
 
