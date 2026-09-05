@@ -3,9 +3,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  /* soft light-green wash */
-  background:
-    radial-gradient(120% 100% at 50% -8%, #d9f7dc 0%, #a9e4b0 52%, #88d293 100%);
+  /* soft light-green wash — a plain smooth top-to-bottom fade so it
+     stays even on tall phone screens (a radial banded on mobile) */
+  background: linear-gradient(180deg, #d7f5db 0%, #b3e7b9 55%, #a0dfa8 100%);
   overflow: hidden;
 }
 
