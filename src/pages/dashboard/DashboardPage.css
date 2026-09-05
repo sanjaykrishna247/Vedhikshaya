@@ -953,50 +953,42 @@
 }
 
 @media (max-width: 640px) {
-  /* not enough width for icon + name side-by-side, so stack the name
-     under the icon instead of truncating it */
+  /* keep icon + name side-by-side (same as desktop), just tightened
+     down so all four names fit without truncating */
   .d-hero__phases {
     flex-wrap: nowrap;
-    gap: 3px;
+    gap: 2px;
   }
   .d-hero__phase {
-    position: relative;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 11px 6px;
-    font-size: 0.7rem;
+    flex-direction: row;
+    padding: 10px 5px 10px 14px;
+    font-size: 0.64rem;
     gap: 4px;
     min-width: 0;
-    text-align: center;
   }
   .d-hero__phase:first-child {
-    padding-left: 10px;
+    padding-left: 9px;
   }
   .d-hero__phase-label {
     display: block;
-    max-width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
   .d-hero__phase-icon svg {
-    height: 16px;
+    height: 14px;
   }
   .d-hero__phase-icon svg.phaseicon--art {
-    height: 28px;
-    max-width: 34px;
-    margin: -8px 0;
+    height: 24px;
+    max-width: 28px;
+    margin: -6px -2px;
   }
   .d-hero__phase-check {
-    position: absolute;
-    top: 4px;
-    right: 6px;
-    margin-left: 0;
+    margin-left: 2px;
   }
   .d-hero__phase-check svg {
-    width: 12px;
-    height: 12px;
+    width: 10px;
+    height: 10px;
   }
 }
 
@@ -2400,20 +2392,19 @@
   gap: 9px;
   width: 100%;
   margin-top: 8px;
-  background: var(--apple);
+  background: var(--sage);
   border: none;
   border-radius: 9px;
   padding: 12px 14px;
-  color: #ffffff;
+  color: var(--forest);
   font-size: 0.95rem;
   font-weight: 700;
   letter-spacing: 0.01em;
   cursor: pointer;
-  box-shadow: 0 6px 16px rgba(139, 197, 61, 0.3);
   transition: background 0.2s ease, transform 0.15s ease;
 }
 .d-sidebar__logout:hover {
-  background: #79ab34;
+  background: #d3e6b8;
 }
 .d-sidebar__logout:active {
   transform: scale(0.99);
@@ -2422,7 +2413,7 @@
   width: 18px;
   height: 18px;
   flex-shrink: 0;
-  color: #ffffff;
+  color: var(--forest);
 }
 
 /* Sidebar — hide scrollbar */
@@ -3151,48 +3142,42 @@
     font-size: 1.3rem;
   }
 
-  /* phase chevrons: labels were being truncated to a single letter —
-     stack icon + name vertically instead of dropping the name, and
-     move the done-check to a small corner badge so it doesn't eat
-     into the already-tight width */
+  /* phase chevrons: keep icon + name on one row even at this width,
+     just shrink everything down a notch further than the 640px pass */
   .d-hero__phases {
     gap: 2px;
   }
   .d-hero__phase {
-    position: relative;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 10px 4px;
+    flex-direction: row;
+    padding: 9px 4px 9px 11px;
+    font-size: 0.58rem;
+    letter-spacing: 0.01em;
     gap: 3px;
-    text-align: center;
   }
   .d-hero__phase:first-child {
     padding-left: 8px;
   }
   .d-hero__phase-label {
     display: block;
-    font-size: 0.58rem;
-    letter-spacing: 0.01em;
     white-space: nowrap;
     max-width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
   }
+  .d-hero__phase-icon svg {
+    height: 12px;
+  }
   .d-hero__phase-icon svg.phaseicon--art {
-    height: 24px;
-    max-width: 30px;
-    margin: -6px 0;
+    height: 20px;
+    max-width: 24px;
+    margin: -5px -2px;
   }
   .d-hero__phase-check {
-    position: absolute;
-    top: 4px;
-    right: 6px;
-    margin-left: 0;
+    margin-left: 1px;
   }
   .d-hero__phase-check svg {
-    width: 11px;
-    height: 11px;
+    width: 9px;
+    height: 9px;
   }
 
   /* water level: stack the status chip above the chart instead of

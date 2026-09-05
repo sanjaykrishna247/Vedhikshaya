@@ -108,7 +108,6 @@ export default function Sidebar({ open = true }) {
           <IconLogout className="d-sidebar__logout-icon" />
           <span>Log Out</span>
         </button>
-        <div className="d-sidebar__version">Vedikshaya OS v2.4.0</div>
       </div>
     </aside>
   );
