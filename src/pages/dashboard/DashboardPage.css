@@ -987,6 +987,10 @@
      phones instead of truncating with an ellipsis; the done-check
      is pulled out of the flex row (absolute, corner badge) so it
      never competes with the label for width. */
+  .d-hero {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
   .d-hero__phases {
     flex-wrap: nowrap;
     gap: 4px;
@@ -3179,6 +3183,10 @@
      viewport-relative font so it keeps shrinking on narrower phones,
      and the done-check is an absolute corner badge so it never eats
      into the label's width */
+  .d-hero {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
   .d-hero__phases {
     gap: 2px;
   }
