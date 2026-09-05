@@ -4,7 +4,7 @@
   align-items: center;
   justify-content: center;
   background: radial-gradient(ellipse 80% 60% at 50% 30%, rgba(139, 197, 61, 0.12), transparent),
-    var(--near-black);
+    linear-gradient(150deg, #063a1c 0%, #04250f 32%, #02180a 62%, var(--near-black) 100%);
   overflow: hidden;
 }
 
