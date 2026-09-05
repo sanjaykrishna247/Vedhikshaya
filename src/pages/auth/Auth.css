@@ -211,7 +211,7 @@
   background: #f8faf6;
   font-size: 0.98rem;
   font-family: var(--font-body);
-  color: #3fa34d;
+  color: #1c1c1c;
   outline: none;
   transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
 }
@@ -300,7 +300,7 @@
   }
   .auth__card--glass .auth__field input {
     background: rgba(255, 255, 255, 0.62);
-    color: #3fa34d;
+    color: #1c1c1c;
   }
   .auth__card--glass .auth__field label {
     color: #3fa34d;
