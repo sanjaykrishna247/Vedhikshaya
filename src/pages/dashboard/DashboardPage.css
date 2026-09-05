@@ -931,9 +931,9 @@
   max-width: 34px;
 }
 .d-hero__phase-icon svg.phaseicon--art {
-  height: 30px;
-  max-width: 36px;
-  margin: -1px 0;
+  height: 54px;
+  max-width: 68px;
+  margin: -16px -6px;
 }
 .d-hero__phase-label {
   flex: 1;
@@ -975,8 +975,8 @@
     height: 16px;
   }
   .d-hero__phase-icon svg.phaseicon--art {
-    height: 18px;
-    margin: 0;
+    height: 32px;
+    margin: -12px -4px;
   }
 }
 
@@ -2912,6 +2912,19 @@
   .d-sidebar:not(.d-sidebar--collapsed) {
     transform: translateX(0);
     box-shadow: 16px 0 48px rgba(0, 0, 0, 0.35);
+  }
+
+  /* Without flex-shrink:0, a flex column with overflow-y:auto will
+     squash its children to fit the fixed height instead of actually
+     overflowing/scrolling (browsers auto-shrink flex items whose
+     min-height:auto resolves to 0 inside a scroll container). Pin
+     every direct child to its natural size so content that doesn't
+     fit causes real overflow, which overflow-y:auto can then scroll. */
+  .d-sidebar > * {
+    flex-shrink: 0;
+  }
+  .d-sidebar__spacer {
+    flex-shrink: 1;
   }
 
   .d-sidebar__group {
