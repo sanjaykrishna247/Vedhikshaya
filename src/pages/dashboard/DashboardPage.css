@@ -224,7 +224,7 @@
   margin-bottom: 18px;
 }
 .d-page-head h1 {
-  font-family: var(--font-display);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   font-size: 1.6rem;
   font-weight: 700;
   letter-spacing: -0.01em;
@@ -232,6 +232,7 @@
   margin: 0 0 4px;
 }
 .d-page-head p {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   font-size: 0.9rem;
   color: var(--d-muted);
   margin: 0;

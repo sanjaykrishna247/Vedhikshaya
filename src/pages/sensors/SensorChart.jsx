@@ -16,6 +16,7 @@ export default function SensorChart({ title, unit, color = '#8bc53d', data, icon
     rootRef.current = root;
     root._logo?.dispose();
     root.setThemes([am5themes_Animated.new(root)]);
+    root.fontFamily = "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif";
 
     const chart = root.container.children.push(
       am5xy.XYChart.new(root, {
