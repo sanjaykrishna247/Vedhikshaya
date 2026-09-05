@@ -1568,54 +1568,10 @@
   .d-shell {
     flex-direction: column;
   }
-  .d-sidebar {
-    position: static;
-    height: auto;
-    overflow-y: visible;
-    width: auto;
-    flex-direction: row;
-    flex-wrap: wrap;
-    align-items: center;
-    padding: 16px 18px;
-    gap: 14px;
-    border-right: none;
-    border-bottom: 1px solid var(--d-border);
-  }
-  .d-sidebar--collapsed {
-    display: none;
-  }
-  .d-sidebar__group {
-    display: contents;
-  }
-  .d-sidebar__divider,
-  .d-sidebar__spacer,
-  .d-sidebar__version {
-    display: none;
-  }
-  .d-sidebar__section-label {
-    display: none;
-  }
-  .d-sidebar__nav {
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: 6px;
-  }
-  .d-sidebar__link {
-    padding: 8px 12px;
-  }
-  .d-sidebar__linklabel {
-    display: none;
-  }
-  .d-sidebar__chevron {
-    display: none;
-  }
-  .d-sidebar__pod {
-    margin-top: 0;
-    margin-left: auto;
-  }
-  .d-sidebar__drmode {
-    width: auto;
-  }
+  /* .d-sidebar itself is styled as an off-canvas drawer further down
+     ("Mobile drawer" blocks) — do not touch its layout/position here,
+     that used to be a leftover horizontal-strip design that fought
+     with the drawer rules and broke real-device scrolling. */
 
   .d-col-8, .d-col-7 {
     grid-column: span 12;
@@ -1789,6 +1745,14 @@
 .d-toggle {
   background: rgba(255, 255, 255, 0.22);
 }
+.d-sidebar__logout {
+  border-color: rgba(255, 255, 255, 0.16);
+  color: #ff8a80;
+}
+.d-sidebar__logout:hover {
+  background: rgba(255, 138, 128, 0.12);
+  border-color: rgba(255, 138, 128, 0.4);
+}
 
 /* Sidebar nav — glassy pill on hover / active */
 .d-sidebar__nav {
@@ -1823,67 +1787,9 @@
 }
 
 /* ============================================================
-   Mobile sidebar + top bar fixes  (kept last so they win)
+   Mobile top bar fixes
    ============================================================ */
 @media (max-width: 980px) {
-  .d-sidebar {
-    padding: 8px 12px;
-    gap: 10px;
-    flex-wrap: nowrap;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.14);
-  }
-  .d-sidebar__pod,
-  .d-sidebar__drmode,
-  .d-sidebar__profile {
-    display: none;
-  }
-  .d-sidebar__nav {
-    flex: 1;
-    min-width: 0;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    gap: 8px;
-    overflow-x: auto;
-    scrollbar-width: none;
-    -webkit-overflow-scrolling: touch;
-  }
-  .d-sidebar__nav::-webkit-scrollbar {
-    display: none;
-  }
-  .d-sidebar__link {
-    flex-shrink: 0;
-    padding: 7px 14px 7px 7px;
-    border-radius: 12px;
-    gap: 9px;
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-    box-shadow: none;
-  }
-  .d-sidebar__link:hover,
-  .d-sidebar__link--active {
-    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.16);
-  }
-  .d-sidebar__link--active::before {
-    display: none;
-  }
-  .d-sidebar__linklabel {
-    display: block;
-    font-size: 0.82rem;
-    white-space: nowrap;
-  }
-  .d-sidebar__chevron {
-    display: none;
-  }
-  .d-sidebar__icon {
-    width: 30px;
-    height: 30px;
-    border-radius: 8px;
-  }
-  .d-sidebar__icon svg {
-    width: 16px;
-    height: 16px;
-  }
-
   /* thin the top bar down */
   .d-topbar {
     gap: 12px;
@@ -2475,6 +2381,32 @@
   letter-spacing: 0.02em;
 }
 
+.d-sidebar__logout {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  margin-top: 8px;
+  background: transparent;
+  border: 1px solid var(--d-border);
+  border-radius: 10px;
+  padding: 12px 14px;
+  color: #b3423b;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+.d-sidebar__logout:hover {
+  background: rgba(179, 66, 59, 0.08);
+  border-color: rgba(179, 66, 59, 0.35);
+}
+.d-sidebar__logout-icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
 /* Sidebar — hide scrollbar */
 .d-sidebar {
   scrollbar-width: none;
@@ -2891,16 +2823,19 @@
     position: fixed;
     top: 0;
     left: 0;
-    bottom: 0;
+    bottom: auto;
     width: 280px;
     max-width: 86vw;
-    height: auto;
+    height: 100dvh;
     display: flex;
     flex-direction: column;
     flex-wrap: nowrap;
     align-items: stretch;
     box-sizing: border-box;
     overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: contain;
+    touch-action: pan-y;
     padding: 74px 16px 20px;
     gap: 0;
     border: none;
@@ -3199,20 +3134,47 @@
   }
 
   /* phase chevrons: labels were being truncated to a single letter —
-     drop the label text on very narrow screens, keep icon + check */
-  .d-hero__phase-label {
-    display: none;
+     stack icon + name vertically instead of dropping the name, and
+     move the done-check to a small corner badge so it doesn't eat
+     into the already-tight width */
+  .d-hero__phases {
+    gap: 2px;
   }
   .d-hero__phase {
+    position: relative;
+    flex-direction: column;
     justify-content: center;
-    padding: 12px 8px;
-    gap: 0;
+    align-items: center;
+    padding: 10px 4px;
+    gap: 3px;
+    text-align: center;
   }
   .d-hero__phase:first-child {
-    padding-left: 12px;
+    padding-left: 8px;
+  }
+  .d-hero__phase-label {
+    display: block;
+    font-size: 0.58rem;
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .d-hero__phase-icon svg.phaseicon--art {
+    height: 24px;
+    max-width: 30px;
+    margin: -6px 0;
   }
   .d-hero__phase-check {
-    margin-left: 4px;
+    position: absolute;
+    top: 4px;
+    right: 6px;
+    margin-left: 0;
+  }
+  .d-hero__phase-check svg {
+    width: 11px;
+    height: 11px;
   }
 
   /* water level: stack the status chip above the chart instead of

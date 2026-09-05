@@ -1,5 +1,7 @@
 import { useState } from 'react';
-import { IconPod, IconThermo, IconChat, IconHistory, IconChevronRight } from './icons';
+import { useNavigate } from 'react-router-dom';
+import { IconPod, IconThermo, IconChat, IconHistory, IconChevronRight, IconLogout } from './icons';
+import { useAuth } from '../../auth/AuthContext';
 
 const NAV = [
   { icon: IconPod, label: 'Brew Status', active: true, expandable: true },
@@ -23,6 +25,13 @@ const POD_INGREDIENTS = [
 
 export default function Sidebar({ open = true }) {
   const [drMode, setDrMode] = useState(false);
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/home');
+  };
 
   return (
     <aside className={`d-sidebar ${open ? '' : 'd-sidebar--collapsed'}`}>
@@ -94,6 +103,10 @@ export default function Sidebar({ open = true }) {
           <span className={`d-toggle ${drMode ? 'd-toggle--on' : ''}`}>
             <span className="d-toggle__knob" />
           </span>
+        </button>
+        <button className="d-sidebar__logout" onClick={handleLogout}>
+          <IconLogout className="d-sidebar__logout-icon" />
+          <span>Log Out</span>
         </button>
         <div className="d-sidebar__version">Vedikshaya OS v2.4.0</div>
       </div>
