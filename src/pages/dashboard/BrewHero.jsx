@@ -1,6 +1,7 @@
 import useCountUp from './useCountUp';
 import { IconClock } from './icons';
 import { PhaseSoak, PhaseBoil, PhaseStir, PhaseDispense } from './phaseIcons';
+import { useKashaya } from '../../auth/KashayaContext';
 
 const STEP_ICON = {
   Soaking: <PhaseSoak />,
@@ -19,6 +20,7 @@ const STEPS = ['Soaking', 'Boil', 'Stirring', 'Dispense'];
 const CURRENT_STEP = 2;
 
 export default function BrewHero() {
+  const { kashaya } = useKashaya();
   const totalSeconds = 8 * 60 + 24;
   const seconds = useCountUp(totalSeconds, { duration: 1200 });
   const mm = String(Math.floor(seconds / 60)).padStart(2, '0');
@@ -31,7 +33,7 @@ export default function BrewHero() {
 
       <div className="d-hero__top">
         <div>
-          <h2 className="d-hero__title">Dashamoola Kwatha</h2>
+          <h2 className="d-hero__title">{kashaya}</h2>
           <p className="d-hero__sub">Stirring phase — temperature holding at 87°C</p>
         </div>
 

@@ -9,6 +9,7 @@ import {
   IconLogout,
 } from './icons';
 import { useAuth } from '../../auth/AuthContext';
+import { useKashaya } from '../../auth/KashayaContext';
 
 const NAV = [
   { icon: IconBrewStatus, label: 'Brew Status', to: '/dashboard', expandable: true },
@@ -33,6 +34,7 @@ const POD_INGREDIENTS = [
 export default function Sidebar({ open = true }) {
   const [drMode, setDrMode] = useState(false);
   const { logout } = useAuth();
+  const { kashaya } = useKashaya();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -77,7 +79,7 @@ export default function Sidebar({ open = true }) {
           <div className="d-sidebar__pod-top">
             <div>
               <div className="d-sidebar__pod-label">Current Pod</div>
-              <div className="d-sidebar__pod-name">Dashamoola Kwatha</div>
+              <div className="d-sidebar__pod-name">{kashaya}</div>
             </div>
           </div>
           <span className="d-badge">AFI Certified</span>

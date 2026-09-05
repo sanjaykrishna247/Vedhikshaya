@@ -5,11 +5,11 @@ import './index.css'
 import App from './App.jsx'
 import DashboardPage from './pages/dashboard/DashboardPage.jsx'
 import { AuthProvider } from './auth/AuthContext.jsx'
+import { KashayaProvider } from './auth/KashayaContext.jsx'
 import ProtectedRoute from './auth/ProtectedRoute.jsx'
 import Login from './pages/auth/Login.jsx'
 import Signup from './pages/auth/Signup.jsx'
 import HomeHub from './pages/home/HomeHub.jsx'
-import ScanPod from './pages/scan/ScanPod.jsx'
 import ChatbotPage from './pages/chatbot/ChatbotPage.jsx'
 import BrewHistory from './pages/history/BrewHistory.jsx'
 import RouteLoading from './components/RouteLoading.jsx'
@@ -17,12 +17,15 @@ import RouteLoading from './components/RouteLoading.jsx'
 // amCharts pulls in a lot of weight — load it only when someone actually
 // visits /sensors instead of bundling it into every page's initial load.
 const SensorsPage = lazy(() => import('./pages/sensors/SensorsPage.jsx'))
+// jsQR adds real weight too — only needed on the scan page.
+const ScanPod = lazy(() => import('./pages/scan/ScanPod.jsx'))
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
       <AuthProvider>
-        <Routes>
+        <KashayaProvider>
+          <Routes>
           <Route path="/" element={<App />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
@@ -39,7 +42,9 @@ createRoot(document.getElementById('root')).render(
             path="/scan"
             element={
               <ProtectedRoute>
-                <ScanPod />
+                <Suspense fallback={<RouteLoading />}>
+                  <ScanPod />
+                </Suspense>
               </ProtectedRoute>
             }
           />
@@ -77,7 +82,8 @@ createRoot(document.getElementById('root')).render(
               </ProtectedRoute>
             }
           />
-        </Routes>
+          </Routes>
+        </KashayaProvider>
       </AuthProvider>
     </BrowserRouter>
   </StrictMode>,

@@ -1,15 +1,40 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import jsQR from 'jsqr';
 import { IconPod } from '../dashboard/icons';
+import { useKashaya } from '../../auth/KashayaContext';
 import logo from '../../assets/logo.svg';
 import './ScanPod.css';
 
+// The QR code just contains the kashaya name as plain text. Also accept a
+// small JSON payload (e.g. {"name": "..."}) in case pods ever encode more
+// than just the name.
+function extractKashayaName(rawText) {
+  const text = rawText.trim();
+  if (!text) return '';
+  if (text.startsWith('{')) {
+    try {
+      const parsed = JSON.parse(text);
+      if (typeof parsed.name === 'string' && parsed.name.trim()) {
+        return parsed.name.trim();
+      }
+    } catch {
+      // not JSON — fall through and use the raw text
+    }
+  }
+  return text;
+}
+
 export default function ScanPod() {
   const navigate = useNavigate();
+  const { setKashaya } = useKashaya();
   const videoRef = useRef(null);
+  const canvasRef = useRef(null);
   const streamRef = useRef(null);
+  const rafRef = useRef(null);
   const [status, setStatus] = useState('requesting'); // requesting | live | denied | detected
   const [errorMsg, setErrorMsg] = useState('');
+  const [detectedName, setDetectedName] = useState('');
 
   useEffect(() => {
     let cancelled = false;
@@ -48,13 +73,57 @@ export default function ScanPod() {
     };
   }, []);
 
-  const handleDetect = () => {
-    setStatus('detected');
-  };
+  // Real-time QR scanning: sample video frames onto an offscreen canvas and
+  // run jsQR against the pixel data until a code is found.
+  useEffect(() => {
+    if (status !== 'live') return undefined;
+
+    const video = videoRef.current;
+    const canvas = canvasRef.current;
+    if (!video || !canvas) return undefined;
+    const ctx = canvas.getContext('2d', { willReadFrequently: true });
+
+    const SCAN_WIDTH = 400; // downscaled for faster decode; QR still reads fine
+
+    const tick = () => {
+      if (video.readyState === video.HAVE_ENOUGH_DATA && video.videoWidth) {
+        const scale = SCAN_WIDTH / video.videoWidth;
+        canvas.width = SCAN_WIDTH;
+        canvas.height = video.videoHeight * scale;
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const code = jsQR(imageData.data, imageData.width, imageData.height, {
+          inversionAttempts: 'attemptBoth',
+        });
+
+        if (code && code.data) {
+          const name = extractKashayaName(code.data);
+          if (name) {
+            setDetectedName(name);
+            setStatus('detected');
+            return;
+          }
+        }
+      }
+      rafRef.current = requestAnimationFrame(tick);
+    };
+
+    rafRef.current = requestAnimationFrame(tick);
+    return () => {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    };
+  }, [status]);
 
   const handleStartBrewing = () => {
+    if (detectedName) setKashaya(detectedName);
     streamRef.current?.getTracks().forEach((t) => t.stop());
     navigate('/dashboard');
+  };
+
+  const handleScanAgain = () => {
+    setDetectedName('');
+    setStatus('live');
   };
 
   return (
@@ -76,10 +145,13 @@ export default function ScanPod() {
           <span className="scan__eyebrow-dot" /> Pod Scanner
         </span>
         <h1 className="scan__title">Scan the Pod</h1>
-        <p className="scan__sub">Center the pod's label inside the frame.</p>
+        <p className="scan__sub">
+          {status === 'detected' ? 'Pod identified.' : "Center the pod's QR code inside the frame."}
+        </p>
 
         <div className="scan__viewport">
           <video ref={videoRef} autoPlay playsInline muted className="scan__video" />
+          <canvas ref={canvasRef} style={{ display: 'none' }} />
 
           {status === 'requesting' && (
             <div className="scan__overlay">
@@ -92,7 +164,6 @@ export default function ScanPod() {
             <div className="scan__overlay">
               <IconPod className="scan__overlay-icon" />
               <p>{errorMsg}</p>
-              <p className="scan__overlay-hint">You can still continue with a demo pod below.</p>
             </div>
           )}
 
@@ -112,20 +183,27 @@ export default function ScanPod() {
               </span>
               <div>
                 <div className="scan__result-label">Pod Detected</div>
-                <div className="scan__result-name">Dashamoola Kwatha</div>
+                <div className="scan__result-name">{detectedName}</div>
               </div>
             </div>
           )}
         </div>
 
         <div className="scan__actions">
-          {status !== 'detected' ? (
-            <button className="scan__btn scan__btn--primary" onClick={handleDetect}>
-              Simulate Scan
-            </button>
-          ) : (
+          {status === 'detected' ? (
             <button className="scan__btn scan__btn--primary" onClick={handleStartBrewing}>
               Start Brewing
+            </button>
+          ) : status === 'denied' ? (
+            <Link to="/home" className="scan__btn scan__btn--primary">
+              Back to Home
+            </Link>
+          ) : (
+            <p className="scan__sub scan__sub--hint">Scanning automatically…</p>
+          )}
+          {status === 'detected' && (
+            <button className="scan__btn scan__btn--ghost" onClick={handleScanAgain}>
+              Scan Again
             </button>
           )}
         </div>

@@ -1,14 +1,17 @@
 import { useEffect, useRef, useState } from 'react';
+import { useKashaya } from '../../auth/KashayaContext';
 
-const SEED_MESSAGES = [
-  { role: 'bot', text: 'Brew started. Dashamoola Kwatha detected. Estimated time: 14 min.' },
-  { role: 'bot', text: 'Temperature stabilized at 87°C. Stirring at 30%.' },
-  { role: 'user', text: 'Is this brew safe for evening use?' },
-  {
-    role: 'bot',
-    text: 'Yes — Dashamoola is recommended post-sunset. Avoid food 30 min before consuming.',
-  },
-];
+function buildSeedMessages(kashaya) {
+  return [
+    { role: 'bot', text: `Brew started. ${kashaya} detected. Estimated time: 14 min.` },
+    { role: 'bot', text: 'Temperature stabilized at 87°C. Stirring at 30%.' },
+    { role: 'user', text: 'Is this brew safe for evening use?' },
+    {
+      role: 'bot',
+      text: `Yes — ${kashaya} is recommended post-sunset. Avoid food 30 min before consuming.`,
+    },
+  ];
+}
 
 const SYSTEM_PROMPT =
   'You are Vedikshaya AI, an Ayurvedic brew assistant. Answer only about the current brew, ' +
@@ -38,6 +41,7 @@ async function askVedikshayaAI(messages) {
 }
 
 export default function AIChat() {
+  const { kashaya } = useKashaya();
   const [messages, setMessages] = useState([]);
   const [visibleCount, setVisibleCount] = useState(0);
   const [input, setInput] = useState('');
@@ -45,8 +49,8 @@ export default function AIChat() {
   const scrollRef = useRef(null);
 
   useEffect(() => {
-    setMessages(SEED_MESSAGES);
-  }, []);
+    setMessages(buildSeedMessages(kashaya));
+  }, [kashaya]);
 
   useEffect(() => {
     if (visibleCount >= messages.length) return;
