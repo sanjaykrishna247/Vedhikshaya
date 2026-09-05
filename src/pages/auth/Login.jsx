@@ -113,7 +113,7 @@ export default function Login() {
         muted
         playsInline
       >
-        <source src="/videos/brew-overhead.mp4" type="video/mp4" />
+        <source src="/videos/brew-overhead-v2.mp4" type="video/mp4" />
       </video>
       <video
         ref={videoBRef}
@@ -123,7 +123,7 @@ export default function Login() {
         muted
         playsInline
       >
-        <source src="/videos/brew-overhead.mp4" type="video/mp4" />
+        <source src="/videos/brew-overhead-v2.mp4" type="video/mp4" />
       </video>
       <div className="auth__video-overlay" />
 
