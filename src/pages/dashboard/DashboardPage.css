@@ -988,15 +988,11 @@
     max-width: 26px;
     margin: -5px -2px;
   }
+  /* the done-checkmark rendered as an illegible white speck at this
+     size — drop it and rely on the solid dark-green fill to signal
+     "done" instead */
   .d-hero__phase-check {
-    position: absolute;
-    top: 3px;
-    right: 4px;
-    margin-left: 0;
-  }
-  .d-hero__phase-check svg {
-    width: 9px;
-    height: 9px;
+    display: none;
   }
 }
 
@@ -3184,14 +3180,7 @@
     margin: -4px -2px;
   }
   .d-hero__phase-check {
-    position: absolute;
-    top: 2px;
-    right: 3px;
-    margin-left: 0;
-  }
-  .d-hero__phase-check svg {
-    width: 8px;
-    height: 8px;
+    display: none;
   }
 
   /* water level: stack the status chip above the chart instead of
