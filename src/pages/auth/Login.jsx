@@ -112,6 +112,8 @@ export default function Login() {
         loop
         muted
         playsInline
+        preload="auto"
+        poster="/videos/brew-overhead-poster.jpg"
       >
         <source src="/videos/brew-overhead-v3.mp4" type="video/mp4" />
       </video>
@@ -122,6 +124,7 @@ export default function Login() {
         loop
         muted
         playsInline
+        preload="auto"
       >
         <source src="/videos/brew-overhead-v3.mp4" type="video/mp4" />
       </video>
