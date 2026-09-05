@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import RobotDoctor from '../../components/RobotDoctor';
+import AnimatedDoctor from '../../components/AnimatedDoctor';
 import { findRecommendation, KASHAYA_CATALOGUE } from './kashayaData';
 import logo from '../../assets/logo.svg';
 import './ChatbotPage.css';
@@ -62,7 +62,7 @@ export default function ChatbotPage() {
       <div className="cb__body">
         <main className="cb__chat">
           <div className="cb__chat-head">
-            <RobotDoctor size={40} />
+            <AnimatedDoctor size={52} animated={false} />
             <div>
               <div className="cb__chat-title">Dr. Vedik</div>
               <div className="cb__chat-sub">
@@ -76,7 +76,7 @@ export default function ChatbotPage() {
               <div key={i} className={`cb__msg cb__msg--${m.role}`}>
                 {m.role === 'bot' && (
                   <span className="cb__msg-avatar">
-                    <RobotDoctor size={26} />
+                    <AnimatedDoctor size={34} animated={false} />
                   </span>
                 )}
                 <span
@@ -90,7 +90,7 @@ export default function ChatbotPage() {
             {thinking && (
               <div className="cb__msg cb__msg--bot">
                 <span className="cb__msg-avatar">
-                  <RobotDoctor size={26} />
+                  <AnimatedDoctor size={34} animated={false} />
                 </span>
                 <span className="cb__msg-bubble cb__typing">
                   <span />

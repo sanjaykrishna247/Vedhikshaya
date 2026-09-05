@@ -2,7 +2,7 @@
 // helper classes are scoped under `.ad-doctor` so they can't leak into the
 // rest of the app. Recoloured from the original cyan asset to the Vedikshaya
 // green palette.
-export default function AnimatedDoctor({ size = 64, className = '' }) {
+export default function AnimatedDoctor({ size = 64, className = '', animated = true }) {
   return (
     <span
       className={`ad-doctor ${className}`}
@@ -18,6 +18,7 @@ export default function AnimatedDoctor({ size = 64, className = '' }) {
         .ad-doctor .ad-fill-ink    { fill: #012F13; }
         .ad-doctor .ad-fill-visor  { fill: #08300F; }
 
+        ${animated ? `
         @keyframes adFloat      { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
         @keyframes adShadow     { 0%,100% { transform: scale(1); opacity: .8; } 50% { transform: scale(.92); opacity: .55; } }
         @keyframes adWave       { 0%,100% { transform: rotate(0); } 15% { transform: rotate(-24deg); } 30% { transform: rotate(10deg); } 45% { transform: rotate(-24deg); } 60% { transform: rotate(10deg); } 75% { transform: rotate(-14deg); } 85% { transform: rotate(0); } }
@@ -34,6 +35,7 @@ export default function AnimatedDoctor({ size = 64, className = '' }) {
           .ad-doctor #ad-shadow, .ad-doctor #ad-body, .ad-doctor #ad-head,
           .ad-doctor .ad-eye, .ad-doctor #ad-arm { animation: none; }
         }
+        ` : ''}
       `}</style>
 
       <svg viewBox="118 92 424 452" xmlns="http://www.w3.org/2000/svg">
