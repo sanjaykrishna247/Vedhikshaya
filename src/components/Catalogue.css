@@ -10,7 +10,17 @@
   padding: 10px 24px 30px;
   scroll-snap-type: x proximity;
   scrollbar-width: thin;
-  justify-content: center;
+  /* justify-content: center on a scrollable overflow container starts the
+     scroll position mid-row and makes the left side unreachable — always
+     left-align instead. */
+  justify-content: flex-start;
+}
+@media (min-width: 1220px) {
+  /* Once the row is wide enough to fit all 4 cards without overflowing,
+     centering is safe again (nothing to scroll, so no clipped-edge bug). */
+  .catalogue__row {
+    justify-content: center;
+  }
 }
 
 .pod-card {

@@ -261,9 +261,15 @@
     flex-direction: column;
   }
   .bh__aside {
+    flex-shrink: 0;
+    max-height: 60vh;
     border-right: none;
     border-bottom: 1px solid #dde3dc;
     padding: 24px 20px;
+  }
+  .bh__content {
+    flex: 1;
+    min-height: 0;
   }
   .bh__stats {
     display: grid;
