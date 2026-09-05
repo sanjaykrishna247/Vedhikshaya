@@ -3,7 +3,7 @@ import Divider from './Divider';
 import './About.css';
 
 const STATS = [
-  { value: '4:1 Ratio', label: 'Perfect Reduction' },
+  { value: '4:1 Ratio', label: 'Reduction' },
   { value: '85–90°C', label: 'Pharmacopoeia-grade Temperature' },
   { value: '< 30 min', label: 'Fresh Dose, On Demand' },
 ];
