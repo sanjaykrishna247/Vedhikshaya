@@ -115,7 +115,7 @@ export default function Login() {
         preload="auto"
         poster="/videos/brew-overhead-poster.jpg"
       >
-        <source src="/videos/brew-overhead-v3.mp4" type="video/mp4" />
+        <source src="/videos/brew-overhead-v4.mp4" type="video/mp4" />
       </video>
       <video
         ref={videoBRef}
@@ -126,7 +126,7 @@ export default function Login() {
         playsInline
         preload="auto"
       >
-        <source src="/videos/brew-overhead-v3.mp4" type="video/mp4" />
+        <source src="/videos/brew-overhead-v4.mp4" type="video/mp4" />
       </video>
       <div className="auth__video-overlay" />
 
