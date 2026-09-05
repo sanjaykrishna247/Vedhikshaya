@@ -3,8 +3,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  /* plain blended green gradient — no glow, no grid, no black */
-  background: linear-gradient(155deg, #0c5029 0%, #0a4322 30%, #083618 60%, #052b14 100%);
+  /* blended greens — a lighter green washed over a deep-green base
+     (no glow, no grid, no black) */
+  background:
+    radial-gradient(130% 90% at 12% -5%, rgba(74, 190, 108, 0.3), transparent 55%),
+    radial-gradient(110% 80% at 100% 108%, rgba(40, 150, 80, 0.22), transparent 55%),
+    linear-gradient(155deg, #12633a 0%, #0d5330 34%, #0a4526 66%, #073a1e 100%);
   overflow: hidden;
 }
 
