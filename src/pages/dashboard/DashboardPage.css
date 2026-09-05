@@ -219,6 +219,32 @@
   min-height: calc(100vh - 72px);
 }
 
+/* ===== Simple page header (Sensors, etc.) ===== */
+.d-page-head {
+  margin-bottom: 18px;
+}
+.d-page-head h1 {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--d-text);
+  margin: 0 0 4px;
+}
+.d-page-head p {
+  font-size: 0.9rem;
+  color: var(--d-muted);
+  margin: 0;
+}
+@media (max-width: 640px) {
+  .d-page-head h1 {
+    font-size: 1.3rem;
+  }
+  .d-page-head p {
+    font-size: 0.82rem;
+  }
+}
+
 /* ===== Shared card bits ===== */
 .d-card {
   background: var(--d-surface);

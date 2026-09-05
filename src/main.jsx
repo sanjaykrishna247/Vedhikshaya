@@ -12,6 +12,7 @@ import HomeHub from './pages/home/HomeHub.jsx'
 import ScanPod from './pages/scan/ScanPod.jsx'
 import ChatbotPage from './pages/chatbot/ChatbotPage.jsx'
 import BrewHistory from './pages/history/BrewHistory.jsx'
+import SensorsPage from './pages/sensors/SensorsPage.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -51,6 +52,14 @@ createRoot(document.getElementById('root')).render(
             element={
               <ProtectedRoute>
                 <BrewHistory />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/sensors"
+            element={
+              <ProtectedRoute>
+                <SensorsPage />
               </ProtectedRoute>
             }
           />

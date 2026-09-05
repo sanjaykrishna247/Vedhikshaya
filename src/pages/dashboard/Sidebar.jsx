@@ -1,13 +1,21 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { IconPod, IconThermo, IconChat, IconHistory, IconChevronRight, IconLogout } from './icons';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import {
+  IconBrewStatus,
+  IconSensors,
+  IconChat,
+  IconHistory,
+  IconPod,
+  IconChevronRight,
+  IconLogout,
+} from './icons';
 import { useAuth } from '../../auth/AuthContext';
 
 const NAV = [
-  { icon: IconPod, label: 'Brew Status', active: true, expandable: true },
-  { icon: IconThermo, label: 'Sensors', expandable: true },
-  { icon: IconChat, label: 'AI Assistant' },
-  { icon: IconHistory, label: 'Brew History', expandable: true },
+  { icon: IconBrewStatus, label: 'Brew Status', to: '/dashboard', expandable: true },
+  { icon: IconSensors, label: 'Sensors', to: '/sensors', expandable: true },
+  { icon: IconChat, label: 'AI Assistant', to: '/chatbot' },
+  { icon: IconHistory, label: 'Brew History', to: '/brew-history', expandable: true },
 ];
 
 const POD_INGREDIENTS = [
@@ -27,6 +35,7 @@ export default function Sidebar({ open = true }) {
   const [drMode, setDrMode] = useState(false);
   const { logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleLogout = () => {
     logout();
@@ -47,18 +56,17 @@ export default function Sidebar({ open = true }) {
       <div className="d-sidebar__group">
         <nav className="d-sidebar__nav">
           {NAV.map((item) => (
-            <a
+            <Link
               key={item.label}
-              href="#"
-              className={`d-sidebar__link ${item.active ? 'd-sidebar__link--active' : ''}`}
-              onClick={(e) => e.preventDefault()}
+              to={item.to}
+              className={`d-sidebar__link ${location.pathname === item.to ? 'd-sidebar__link--active' : ''}`}
             >
               <span className="d-sidebar__icon">
                 <item.icon />
               </span>
               <span className="d-sidebar__linklabel">{item.label}</span>
               {item.expandable && <IconChevronRight className="d-sidebar__chevron" />}
-            </a>
+            </Link>
           ))}
         </nav>
       </div>

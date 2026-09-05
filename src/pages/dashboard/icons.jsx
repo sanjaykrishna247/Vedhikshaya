@@ -30,6 +30,43 @@ export const IconChat = (p) => (
   </svg>
 );
 
+export const IconBrewStatus = (p) => (
+  <svg viewBox="0 0 48 48" fill="none" {...p}>
+    <g stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M17 16.5 C14.8 14.2 18.8 12.4 17.3 9.5" />
+      <path d="M24 16.5 C21.5 13.5 26.2 11.2 24 6" />
+      <path d="M31 16.5 C28.7 13.8 32.7 12.2 31 8" />
+    </g>
+    <g stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 17.5 C13.2 16.5 15 16 17 16 L31 16 C33 16 34.8 16.5 36 17.5 C34.8 18.7 33 19 31 19 L17 19 C15 19 13.2 18.7 12 17.5 Z" />
+      <path d="M13 18 C13.4 21.5 12.8 24.5 12.8 27.5 C12.8 32.8 16.3 36 24 36 C31.7 36 35.2 32.8 35.2 27.5 C35.2 24.5 34.6 21.5 35 18" />
+      <path d="M35 22.5 C38 22.2 40 23.3 40.5 25.2 C40.9 26.8 40.2 28.1 38.5 28.3" />
+      <path d="M18 36 C19 37 21.5 37.5 24 37.5 C26.5 37.5 29 37 30 36" />
+    </g>
+    <g stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M16 23 C18.2 21.9 20.5 24 23 23 C25.5 22 27.8 24 32 23" />
+      <path d="M16 26.2 C18.2 25.1 20.5 27.2 23 26.2 C25.5 25.2 27.8 27.2 32 26.2" />
+      <path d="M16.5 29.4 C18.8 28.3 21 30.4 23.5 29.4 C26 28.4 28.2 30.4 31.5 29.4" />
+    </g>
+  </svg>
+);
+
+export const IconSensors = (p) => (
+  <svg viewBox="0 0 48 48" fill="currentColor" {...p}>
+    <path d="M10.8 7.2a1.4 1.4 0 0 1 2 0 1.4 1.4 0 0 1 0 2 C9.7 12.3 8 16.6 8 21s1.7 8.7 4.8 11.8a1.4 1.4 0 1 1-2 2 C7.1 31.1 5.2 26.2 5.2 21s1.9-10.1 5.6-13.8Z" />
+    <path d="M15.3 10.7a1.4 1.4 0 0 1 2 0 1.4 1.4 0 0 1 0 2 C15.2 14.8 14 17.7 14 21s1.2 6.2 3.3 8.3a1.4 1.4 0 1 1-2 2 C12.7 28.9 11.2 25.3 11.2 21s1.5-7.9 4.1-10.3Z" />
+    <path d="M19.6 14.4a1.4 1.4 0 0 1 2 0 1.4 1.4 0 0 1 0 2 C20.5 17.5 20 19.2 20 21s.5 3.5 1.6 4.6a1.4 1.4 0 1 1-2 2 C18 26 17.2 23.6 17.2 21s.8-5 2.4-6.6Z" />
+    <path d="M37.2 7.2a1.4 1.4 0 0 0-2 0 1.4 1.4 0 0 0 0 2 C38.3 12.3 40 16.6 40 21s-1.7 8.7-4.8 11.8a1.4 1.4 0 1 0 2 2 C40.9 31.1 42.8 26.2 42.8 21s-1.9-10.1-5.6-13.8Z" />
+    <path d="M32.7 10.7a1.4 1.4 0 0 0-2 0 1.4 1.4 0 0 0 0 2 C32.8 14.8 34 17.7 34 21s-1.2 6.2-3.3 8.3a1.4 1.4 0 1 0 2 2 C35.3 28.9 36.8 25.3 36.8 21s-1.5-7.9-4.1-10.3Z" />
+    <path d="M28.4 14.4a1.4 1.4 0 0 0-2 0 1.4 1.4 0 0 0 0 2 C27.5 17.5 28 19.2 28 21s-.5 3.5-1.6 4.6a1.4 1.4 0 1 0 2 2 C30 26 30.8 23.6 30.8 21s-.8-5-2.4-6.6Z" />
+    <circle cx="24" cy="13.5" r="3.2" />
+    <rect x="23.15" y="16" width="1.7" height="7.5" />
+    <path d="M13.5 23.5h21a3 3 0 0 1 3 3V34h-27v-7.5a3 3 0 0 1 3-3Z" />
+    <rect x="19" y="26" width="10" height="2.8" rx=".7" fill="#fff" />
+    <rect x="5" y="34" width="38" height="3.5" rx=".7" />
+  </svg>
+);
+
 export const IconHistory = (p) => (
   <svg viewBox="0 0 24 24" fill="none" {...p}>
     <path d="M4 4v5h5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
