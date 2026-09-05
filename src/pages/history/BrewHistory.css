@@ -256,20 +256,26 @@
 
 /* ---------- Responsive ---------- */
 @media (max-width: 900px) {
+  /* On mobile this reads better as one normal page you scroll through
+     top to bottom, not an app-shell with its own internal scroll panes
+     (that's what caused stats to fight the list for a fixed viewport
+     height and get clipped). Let height/overflow fall back to the
+     document's natural flow. */
+  .bh {
+    height: auto;
+  }
   .bh__main {
     display: flex;
     flex-direction: column;
   }
   .bh__aside {
-    flex-shrink: 0;
-    max-height: 60vh;
     border-right: none;
     border-bottom: 1px solid #dde3dc;
     padding: 24px 20px;
+    overflow-y: visible;
   }
   .bh__content {
-    flex: 1;
-    min-height: 0;
+    overflow: visible;
   }
   .bh__stats {
     display: grid;
@@ -279,6 +285,7 @@
     grid-column: 1 / -1;
   }
   .bh__scroll {
+    overflow-y: visible;
     padding: 20px;
   }
 }
