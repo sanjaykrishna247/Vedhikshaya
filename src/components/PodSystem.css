@@ -25,7 +25,7 @@
 .pod3d__glow {
   position: absolute;
   inset: -40px;
-  background: radial-gradient(circle, rgba(0, 220, 79, 0.35), transparent 65%);
+  background: radial-gradient(circle, rgba(139, 197, 61, 0.35), transparent 65%);
   filter: blur(10px);
   animation: podGlow 4s ease-in-out infinite;
   z-index: 0;
@@ -43,7 +43,7 @@
   height: 40px;
   border-radius: 60px 60px 0 0;
   background: linear-gradient(160deg, var(--apple), #6ba52b);
-  box-shadow: 0 0 30px rgba(0, 220, 79, 0.5);
+  box-shadow: 0 0 30px rgba(139, 197, 61, 0.5);
 }
 
 .pod3d__body {
@@ -54,7 +54,7 @@
   margin-top: -2px;
   border-radius: 0 0 90px 90px;
   background: linear-gradient(180deg, rgba(226, 240, 204, 0.14), rgba(226, 240, 204, 0.03));
-  border: 1px solid rgba(0, 220, 79, 0.4);
+  border: 1px solid rgba(139, 197, 61, 0.4);
   border-top: none;
   backdrop-filter: blur(10px);
   overflow: hidden;
@@ -72,8 +72,8 @@
   right: 0;
   top: 55px;
   height: 3px;
-  background: rgba(0, 220, 79, 0.6);
-  box-shadow: 0 0 16px rgba(0, 220, 79, 0.6);
+  background: rgba(139, 197, 61, 0.6);
+  box-shadow: 0 0 16px rgba(139, 197, 61, 0.6);
 }
 
 .pod3d__chip {
@@ -84,14 +84,14 @@
   height: 46px;
   transform: translateX(-50%);
   border-radius: 10px;
-  background: rgba(0, 220, 79, 0.15);
-  border: 1px solid rgba(0, 220, 79, 0.5);
-  box-shadow: 0 0 20px rgba(0, 220, 79, 0.4);
+  background: rgba(139, 197, 61, 0.15);
+  border: 1px solid rgba(139, 197, 61, 0.5);
+  box-shadow: 0 0 20px rgba(139, 197, 61, 0.4);
 }
 .pod3d__chip::before, .pod3d__chip::after {
   content: '';
   position: absolute;
-  background: rgba(0, 220, 79, 0.7);
+  background: rgba(139, 197, 61, 0.7);
 }
 .pod3d__chip::before {
   left: 10px; right: 10px; top: 50%; height: 1.5px; transform: translateY(-50%);
@@ -127,8 +127,8 @@
   align-items: center;
   justify-content: center;
   color: var(--apple);
-  background: rgba(0, 220, 79, 0.12);
-  border: 1px solid rgba(0, 220, 79, 0.4);
+  background: rgba(139, 197, 61, 0.12);
+  border: 1px solid rgba(139, 197, 61, 0.4);
 }
 .pod-system__check svg {
   width: 16px;

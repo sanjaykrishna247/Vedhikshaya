@@ -191,7 +191,7 @@
   height: 18px;
 }
 .cb__input button:not(:disabled):hover {
-  background: #00b843;
+  background: #79ab34;
 }
 .cb__input button:disabled {
   opacity: 0.4;

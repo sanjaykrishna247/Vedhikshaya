@@ -11,8 +11,8 @@ const OPTIONS = [
     icon: IconScan,
     title: 'Scan the Pod',
     desc: 'Point your camera at a Vedikshaya pod to identify it and start brewing.',
-    accent: '#00DC4F',
-    tint: 'rgba(0, 220, 79, 0.14)',
+    accent: '#8BC53D',
+    tint: 'rgba(139, 197, 61, 0.14)',
   },
   {
     to: '/chatbot',

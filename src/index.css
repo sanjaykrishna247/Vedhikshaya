@@ -1,11 +1,11 @@
 :root {
   --sage: #E2F0CC;
-  --apple: #00DC4F;
+  --apple: #8BC53D;
   --forest: #012F13;
   --near-black: #011207;
   --white: #FFFFFF;
 
-  --apple-glow: rgba(0, 220, 79, 0.45);
+  --apple-glow: rgba(139, 197, 61, 0.45);
   --sage-glow: rgba(226, 240, 204, 0.25);
   --muted: #7A9E82;
 
@@ -115,7 +115,7 @@ section {
 .btn-outline {
   background: transparent;
   color: var(--white);
-  border: 1.5px solid rgba(0, 220, 79, 0.5);
+  border: 1.5px solid rgba(139, 197, 61, 0.5);
 }
 .btn-outline:hover {
   border-color: var(--apple);
@@ -125,8 +125,8 @@ section {
 
 /* ---------- Glass cards ---------- */
 .glass {
-  background: linear-gradient(160deg, rgba(226, 240, 204, 0.08), rgba(0, 220, 79, 0.04));
-  border: 1px solid rgba(0, 220, 79, 0.22);
+  background: linear-gradient(160deg, rgba(226, 240, 204, 0.08), rgba(139, 197, 61, 0.04));
+  border: 1px solid rgba(139, 197, 61, 0.22);
   border-radius: var(--radius-lg);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
@@ -134,8 +134,8 @@ section {
   transition: border-color 0.4s var(--ease), box-shadow 0.4s var(--ease), transform 0.4s var(--ease);
 }
 .glass:hover {
-  border-color: rgba(0, 220, 79, 0.55);
-  box-shadow: 0 0 40px rgba(0, 220, 79, 0.18);
+  border-color: rgba(139, 197, 61, 0.55);
+  box-shadow: 0 0 40px rgba(139, 197, 61, 0.18);
   transform: translateY(-6px);
 }
 
@@ -221,7 +221,7 @@ section {
 
 /* ---------- Utility ---------- */
 .glow-text {
-  text-shadow: 0 0 30px rgba(0, 220, 79, 0.5);
+  text-shadow: 0 0 30px rgba(139, 197, 61, 0.5);
 }
 
 @media (max-width: 768px) {

@@ -14,7 +14,7 @@ export default function AnimatedDoctor({ size = 64, className = '', animated = t
         .ad-doctor .ad-stroke-med  { stroke: #012F13; stroke-width: 7;   stroke-linecap: round; stroke-linejoin: round; }
         .ad-doctor .ad-stroke-fine { stroke: #012F13; stroke-width: 5;   stroke-linecap: round; stroke-linejoin: round; }
         .ad-doctor .ad-fill-white  { fill: #FFFFFF; }
-        .ad-doctor .ad-fill-green  { fill: #00DC4F; }
+        .ad-doctor .ad-fill-green  { fill: #8BC53D; }
         .ad-doctor .ad-fill-ink    { fill: #012F13; }
         .ad-doctor .ad-fill-visor  { fill: #08300F; }
 
@@ -91,7 +91,7 @@ export default function AnimatedDoctor({ size = 64, className = '', animated = t
             <line className="ad-stroke-bold" x1="482" x2="452" y1="272" y2="284" />
             <path className="ad-stroke-bold ad-fill-white" d="M464 248 C468 226 492 216 508 230 C522 242 516 268 496 276 C482 282 462 268 464 248 Z" />
             <path className="ad-stroke-med ad-fill-white" d="M472 254 C464 248 462 238 468 232 C474 226 482 232 482 240" />
-            <g fill="none" opacity="0.85" stroke="#00DC4F" strokeLinecap="round" strokeWidth="4.5">
+            <g fill="none" opacity="0.85" stroke="#8BC53D" strokeLinecap="round" strokeWidth="4.5">
               <path d="M524 212 C532 222 534 236 530 248" />
               <path d="M538 224 C544 232 544 242 542 252" strokeWidth="3.5" />
             </g>

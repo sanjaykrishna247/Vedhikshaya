@@ -31,7 +31,7 @@ const DUMMY_SENSORS = [
     id: 'rpm',
     title: 'Stirrer Speed',
     unit: 'RPM',
-    color: '#00dc4f',
+    color: '#8bc53d',
     icon: IconRotate,
     decimals: 0,
     series: { seed: 33, base: 42, variance: 4, drift: 0 },

@@ -2,7 +2,7 @@ export default function RobotDoctor({ size = 44, className = '', mono = false })
   // In mono mode the whole mascot collapses to a single-colour line drawing
   // that inherits `currentColor` from its parent.
   const ink = mono ? 'currentColor' : '#012F13';
-  const lime = mono ? 'currentColor' : '#00DC4F';
+  const lime = mono ? 'currentColor' : '#8BC53D';
   const soft = mono ? 'none' : '#E2F0CC';
   const screen = mono ? 'none' : '#FFFFFF';
 
@@ -39,8 +39,8 @@ export default function RobotDoctor({ size = 44, className = '', mono = false })
       <path d="M40 54c3 3 17 3 20 0" stroke={lime} strokeWidth="3" strokeLinecap="round" fill="none" />
 
       {/* cheeks */}
-      {!mono && <circle cx="32" cy="52" r="3" fill="#00DC4F" opacity="0.5" />}
-      {!mono && <circle cx="68" cy="52" r="3" fill="#00DC4F" opacity="0.5" />}
+      {!mono && <circle cx="32" cy="52" r="3" fill="#8BC53D" opacity="0.5" />}
+      {!mono && <circle cx="68" cy="52" r="3" fill="#8BC53D" opacity="0.5" />}
 
       {/* stethoscope */}
       <path
