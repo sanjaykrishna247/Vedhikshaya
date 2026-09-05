@@ -427,7 +427,7 @@
   background: var(--d-surface-tint);
   color: #3f6d15;
   font-weight: 700;
-  box-shadow: inset 0 0 0 1px rgba(139, 197, 61, 0.3);
+  box-shadow: inset 0 0 0 1px rgba(0, 220, 79, 0.3);
 }
 .d-sidebar__link--active::before {
   display: none;
@@ -482,7 +482,7 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  background: rgba(139, 197, 61, 0.2);
+  background: rgba(0, 220, 79, 0.2);
   color: #3f6d15;
 }
 .d-sidebar__pod-mark svg {
@@ -730,7 +730,7 @@
   white-space: nowrap;
 }
 .d-trend--up {
-  background: rgba(139, 197, 61, 0.16);
+  background: rgba(0, 220, 79, 0.16);
   color: #4c7a1f;
 }
 .d-trend--flat {
@@ -747,7 +747,7 @@
 .d-sparkline__bar {
   width: 4px;
   border-radius: 3px 3px 0 0;
-  background: linear-gradient(180deg, var(--apple), rgba(139, 197, 61, 0.3));
+  background: linear-gradient(180deg, var(--apple), rgba(0, 220, 79, 0.3));
   animation: sparkGrow 1s var(--ease) both;
 }
 @keyframes sparkGrow {
@@ -1207,7 +1207,7 @@
 .ph-bar__track {
   height: 100%;
   border-radius: 100px;
-  background: linear-gradient(90deg, #e05c4b, #e5c93d, #8bc53d);
+  background: linear-gradient(90deg, #e05c4b, #e5c93d, #00dc4f);
 }
 .ph-bar__needle {
   position: absolute;
@@ -1333,7 +1333,7 @@
   height: 22px;
 }
 .d-floatchat__launcher:hover {
-  background: #79ab34;
+  background: #00b843;
 }
 .d-floatchat__launcher--open {
   background: var(--forest);
@@ -1557,7 +1557,7 @@
   height: 17px;
 }
 .d-chat__input button:not(:disabled):hover {
-  background: #79ab34;
+  background: #00b843;
 }
 .d-chat__input button:disabled {
   opacity: 0.4;
@@ -2050,7 +2050,7 @@
   transition: background 0.25s var(--ease);
 }
 .d-segs__dot.is-on {
-  background: #8bc53d;
+  background: #00dc4f;
 }
 
 .d-meter {
@@ -2067,7 +2067,7 @@
   inset: 0 auto 0 0;
   height: 100%;
   border-radius: 999px;
-  background: linear-gradient(90deg, #8bc53d, #5a9e2f);
+  background: linear-gradient(90deg, #00dc4f, #5a9e2f);
   transition: width 1.2s var(--ease);
 }
 
@@ -2132,9 +2132,9 @@
   transition-delay: calc(var(--i, 0) * 45ms);
 }
 .d-segs__dot.is-on {
-  background: var(--dc, #8bc53d);
+  background: var(--dc, #00dc4f);
   transform: scale(1.18);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--dc, #8bc53d) 22%, transparent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--dc, #00dc4f) 22%, transparent);
 }
 
 .d-meter {
@@ -2151,7 +2151,7 @@
   inset: 0 auto 0 0;
   height: 100%;
   border-radius: 999px;
-  background: linear-gradient(90deg, #8bc53d, #5a9e2f);
+  background: linear-gradient(90deg, #00dc4f, #5a9e2f);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35);
   transition: width 1.2s var(--ease);
 }

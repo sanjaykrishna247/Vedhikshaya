@@ -34,7 +34,7 @@ export default function Dashboard() {
                     className="gauge__arc"
                     d="M10 65 A50 50 0 0 1 110 65"
                     fill="none"
-                    stroke="#8BC53D"
+                    stroke="#00DC4F"
                     strokeWidth="8"
                     strokeLinecap="round"
                   />

@@ -6,7 +6,7 @@ import am5themes_Animated from '@amcharts/amcharts5/themes/Animated';
 const MUTED = 0x5f7568;
 const GRID = 0x012f13;
 
-export default function SensorChart({ title, unit, color = '#8bc53d', data, icon: Icon, decimals = 1 }) {
+export default function SensorChart({ title, unit, color = '#00dc4f', data, icon: Icon, decimals = 1 }) {
   const rawId = useId();
   const domId = `sensorchart-${rawId.replace(/[^a-zA-Z0-9]/g, '')}`;
   const rootRef = useRef(null);

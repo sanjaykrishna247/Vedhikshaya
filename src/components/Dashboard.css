@@ -20,7 +20,7 @@
   color: var(--white);
   margin-bottom: 30px;
   padding-bottom: 20px;
-  border-bottom: 1px solid rgba(139, 197, 61, 0.18);
+  border-bottom: 1px solid rgba(0, 220, 79, 0.18);
 }
 
 .dash__live-dot {
@@ -44,8 +44,8 @@
   text-transform: uppercase;
   padding: 6px 14px;
   border-radius: 100px;
-  background: rgba(139, 197, 61, 0.15);
-  border: 1px solid rgba(139, 197, 61, 0.4);
+  background: rgba(0, 220, 79, 0.15);
+  border: 1px solid rgba(0, 220, 79, 0.4);
   color: var(--apple);
 }
 
@@ -57,7 +57,7 @@
 
 .dash__card {
   background: rgba(1, 18, 7, 0.4);
-  border: 1px solid rgba(139, 197, 61, 0.15);
+  border: 1px solid rgba(0, 220, 79, 0.15);
   border-radius: var(--radius-md);
   padding: 22px 20px;
   display: flex;
@@ -126,7 +126,7 @@
   width: 0%;
   border-radius: 100px;
   background: linear-gradient(90deg, var(--apple), var(--sage));
-  box-shadow: 0 0 12px rgba(139, 197, 61, 0.6);
+  box-shadow: 0 0 12px rgba(0, 220, 79, 0.6);
   transition: width 1.6s var(--ease);
 }
 .dash__panel--active .progress-fill {
