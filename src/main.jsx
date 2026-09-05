@@ -12,6 +12,7 @@ import HomeHub from './pages/home/HomeHub.jsx'
 import ScanPod from './pages/scan/ScanPod.jsx'
 import ChatbotPage from './pages/chatbot/ChatbotPage.jsx'
 import BrewHistory from './pages/history/BrewHistory.jsx'
+import RouteLoading from './components/RouteLoading.jsx'
 
 // amCharts pulls in a lot of weight — load it only when someone actually
 // visits /sensors instead of bundling it into every page's initial load.
@@ -62,7 +63,7 @@ createRoot(document.getElementById('root')).render(
             path="/sensors"
             element={
               <ProtectedRoute>
-                <Suspense fallback={null}>
+                <Suspense fallback={<RouteLoading />}>
                   <SensorsPage />
                 </Suspense>
               </ProtectedRoute>

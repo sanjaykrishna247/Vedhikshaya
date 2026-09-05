@@ -5,7 +5,6 @@ import {
   IconSensors,
   IconRobot,
   IconHistory,
-  IconPod,
   IconChevronRight,
   IconLogout,
 } from './icons';
@@ -76,9 +75,6 @@ export default function Sidebar({ open = true }) {
       <div className="d-sidebar__group">
         <div className="d-sidebar__pod">
           <div className="d-sidebar__pod-top">
-            <span className="d-sidebar__pod-mark">
-              <IconPod />
-            </span>
             <div>
               <div className="d-sidebar__pod-label">Current Pod</div>
               <div className="d-sidebar__pod-name">Dashamoola Kwatha</div>
