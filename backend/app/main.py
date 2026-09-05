@@ -7,6 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from . import models
 from .database import engine
 from .routers import auth as auth_router
+from .routers import qr as qr_router
 
 load_dotenv()
 
@@ -25,6 +26,7 @@ app.add_middleware(
 )
 
 app.include_router(auth_router.router)
+app.include_router(qr_router.router)
 
 
 @app.get("/health")

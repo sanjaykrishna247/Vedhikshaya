@@ -6,10 +6,16 @@ import { useKashaya } from '../../auth/KashayaContext';
 import logo from '../../assets/logo.svg';
 import './ScanPod.css';
 
-// The QR code just contains the kashaya name as plain text. Also accept a
-// small JSON payload (e.g. {"name": "..."}) in case pods ever encode more
-// than just the name.
-function extractKashayaName(rawText) {
+const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:8000';
+
+function isUrl(text) {
+  return /^https?:\/\//i.test(text);
+}
+
+// Some pods encode the kashaya name directly as plain text (or a small
+// {"name": "..."} JSON payload); others encode a link to a hosted page
+// (e.g. a me-qr.com "text" page) that displays the name in its content.
+function extractPlainKashayaName(rawText) {
   const text = rawText.trim();
   if (!text) return '';
   if (text.startsWith('{')) {
@@ -25,6 +31,22 @@ function extractKashayaName(rawText) {
   return text;
 }
 
+// The scanned URL can't be fetched directly from the browser (the target
+// site won't send CORS headers for a random client), so the backend fetches
+// it and pulls the name out of the page content.
+async function resolveKashayaFromUrl(url) {
+  const res = await fetch(`${API_BASE}/qr/resolve`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ url }),
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    throw new Error(data.detail || 'Could not read the pod name from that QR code.');
+  }
+  return data.name;
+}
+
 export default function ScanPod() {
   const navigate = useNavigate();
   const { setKashaya } = useKashaya();
@@ -32,7 +54,7 @@ export default function ScanPod() {
   const canvasRef = useRef(null);
   const streamRef = useRef(null);
   const rafRef = useRef(null);
-  const [status, setStatus] = useState('requesting'); // requesting | live | denied | detected
+  const [status, setStatus] = useState('requesting'); // requesting | live | denied | resolving | detected | resolve-error
   const [errorMsg, setErrorMsg] = useState('');
   const [detectedName, setDetectedName] = useState('');
 
@@ -98,7 +120,21 @@ export default function ScanPod() {
         });
 
         if (code && code.data) {
-          const name = extractKashayaName(code.data);
+          const raw = code.data.trim();
+          if (isUrl(raw)) {
+            setStatus('resolving');
+            resolveKashayaFromUrl(raw)
+              .then((name) => {
+                setDetectedName(name);
+                setStatus('detected');
+              })
+              .catch((err) => {
+                setErrorMsg(err.message);
+                setStatus('resolve-error');
+              });
+            return;
+          }
+          const name = extractPlainKashayaName(raw);
           if (name) {
             setDetectedName(name);
             setStatus('detected');
@@ -123,6 +159,7 @@ export default function ScanPod() {
 
   const handleScanAgain = () => {
     setDetectedName('');
+    setErrorMsg('');
     setStatus('live');
   };
 
@@ -146,7 +183,13 @@ export default function ScanPod() {
         </span>
         <h1 className="scan__title">Scan the Pod</h1>
         <p className="scan__sub">
-          {status === 'detected' ? 'Pod identified.' : "Center the pod's QR code inside the frame."}
+          {status === 'detected'
+            ? 'Pod identified.'
+            : status === 'resolving'
+            ? 'Reading pod details…'
+            : status === 'resolve-error'
+            ? "Couldn't read the pod name."
+            : "Center the pod's QR code inside the frame."}
         </p>
 
         <div className="scan__viewport">
@@ -161,6 +204,20 @@ export default function ScanPod() {
           )}
 
           {status === 'denied' && (
+            <div className="scan__overlay">
+              <IconPod className="scan__overlay-icon" />
+              <p>{errorMsg}</p>
+            </div>
+          )}
+
+          {status === 'resolving' && (
+            <div className="scan__overlay">
+              <div className="scan__spinner" />
+              <p>Reading pod details…</p>
+            </div>
+          )}
+
+          {status === 'resolve-error' && (
             <div className="scan__overlay">
               <IconPod className="scan__overlay-icon" />
               <p>{errorMsg}</p>
@@ -194,11 +251,15 @@ export default function ScanPod() {
             <button className="scan__btn scan__btn--primary" onClick={handleStartBrewing}>
               Start Brewing
             </button>
+          ) : status === 'resolve-error' ? (
+            <button className="scan__btn scan__btn--primary" onClick={handleScanAgain}>
+              Try Again
+            </button>
           ) : status === 'denied' ? (
             <Link to="/home" className="scan__btn scan__btn--primary">
               Back to Home
             </Link>
-          ) : (
+          ) : status === 'resolving' ? null : (
             <p className="scan__sub scan__sub--hint">Scanning automatically…</p>
           )}
           {status === 'detected' && (
