@@ -3,38 +3,43 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: radial-gradient(ellipse 80% 60% at 50% 30%, rgba(0, 220, 79, 0.12), transparent),
-    var(--near-black);
+  position: relative;
+  background:
+    radial-gradient(68% 52% at 60% 34%, rgba(0, 220, 79, 0.13), transparent 72%),
+    radial-gradient(85% 60% at 12% 92%, rgba(0, 220, 79, 0.05), transparent 60%),
+    linear-gradient(180deg, #05210e 0%, var(--near-black) 58%);
   overflow: hidden;
 }
 
+/* fine dot field that fades in from a low horizon and out toward the top —
+   reads as a designed surface, not a centered spotlight vignette */
 .hero__grid {
   position: absolute;
   inset: 0;
-  background-image:
-    linear-gradient(rgba(0, 220, 79, 0.06) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 220, 79, 0.06) 1px, transparent 1px);
-  background-size: 56px 56px;
-  mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, black, transparent 75%);
-  -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, black, transparent 75%);
+  background-image: radial-gradient(rgba(0, 220, 79, 0.09) 1px, transparent 1.6px);
+  background-size: 32px 32px;
+  mask-image: linear-gradient(180deg, transparent 4%, black 34%, black 80%, transparent 100%);
+  -webkit-mask-image: linear-gradient(180deg, transparent 4%, black 34%, black 80%, transparent 100%);
 }
 
+/* soft, elongated, heavily-diffused ambient glow offset off-centre — only
+   its opacity breathes (no scale pulse, no hard circular edge) */
 .hero__orb {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 560px;
-  height: 560px;
-  transform: translate(-50%, -55%);
-  border-radius: 50%;
-  background: radial-gradient(circle at 40% 35%, rgba(0, 220, 79, 0.55), rgba(0, 220, 79, 0.12) 45%, transparent 70%);
-  filter: blur(10px);
-  animation: orbPulse 6s ease-in-out infinite;
+  top: 34%;
+  left: 56%;
+  width: 760px;
+  height: 460px;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(ellipse at center, rgba(0, 220, 79, 0.2), transparent 68%);
+  filter: blur(44px);
+  pointer-events: none;
+  animation: orbPulse 8s ease-in-out infinite;
 }
 
 @keyframes orbPulse {
-  0%, 100% { transform: translate(-50%, -55%) scale(1); opacity: 0.85; }
-  50% { transform: translate(-50%, -55%) scale(1.12); opacity: 1; }
+  0%, 100% { opacity: 0.72; }
+  50% { opacity: 1; }
 }
 
 .hero__content {
@@ -125,9 +130,9 @@
   width: 110px;
   height: 170px;
   border-radius: 55px 55px 40px 40px;
-  background: linear-gradient(160deg, rgba(226, 240, 204, 0.16), rgba(0, 220, 79, 0.08));
-  border: 1px solid rgba(0, 220, 79, 0.4);
-  box-shadow: 0 0 50px rgba(0, 220, 79, 0.25), inset 0 0 30px rgba(0, 220, 79, 0.15);
+  background: linear-gradient(160deg, rgba(226, 240, 204, 0.12), rgba(0, 220, 79, 0.06));
+  border: 1px solid rgba(0, 220, 79, 0.26);
+  box-shadow: 0 0 38px rgba(0, 220, 79, 0.14), inset 0 0 26px rgba(0, 220, 79, 0.1);
   backdrop-filter: blur(6px);
   position: relative;
   overflow: hidden;
@@ -144,8 +149,8 @@
   right: 0;
   top: 38%;
   height: 22%;
-  background: rgba(0, 220, 79, 0.35);
-  box-shadow: 0 0 20px rgba(0, 220, 79, 0.5);
+  background: rgba(0, 220, 79, 0.28);
+  box-shadow: 0 0 16px rgba(0, 220, 79, 0.32);
 }
 
 @keyframes podFloat {
