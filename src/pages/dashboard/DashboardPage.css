@@ -1002,9 +1002,17 @@
     font-size: clamp(0.52rem, 2.4vw, 0.66rem);
     gap: 3px;
     min-width: 0;
+    /* the 13px arrow-notch (from the desktop clip-path) cuts through
+       the icon when left padding is this tight — shrink the notch to
+       match instead of pushing content further right */
+    clip-path: polygon(0 0, calc(100% - 7px) 0, 100% 50%, calc(100% - 7px) 100%, 0 100%, 7px 50%);
   }
   .d-hero__phase:first-child {
     padding-left: 8px;
+    clip-path: polygon(0 0, calc(100% - 7px) 0, 100% 50%, calc(100% - 7px) 100%, 0 100%);
+  }
+  .d-hero__phase:last-child {
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 7px 50%);
   }
   .d-hero__phase-label {
     display: block;
@@ -3197,9 +3205,16 @@
     font-size: clamp(0.42rem, 2.3vw, 0.52rem);
     letter-spacing: 0.005em;
     gap: 2px;
+    /* shrink the arrow-notch to match this width's tighter padding —
+       otherwise it cuts into the icon (see 640px breakpoint above) */
+    clip-path: polygon(0 0, calc(100% - 5px) 0, 100% 50%, calc(100% - 5px) 100%, 0 100%, 5px 50%);
   }
   .d-hero__phase:first-child {
     padding-left: 6px;
+    clip-path: polygon(0 0, calc(100% - 5px) 0, 100% 50%, calc(100% - 5px) 100%, 0 100%);
+  }
+  .d-hero__phase:last-child {
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 5px 50%);
   }
   .d-hero__phase-label {
     display: block;
