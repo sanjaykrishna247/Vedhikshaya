@@ -939,11 +939,11 @@
 }
 .d-hero__phase--done {
   background: #3f7d1e;
-  color: #ffffff;
+  color: #000000;
 }
 .d-hero__phase--current {
   background: var(--apple);
-  color: #ffffff;
+  color: #000000;
   font-weight: 700;
 }
 .d-hero__phase--upcoming {
