@@ -682,6 +682,7 @@
 }
 .d-col-4 { grid-column: span 4; }
 .d-col-5 { grid-column: span 5; }
+.d-col-6 { grid-column: span 6; }
 .d-col-7 { grid-column: span 7; }
 .d-col-8 { grid-column: span 8; }
 .d-col-12 { grid-column: span 12; }
@@ -1618,7 +1619,7 @@
   .d-col-8, .d-col-7 {
     grid-column: span 12;
   }
-  .d-col-4, .d-col-5 {
+  .d-col-4, .d-col-5, .d-col-6 {
     grid-column: span 12;
   }
 }

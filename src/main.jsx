@@ -1,4 +1,4 @@
-import { StrictMode } from 'react'
+import { StrictMode, Suspense, lazy } from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import './index.css'
@@ -12,7 +12,10 @@ import HomeHub from './pages/home/HomeHub.jsx'
 import ScanPod from './pages/scan/ScanPod.jsx'
 import ChatbotPage from './pages/chatbot/ChatbotPage.jsx'
 import BrewHistory from './pages/history/BrewHistory.jsx'
-import SensorsPage from './pages/sensors/SensorsPage.jsx'
+
+// amCharts pulls in a lot of weight — load it only when someone actually
+// visits /sensors instead of bundling it into every page's initial load.
+const SensorsPage = lazy(() => import('./pages/sensors/SensorsPage.jsx'))
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -59,7 +62,9 @@ createRoot(document.getElementById('root')).render(
             path="/sensors"
             element={
               <ProtectedRoute>
-                <SensorsPage />
+                <Suspense fallback={null}>
+                  <SensorsPage />
+                </Suspense>
               </ProtectedRoute>
             }
           />

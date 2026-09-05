@@ -1,0 +1,52 @@
+.d-page-head--sub {
+  margin-top: 26px;
+}
+.d-page-head--sub h2 {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--d-text);
+  margin: 0 0 4px;
+}
+.d-page-head--sub p {
+  font-size: 0.85rem;
+  color: var(--d-muted);
+  margin: 0;
+}
+
+.d-card--sensorchart .d-card__head {
+  margin-bottom: 10px;
+  padding-bottom: 12px;
+}
+.sensorchart__value {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--d-text);
+  display: flex;
+  align-items: baseline;
+  gap: 3px;
+  flex-shrink: 0;
+}
+.sensorchart__value small {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--d-muted);
+}
+.sensorchart__canvas {
+  width: 100%;
+  height: 190px;
+}
+
+@media (max-width: 640px) {
+  .d-page-head--sub {
+    margin-top: 20px;
+  }
+  .d-page-head--sub h2 {
+    font-size: 1.02rem;
+  }
+  .sensorchart__canvas {
+    height: 160px;
+  }
+}

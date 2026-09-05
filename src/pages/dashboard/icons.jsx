@@ -92,6 +92,33 @@ export const IconDroplet = (p) => (
   </svg>
 );
 
+export const IconGauge = (p) => (
+  <svg viewBox="0 0 24 24" fill="none" {...p}>
+    <path d="M4 15a8 8 0 1 1 16 0" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+    <path d="M12 15 15.5 10" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+    <circle cx="12" cy="15" r="1.3" fill="currentColor" />
+  </svg>
+);
+
+export const IconRotate = (p) => (
+  <svg viewBox="0 0 24 24" fill="none" {...p}>
+    <path d="M4.6 15A8 8 0 1 0 6 7.3L4 9" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M4 4v5h5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+
+export const IconWave = (p) => (
+  <svg viewBox="0 0 24 24" fill="none" {...p}>
+    <path
+      d="M3 9c1.5-2 3.5-2 5 0s3.5 2 5 0 3.5-2 5 0 2.5 1.5 3 2M3 15c1.5-2 3.5-2 5 0s3.5 2 5 0 3.5-2 5 0 2.5 1.5 3 2"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
 export const IconFlask = (p) => (
   <svg viewBox="0 0 24 24" fill="none" {...p}>
     <path d="M9 3h6M10 3v6l-5.2 9a2 2 0 0 0 1.7 3h11a2 2 0 0 0 1.7-3L14 9V3" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
