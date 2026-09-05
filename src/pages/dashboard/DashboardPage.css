@@ -943,7 +943,7 @@
 }
 .d-hero__phase--current {
   background: var(--apple);
-  color: var(--near-black);
+  color: #ffffff;
   font-weight: 700;
 }
 .d-hero__phase--upcoming {
