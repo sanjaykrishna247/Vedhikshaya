@@ -941,8 +941,9 @@
   color: #ffffff;
 }
 .d-hero__phase--current {
-  background: #d9ecc4;
-  color: #2f5710;
+  background: var(--apple);
+  color: var(--near-black);
+  font-weight: 700;
 }
 .d-hero__phase--upcoming {
   background: #e9edee;
@@ -3178,18 +3179,18 @@
      and the done-check is an absolute corner badge so it never eats
      into the label's width */
   .d-hero__phases {
-    gap: 3px;
+    gap: 2px;
   }
   .d-hero__phase {
     position: relative;
     flex-direction: row;
-    padding: 9px 5px 9px 10px;
-    font-size: clamp(0.46rem, 2.7vw, 0.58rem);
-    letter-spacing: 0.01em;
-    gap: 3px;
+    padding: 8px 3px 8px 7px;
+    font-size: clamp(0.42rem, 2.3vw, 0.52rem);
+    letter-spacing: 0.005em;
+    gap: 2px;
   }
   .d-hero__phase:first-child {
-    padding-left: 7px;
+    padding-left: 6px;
   }
   .d-hero__phase-label {
     display: block;
@@ -3199,12 +3200,12 @@
     flex: 1 1 auto;
   }
   .d-hero__phase-icon svg {
-    height: 11px;
+    height: 10px;
   }
   .d-hero__phase-icon svg.phaseicon--art {
-    height: 18px;
-    max-width: 22px;
-    margin: -4px -2px;
+    height: 16px;
+    max-width: 19px;
+    margin: -3px -1px;
   }
   .d-hero__phase-check {
     display: none;

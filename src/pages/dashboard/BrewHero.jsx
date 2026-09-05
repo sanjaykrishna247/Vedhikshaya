@@ -4,8 +4,8 @@ import { PhaseSoak, PhaseBoil, PhaseStir, PhaseDispense } from './phaseIcons';
 
 const STEP_ICON = {
   Soaking: <PhaseSoak />,
-  Boil: <PhaseBoil />,
-  Stirring: <PhaseStir />,
+  Boil: <PhaseStir />,
+  Stirring: <PhaseBoil />,
   Dispense: <PhaseDispense />,
 };
 
