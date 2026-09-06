@@ -192,13 +192,22 @@ export default function AdminDashboard() {
 
       <div className="adm__shell">
         <nav className="adm__rail">
+          <div className="adm__profile">
+            <span className="adm__profile-avatar">AD</span>
+            <span>
+              <span className="adm__profile-name">Admin</span>
+              <br />
+              <span className="adm__profile-role">Vedikshaya Network</span>
+            </span>
+          </div>
+          <div className="adm__divider" />
           {TABS.map((t) => (
             <button
               key={t}
               className={`adm__tab ${tab === t ? 'adm__tab--on' : ''}`}
               onClick={() => setTab(t)}
             >
-              {TAB_ICON[t]}
+              <span className="adm__tab-ic">{TAB_ICON[t]}</span>
               <span className="adm__tab-label">{t}</span>
               {t === 'Complaints' && overview.openComplaints > 0 && (
                 <span className="adm__tab-dot">{overview.openComplaints}</span>
