@@ -9,7 +9,7 @@ import {
   todayYmd,
 } from './portalData';
 
-const STORE_KEY = 'vedikshaya_portal_store_v3';
+const STORE_KEY = 'vedikshaya_portal_store_v4';
 const SESSION_KEY = 'vedikshaya_portal_session';
 const REFRESH_MS = 30_000;
 
@@ -22,7 +22,7 @@ function loadStore() {
     const raw = localStorage.getItem(STORE_KEY);
     if (raw) {
       const parsed = JSON.parse(raw);
-      if (parsed?.version === 3) return parsed;
+      if (parsed?.version === 4) return parsed;
     }
   } catch {
     /* ignore corrupt / unavailable storage */
@@ -104,6 +104,12 @@ export function PortalProvider({ children }) {
 
       if (parsed.role === 'doctor') {
         const doc = current.doctor;
+        if (doc.username.toLowerCase() !== parsed.username) {
+          throw new Error('No doctor found for that username');
+        }
+        if (doc.password && password !== doc.password) {
+          throw new Error('Incorrect password');
+        }
         const sess = {
           role: 'doctor',
           id: doc.id,
@@ -122,6 +128,9 @@ export function PortalProvider({ children }) {
         (p) => p.username.toLowerCase() === parsed.username && p.hospitalDomain === parsed.domain,
       );
       if (!pat) throw new Error('No patient found for that username');
+      if (pat.password && password !== pat.password) {
+        throw new Error('Incorrect password');
+      }
       patch((s) => {
         const t = s.patients.find((p) => p.id === pat.id);
         if (t) t.online = true;

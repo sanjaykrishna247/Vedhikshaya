@@ -221,6 +221,7 @@ export function seedStore() {
     number: 2024,
     username: `DR2024@${domain}`,
     name: 'Dr. Meera Nair',
+    password: '123456',
     hospitalName: 'Apollo Hospital',
     hospitalDomain: domain,
     speciality: 'Kayachikitsa (Internal Medicine)',
@@ -238,7 +239,7 @@ export function seedStore() {
 
   const patients = [
     makePatient({
-      id: 'PT1042', number: 1042, username: `PT1042@${domain}`, password: 'Xk92mP4q',
+      id: 'PT1042', number: 1042, username: `PT1042@${domain}`, password: '123456',
       name: 'Anand Rao', age: 54, gender: 'Male', phone: '+91 9845 66210',
       condition: 'Chronic lower-back pain (vata)', kashaya: 'Dashamoola Kwatha',
       hospitalDomain: domain, doctorId: doctor.id, doctorName: doctor.name,
@@ -248,7 +249,7 @@ export function seedStore() {
       symptoms: { [todayYmd()]: { feeling: 'better', note: 'Stiffness easing in the mornings', at: Date.now() - 3600_000 } },
     }),
     makePatient({
-      id: 'PT1043', number: 1043, username: `PT1043@${domain}`, password: 'Rt51wZ8b',
+      id: 'PT1043', number: 1043, username: `PT1043@${domain}`, password: '123456',
       name: 'Kavya Menon', age: 32, gender: 'Female', phone: '+91 99872 41005',
       condition: 'Irregular digestion, bloating', kashaya: 'Triphala Kwatha',
       hospitalDomain: domain, doctorId: doctor.id, doctorName: doctor.name,
@@ -261,7 +262,7 @@ export function seedStore() {
       brews: [brewSample('Triphala Kwatha', 88, 200), brewSample('Triphala Kwatha', 90, 1700)],
     }),
     makePatient({
-      id: 'PT1044', number: 1044, username: `PT1044@${domain}`, password: 'Lp73kQ2m',
+      id: 'PT1044', number: 1044, username: `PT1044@${domain}`, password: '123456',
       name: 'Suresh Iyer', age: 47, gender: 'Male', phone: '+91 90031 55678',
       condition: 'Recurrent low-grade fever, fatigue', kashaya: 'Guduchi Kwatha',
       hospitalDomain: domain, doctorId: doctor.id, doctorName: doctor.name,
@@ -269,7 +270,7 @@ export function seedStore() {
       brews: [brewSample('Guduchi Kwatha', 96, 50), brewSample('Guduchi Kwatha', 95, 1500)],
     }),
     makePatient({
-      id: 'PT1045', number: 1045, username: `PT1045@${domain}`, password: 'Nb64jH9c',
+      id: 'PT1045', number: 1045, username: `PT1045@${domain}`, password: '123456',
       name: 'Fatima Sheikh', age: 29, gender: 'Female', phone: '+91 98200 77341',
       condition: 'Post-viral joint aches', kashaya: 'Dashamoola Kwatha',
       hospitalDomain: domain, doctorId: doctor.id, doctorName: doctor.name,
@@ -278,7 +279,7 @@ export function seedStore() {
   ];
 
   return {
-    version: 3,
+    version: 4,
     doctor,
     patients,
     counters: { patient: 1045 },
