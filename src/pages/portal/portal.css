@@ -790,29 +790,34 @@
   align-items: start;
 }
 .pt__chat-list {
-  background: var(--pt-sage);
-  border: 1px solid var(--pt-line);
-  border-radius: 12px;
-  box-shadow: var(--pt-card-shadow);
-  overflow: hidden;
-  max-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 72vh;
   overflow-y: auto;
+  padding: 2px;
 }
 .pt__chat-listitem {
   width: 100%;
   text-align: left;
-  padding: 12px 14px;
-  border-bottom: 1px solid rgba(1, 47, 19, 0.08);
-  background: transparent;
+  padding: 13px 14px;
+  background: var(--pt-sage);
+  border: 1px solid var(--pt-line);
   border-left: 3px solid transparent;
+  border-radius: 12px;
+  box-shadow: var(--pt-card-shadow);
   cursor: pointer;
   display: flex;
   gap: 10px;
+  transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.12s ease;
 }
-.pt__chat-listitem:hover { background: rgba(255, 255, 255, 0.4); }
+.pt__chat-listitem:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(1, 47, 19, 0.1);
+}
 .pt__chat-listitem.is-active {
-  background: rgba(255, 255, 255, 0.55);
   border-left-color: var(--pt-accent);
+  box-shadow: 0 6px 18px rgba(1, 47, 19, 0.12);
 }
 .pt__chat-listitem-body { flex: 1; min-width: 0; }
 .pt__chat-listitem-name {
