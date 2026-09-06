@@ -11,6 +11,30 @@ import {
 } from './adminData';
 import './AdminDashboard.css';
 
+const S = { fill: 'none', stroke: 'currentColor', strokeWidth: 1.8, strokeLinecap: 'round', strokeLinejoin: 'round' };
+const TAB_ICON = {
+  Overview: (
+    <svg viewBox="0 0 24 24" {...S}><rect x="3" y="3" width="8" height="8" rx="1.5" /><rect x="13" y="3" width="8" height="8" rx="1.5" /><rect x="3" y="13" width="8" height="8" rx="1.5" /><rect x="13" y="13" width="8" height="8" rx="1.5" /></svg>
+  ),
+  Hospitals: (
+    <svg viewBox="0 0 24 24" {...S}><path d="M4 21V8l8-4 8 4v13" /><path d="M9 21v-5h6v5" /><path d="M12 8v4M10 10h4" /></svg>
+  ),
+  Doctors: (
+    <svg viewBox="0 0 24 24" {...S}><circle cx="12" cy="8" r="3.5" /><path d="M5.5 20a6.5 6.5 0 0 1 13 0" /></svg>
+  ),
+  Patients: (
+    <svg viewBox="0 0 24 24" {...S}><rect x="5" y="3" width="14" height="18" rx="2" /><path d="M9 3.5h6V6H9zM9 11h6M9 15h4" /></svg>
+  ),
+  Payments: (
+    <svg viewBox="0 0 24 24" {...S}><rect x="3" y="5" width="18" height="14" rx="2" /><path d="M3 10h18" /></svg>
+  ),
+  Reports: (
+    <svg viewBox="0 0 24 24" {...S}><path d="M4 20V4M4 20h16" /><rect x="8" y="12" width="3" height="5" /><rect x="14" y="8" width="3" height="9" /></svg>
+  ),
+  Complaints: (
+    <svg viewBox="0 0 24 24" {...S}><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v8a2.5 2.5 0 0 1-2.5 2.5H10l-4.5 4v-4H6.5A2.5 2.5 0 0 1 4 13.5z" /><path d="M12 7v4M12 13.5h.01" /></svg>
+  ),
+};
 const TABS = ['Overview', 'Hospitals', 'Doctors', 'Patients', 'Payments', 'Reports', 'Complaints'];
 const inr = (n) => `₹${n.toLocaleString('en-IN')}`;
 
@@ -174,7 +198,8 @@ export default function AdminDashboard() {
               className={`adm__tab ${tab === t ? 'adm__tab--on' : ''}`}
               onClick={() => setTab(t)}
             >
-              {t}
+              {TAB_ICON[t]}
+              <span className="adm__tab-label">{t}</span>
               {t === 'Complaints' && overview.openComplaints > 0 && (
                 <span className="adm__tab-dot">{overview.openComplaints}</span>
               )}
