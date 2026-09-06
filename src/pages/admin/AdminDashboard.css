@@ -482,14 +482,41 @@
 }
 
 @media (max-width: 860px) {
+  .adm__topbar {
+    height: 60px;
+    padding: 0 16px;
+  }
+  .adm__wordmark {
+    font-size: 0.98rem;
+  }
+  .adm__badge {
+    font-size: 0.56rem;
+    padding: 3px 8px;
+  }
+
   .adm__shell {
     flex-direction: column;
+    min-height: 0;
   }
+
+  /* nav becomes a sticky horizontal scroll strip */
   .adm__rail {
+    position: sticky;
+    top: 60px;
+    z-index: 15;
     width: 100%;
     flex-direction: row;
-    flex-wrap: wrap;
-    padding: 12px;
+    flex-wrap: nowrap;
+    gap: 8px;
+    padding: 10px 12px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    border-right: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  }
+  .adm__rail::-webkit-scrollbar {
+    display: none;
   }
   .adm__profile,
   .adm__divider {
@@ -497,26 +524,82 @@
   }
   .adm__tab {
     flex: 0 0 auto;
-    padding: 8px 14px 8px 8px;
+    gap: 8px;
+    padding: 7px 14px 7px 7px;
+    font-size: 0.82rem;
+    white-space: nowrap;
   }
   .adm__tab-label {
     flex: 0 0 auto;
   }
   .adm__tab-ic {
-    width: 30px;
-    height: 30px;
+    width: 28px;
+    height: 28px;
   }
+  .adm__tab-ic svg {
+    width: 17px;
+    height: 17px;
+  }
+
   .adm__main {
-    padding: 20px 16px 48px;
+    padding: 18px 14px 48px;
   }
+  .adm__toast {
+    top: 8px;
+  }
+  .adm__h1 {
+    font-size: 1.28rem;
+  }
+
+  .adm__head {
+    margin-bottom: 14px;
+  }
+  .adm__head-right {
+    width: 100%;
+  }
+  .adm__head-right select,
+  .adm__head-right .adm__btn {
+    flex: 1;
+  }
+
   .adm__stats {
     grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
   }
+  .adm__stat {
+    padding: 14px 16px;
+  }
+  .adm__stat-value {
+    font-size: 1.25rem;
+  }
+
+  .adm__form {
+    flex-direction: column;
+  }
+  .adm__form input,
+  .adm__form select {
+    width: 100%;
+    min-width: 0;
+  }
+
   .adm__bar-row {
-    grid-template-columns: 1fr 60px;
+    grid-template-columns: 1fr auto;
+    gap: 6px 10px;
+  }
+  .adm__bar-label {
+    font-size: 0.8rem;
   }
   .adm__bar-track {
     grid-column: 1 / -1;
     order: 3;
+  }
+}
+
+@media (max-width: 460px) {
+  .adm__stats {
+    grid-template-columns: 1fr;
+  }
+  .adm__badge {
+    display: none;
   }
 }
