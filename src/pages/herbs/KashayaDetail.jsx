@@ -1,5 +1,5 @@
 import { Link, useParams, Navigate } from 'react-router-dom';
-import { IconLeaf } from '../dashboard/icons';
+import BotanicalIcon from './BotanicalIcon';
 import { getKashaya } from './herbsData';
 import logo from '../../assets/logo.svg';
 import './HerbsLibrary.css';
@@ -25,20 +25,24 @@ export default function KashayaDetail() {
       </header>
 
       <main className="hl__main hl__detail">
-        <span className="hl__eyebrow">
-          <span className="hl__eyebrow-dot" /> {k.tradition}
-        </span>
-        <h1 className="hl__title">{k.name}</h1>
-        <p className="hl__sub">{k.tagline}</p>
-        <p className="hl__lead">{k.summary}</p>
+        <div className="hl__hero">
+          <BotanicalIcon className="hl__watermark hl__watermark--hero" aria-hidden="true" />
+          <span className="hl__eyebrow">
+            <span className="hl__eyebrow-dot" /> {k.tradition}
+          </span>
+          <h1 className="hl__title">{k.name}</h1>
+          <p className="hl__sub">{k.tagline}</p>
+          <p className="hl__lead">{k.summary}</p>
+        </div>
 
         <section className="hl__section">
           <h2 className="hl__h2">
-            <IconLeaf /> Herbs used ({k.ingredients.length})
+            <BotanicalIcon /> Herbs used ({k.ingredients.length})
           </h2>
           <div className="hl__herbs">
-            {k.ingredients.map((h) => (
+            {k.ingredients.map((h, i) => (
               <article key={h.name} className="hl__herb">
+                <span className="hl__herb-num">{String(i + 1).padStart(2, '0')}</span>
                 <div className="hl__herb-head">
                   <h3 className="hl__herb-name">{h.name}</h3>
                   <span className="hl__herb-botanical">{h.botanical}</span>
