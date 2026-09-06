@@ -7,6 +7,7 @@ import DashboardPage from './pages/dashboard/DashboardPage.jsx'
 import { AuthProvider } from './auth/AuthContext.jsx'
 import { KashayaProvider } from './auth/KashayaContext.jsx'
 import ProtectedRoute from './auth/ProtectedRoute.jsx'
+import AdminRoute from './auth/AdminRoute.jsx'
 import Login from './pages/auth/Login.jsx'
 import Signup from './pages/auth/Signup.jsx'
 import HomeHub from './pages/home/HomeHub.jsx'
@@ -86,9 +87,9 @@ createRoot(document.getElementById('root')).render(
           <Route
             path="/admin"
             element={
-              <ProtectedRoute>
+              <AdminRoute>
                 <AdminDashboard />
-              </ProtectedRoute>
+              </AdminRoute>
             }
           />
           <Route

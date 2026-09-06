@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../auth/AuthContext';
+import { isAdmin } from '../../auth/AdminRoute';
 import { IconScan, IconHistory, IconLeaf, IconGrid, IconLogout, IconChevronRight } from '../dashboard/icons';
 import RobotDoctor from '../../components/RobotDoctor';
 import logo from '../../assets/logo.svg';
@@ -38,19 +39,21 @@ const OPTIONS = [
     accent: '#4c7a1f',
     tint: 'rgba(76, 122, 31, 0.14)',
   },
-  {
-    to: '/admin',
-    icon: IconGrid,
-    title: 'Admin Console',
-    desc: 'Manage hospitals, doctors and patient records, payments, reports, and user complaints.',
-    accent: '#2f5d8a',
-    tint: 'rgba(47, 93, 138, 0.13)',
-  },
 ];
+
+const ADMIN_OPTION = {
+  to: '/admin',
+  icon: IconGrid,
+  title: 'Admin Console',
+  desc: 'Manage hospitals, doctors and patient records, payments, reports, and user complaints.',
+  accent: '#2f5d8a',
+  tint: 'rgba(47, 93, 138, 0.13)',
+};
 
 export default function HomeHub() {
   const { user, logout } = useAuth();
   const firstName = user?.name ? user.name.split(' ')[0] : null;
+  const options = isAdmin(user) ? [...OPTIONS, ADMIN_OPTION] : OPTIONS;
 
   return (
     <div className="hub">
@@ -78,7 +81,7 @@ export default function HomeHub() {
         </p>
 
         <div className="hub__grid">
-          {OPTIONS.map((opt) => (
+          {options.map((opt) => (
             <Link
               key={opt.to}
               to={opt.to}

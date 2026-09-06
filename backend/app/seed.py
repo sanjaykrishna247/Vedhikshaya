@@ -1,4 +1,4 @@
-"""Seed a demo account for quick testing / hackathon demos.
+"""Seed demo + admin accounts for quick testing / hackathon demos.
 
 Usage:
     python -m app.seed
@@ -8,31 +8,32 @@ from . import auth as auth_utils
 from . import models
 from .database import Base, SessionLocal, engine
 
-DEMO_EMAIL = "demo@vedikshaya.com"
-DEMO_PASSWORD = "demo1234"
-DEMO_NAME = "Demo User"
+ACCOUNTS = [
+    ("Demo User", "demo@vedikshaya.com", "demo1234"),
+    ("Admin", "admin@vedikshaya.com", "admin1234"),
+]
 
 
-def seed_demo_user() -> None:
+def seed_accounts() -> None:
     Base.metadata.create_all(bind=engine)
     db = SessionLocal()
     try:
-        existing = db.query(models.User).filter(models.User.email == DEMO_EMAIL).first()
-        if existing:
-            print(f"Demo user already exists: {DEMO_EMAIL}")
-            return
-
-        user = models.User(
-            name=DEMO_NAME,
-            email=DEMO_EMAIL,
-            hashed_password=auth_utils.hash_password(DEMO_PASSWORD),
-        )
-        db.add(user)
-        db.commit()
-        print(f"Created demo user: {DEMO_EMAIL} / {DEMO_PASSWORD}")
+        for name, email, password in ACCOUNTS:
+            if db.query(models.User).filter(models.User.email == email).first():
+                print(f"Already exists: {email}")
+                continue
+            db.add(
+                models.User(
+                    name=name,
+                    email=email,
+                    hashed_password=auth_utils.hash_password(password),
+                )
+            )
+            db.commit()
+            print(f"Created: {email} / {password}")
     finally:
         db.close()
 
 
 if __name__ == "__main__":
-    seed_demo_user()
+    seed_accounts()
