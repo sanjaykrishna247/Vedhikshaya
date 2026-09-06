@@ -8,7 +8,7 @@ load_dotenv()
 
 DATABASE_URL = os.getenv(
     "DATABASE_URL", "postgresql+psycopg2://postgres:password@localhost:5432/vedikshaya"
-)
+).strip()
 
 # Some providers (incl. older Supabase copy-paste strings) hand out the
 # deprecated "postgres://" scheme, which SQLAlchemy 2.0 no longer accepts.
