@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../auth/AuthContext';
+import { isAdmin } from '../../auth/AdminRoute';
 import logo from '../../assets/logo.svg';
 import './Auth.css';
 
@@ -93,8 +94,8 @@ export default function Login() {
     setError('');
     setLoading(true);
     try {
-      await login(email, password);
-      const redirectTo = location.state?.from || '/home';
+      const data = await login(email, password);
+      const redirectTo = isAdmin(data?.user) ? '/admin' : location.state?.from || '/home';
       navigate(redirectTo, { replace: true });
     } catch (err) {
       setError(err.message);
