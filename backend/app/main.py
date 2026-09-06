@@ -11,7 +11,15 @@ from .routers import qr as qr_router
 
 load_dotenv()
 
-models.Base.metadata.create_all(bind=engine)
+# The tables only need creating once; on every later boot this is a no-op.
+# Don't let a transient database outage (e.g. Railway's free DB pausing on
+# idle) crash-loop the whole API — log it and start anyway so /health and
+# clear error responses still work, and requests recover once the DB is back
+# (the engine has pool_pre_ping enabled).
+try:
+    models.Base.metadata.create_all(bind=engine)
+except Exception as exc:  # noqa: BLE001
+    print(f"[startup] could not reach the database: {exc}")
 
 app = FastAPI(title="Vedikshaya API")
 
