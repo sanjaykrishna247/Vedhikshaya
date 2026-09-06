@@ -13,7 +13,9 @@ export default function DoctorChat() {
 
   const active = useMemo(() => patients.filter((p) => p.active || getChat(p.id).length), [patients, tick]);
 
-  const [selected, setSelected] = useState(location.state?.patientId || active[0]?.id || null);
+  // Start on the conversation list (WhatsApp-style). Opening from a patient's
+  // "Message" button jumps straight into that thread.
+  const [selected, setSelected] = useState(location.state?.patientId || null);
   const [draft, setDraft] = useState('');
   const scrollRef = useRef(null);
 
@@ -27,6 +29,14 @@ export default function DoctorChat() {
       })
       .sort((a, b) => b.ts - a.ts);
   }, [active, tick]);
+
+  // On a wide screen, land on the most recent conversation so the panel
+  // isn't empty; on phones keep the list showing until one is tapped.
+  useEffect(() => {
+    const wide = typeof window !== 'undefined' && window.matchMedia('(min-width: 1081px)').matches;
+    if (!selected && wide && threads.length) setSelected(threads[0].p.id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const current = active.find((p) => p.id === selected);
   const messages = current ? getChat(current.id) : [];

@@ -1087,11 +1087,16 @@
 
 /* ---- responsive ---- */
 @media (max-width: 1080px) {
+  /* WhatsApp-style: one pane at a time — conversation list, then the thread */
   .pt__chat { grid-template-columns: 1fr; }
   .pt__chat-list { max-height: none; }
   .pt__chat-list.is-hidden-mobile { display: none; }
   .pt__chat-panel.is-hidden-mobile { display: none; }
+  .pt__chat-panel { height: calc(100dvh - 180px); }
   .pt__chat-back { display: inline-flex; }
+  .pt__chat-listitem { padding: 14px; }
+  .pt__chat-listitem-name { font-size: 0.92rem; }
+  .pt__chat-listitem-preview { font-size: 0.82rem; }
 }
 @media (min-width: 1081px) {
   .pt__chat-back { display: none; }
