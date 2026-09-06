@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import logo from '../../assets/logo.svg';
 import { usePortal } from '../../portal/PortalContext';
 
@@ -119,12 +119,34 @@ function NotifBell({ items, onOpen }) {
 // ---------------------------------------------------------------------------
 // portal shell — topbar + sidebar + main
 // ---------------------------------------------------------------------------
+// hamburger icon — matches the dashboard's IconMenu weight
+const IconMenu = (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round">
+    <path d="M4 7h16M4 12h16M4 17h16" />
+  </svg>
+);
+
 export function PortalShell({ variant, nav, children, headerExtra }) {
   const { session, portalLogout, doctor, setDoctorAvailability, doctorNotifications, patientNotifications, markNotificationsRead } = usePortal();
   const navigate = useNavigate();
+  const location = useLocation();
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   const isDoctor = variant === 'doctor';
   const notifItems = isDoctor ? doctorNotifications : patientNotifications(session?.id);
+
+  // close the drawer on navigation
+  useEffect(() => {
+    setDrawerOpen(false);
+  }, [location.pathname]);
+
+  // lock background scroll while the drawer is open (same as the dashboard)
+  useEffect(() => {
+    document.body.style.overflow = drawerOpen ? 'hidden' : '';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [drawerOpen]);
 
   const handleLogout = () => {
     portalLogout();
@@ -141,11 +163,21 @@ export function PortalShell({ variant, nav, children, headerExtra }) {
   return (
     <div className="pt">
       <header className="pt__topbar">
-        <Link to={isDoctor ? '/doctor/dashboard' : '/patient/dashboard'} className="pt__brand">
-          <img src={logo} className="pt__logo" alt="" aria-hidden="true" />
-          <span className="pt__wordmark">Vediks<span>haya</span></span>
-          <span className="pt__badge">{isDoctor ? 'Doctor' : 'Patient'} Portal</span>
-        </Link>
+        <div className="pt__topbar-left">
+          <button
+            className="pt__burger"
+            aria-label="Toggle menu"
+            aria-expanded={drawerOpen}
+            onClick={() => setDrawerOpen((v) => !v)}
+          >
+            {IconMenu}
+          </button>
+          <Link to={isDoctor ? '/doctor/dashboard' : '/patient/dashboard'} className="pt__brand">
+            <img src={logo} className="pt__logo" alt="" aria-hidden="true" />
+            <span className="pt__wordmark">Vediks<span>haya</span></span>
+            <span className="pt__badge">{isDoctor ? 'Doctor' : 'Patient'} Portal</span>
+          </Link>
+        </div>
 
         <div className="pt__topbar-right">
           {headerExtra}
@@ -163,7 +195,7 @@ export function PortalShell({ variant, nav, children, headerExtra }) {
       </header>
 
       <div className="pt__shell">
-        <aside className="pt__side">
+        <aside className={`pt__side ${drawerOpen ? 'is-open' : ''}`}>
           <div className="pt__profile">
             <span className="pt__profile-avatar">{initials}</span>
             <span>
@@ -179,6 +211,7 @@ export function PortalShell({ variant, nav, children, headerExtra }) {
                 key={item.to}
                 to={item.to}
                 end={item.end}
+                onClick={() => setDrawerOpen(false)}
                 className={({ isActive }) => `pt__navlink ${isActive ? 'is-active' : ''}`}
               >
                 <span className="pt__navlink-ic">{item.icon}</span>
@@ -193,6 +226,8 @@ export function PortalShell({ variant, nav, children, headerExtra }) {
             <span>Log Out</span>
           </button>
         </aside>
+
+        {drawerOpen && <div className="pt__scrim" onClick={() => setDrawerOpen(false)} aria-hidden="true" />}
 
         <main className="pt__main">{children}</main>
       </div>

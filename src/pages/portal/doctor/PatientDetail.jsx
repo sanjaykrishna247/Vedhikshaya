@@ -112,7 +112,7 @@ export default function PatientDetail() {
 
       <h2 className="pt__h2">Current prescription</h2>
       <div className="pt__card">
-        <dl style={{ display: 'grid', gridTemplateColumns: '160px 1fr', gap: '8px 16px', margin: 0, fontSize: '0.88rem' }}>
+        <dl className="pt__dl">
           <dt style={dt}>Kashaya</dt>
           <dd style={dd}>{patient.prescription.kashaya}</dd>
           <dt style={dt}>Schedule</dt>
