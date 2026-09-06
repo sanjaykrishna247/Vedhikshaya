@@ -12,6 +12,8 @@ import Signup from './pages/auth/Signup.jsx'
 import HomeHub from './pages/home/HomeHub.jsx'
 import ChatbotPage from './pages/chatbot/ChatbotPage.jsx'
 import BrewHistory from './pages/history/BrewHistory.jsx'
+import HerbsLibrary from './pages/herbs/HerbsLibrary.jsx'
+import KashayaDetail from './pages/herbs/KashayaDetail.jsx'
 import RouteLoading from './components/RouteLoading.jsx'
 
 // amCharts pulls in a lot of weight — load it only when someone actually
@@ -61,6 +63,22 @@ createRoot(document.getElementById('root')).render(
             element={
               <ProtectedRoute>
                 <BrewHistory />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/herbs"
+            element={
+              <ProtectedRoute>
+                <HerbsLibrary />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/herbs/:slug"
+            element={
+              <ProtectedRoute>
+                <KashayaDetail />
               </ProtectedRoute>
             }
           />

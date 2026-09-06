@@ -1,0 +1,312 @@
+.hl {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(180deg, #f8faf5 0%, #eef3e9 100%);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: var(--forest);
+}
+
+/* header */
+.hl__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 32px;
+  border-bottom: 1px solid rgba(1, 47, 19, 0.08);
+  background: #ffffff;
+}
+.hl__brand {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+}
+.hl__logo-img {
+  height: 36px;
+  width: auto;
+  display: block;
+  flex-shrink: 0;
+}
+.hl__wordmark {
+  font-weight: 700;
+  font-size: 1.06rem;
+  color: var(--forest);
+}
+.hl__wordmark span {
+  color: var(--apple);
+}
+.hl__back {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #5f7568;
+}
+.hl__back:hover {
+  color: var(--forest);
+}
+
+/* main */
+.hl__main {
+  flex: 1;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 44px 32px 64px;
+}
+
+.hl__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: rgba(139, 197, 61, 0.12);
+  border: 1px solid rgba(139, 197, 61, 0.3);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #3f6d15;
+}
+.hl__eyebrow-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--apple);
+}
+
+.hl__intro {
+  margin-bottom: 34px;
+}
+.hl__title {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  color: var(--forest);
+  margin: 16px 0 10px;
+}
+.hl__sub {
+  font-size: 0.98rem;
+  line-height: 1.6;
+  color: #4a5c50;
+  max-width: 640px;
+}
+
+/* index grid */
+.hl__grid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.hl__card {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 22px 24px;
+  background: #ffffff;
+  border: 1px solid #e0e6da;
+  border-radius: 16px;
+  transition: border-color 0.16s ease, box-shadow 0.16s ease, transform 0.16s ease;
+}
+.hl__card:hover {
+  border-color: #b7cfa2;
+  box-shadow: 0 14px 34px rgba(1, 47, 19, 0.1);
+  transform: translateY(-2px);
+}
+.hl__card-mark {
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  border-radius: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(139, 197, 61, 0.14);
+  color: #3f6d15;
+}
+.hl__card-mark svg {
+  width: 24px;
+  height: 24px;
+}
+.hl__card-body {
+  flex: 1;
+  min-width: 0;
+}
+.hl__card-tradition {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #8a9b8b;
+}
+.hl__card-name {
+  font-size: 1.16rem;
+  font-weight: 700;
+  color: var(--forest);
+  margin: 3px 0 5px;
+}
+.hl__card-tagline {
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: #566a5c;
+}
+.hl__card-count {
+  display: inline-block;
+  margin-top: 10px;
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: #3f6d15;
+  background: rgba(139, 197, 61, 0.14);
+  border-radius: 999px;
+  padding: 3px 10px;
+}
+.hl__card-cta {
+  flex-shrink: 0;
+  color: var(--apple);
+  display: inline-flex;
+}
+.hl__card-cta svg {
+  width: 22px;
+  height: 22px;
+}
+
+/* detail */
+.hl__lead {
+  margin-top: 20px;
+  font-size: 1.02rem;
+  line-height: 1.7;
+  color: #33453b;
+  max-width: 720px;
+}
+.hl__section {
+  margin-top: 40px;
+}
+.hl__h2 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--forest);
+  margin-bottom: 16px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(1, 47, 19, 0.1);
+}
+.hl__h2 svg {
+  width: 18px;
+  height: 18px;
+  color: #3f6d15;
+}
+.hl__para {
+  font-size: 0.96rem;
+  line-height: 1.75;
+  color: #3d4f44;
+  margin-bottom: 14px;
+  max-width: 760px;
+}
+
+.hl__herbs {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+.hl__herb {
+  background: #ffffff;
+  border: 1px solid #e0e6da;
+  border-radius: 14px;
+  padding: 18px 20px;
+}
+.hl__herb-head {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.hl__herb-name {
+  font-size: 1.02rem;
+  font-weight: 700;
+  color: var(--forest);
+}
+.hl__herb-botanical {
+  font-size: 0.82rem;
+  font-style: italic;
+  color: #7c8d80;
+}
+.hl__herb-part {
+  font-size: 0.82rem;
+  color: #55685c;
+  margin-bottom: 8px;
+}
+.hl__herb-part span {
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 0.66rem;
+  color: #9aa89b;
+  margin-right: 6px;
+}
+.hl__herb-role {
+  font-size: 0.88rem;
+  line-height: 1.6;
+  color: #3d4f44;
+}
+
+.hl__refs {
+  list-style: disc;
+  padding-left: 20px;
+}
+.hl__refs li {
+  font-size: 0.88rem;
+  line-height: 1.6;
+  color: #55685c;
+  margin-bottom: 6px;
+}
+
+.hl__detail-back {
+  display: inline-block;
+  margin-top: 42px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #3f6d15;
+}
+.hl__detail-back:hover {
+  color: var(--forest);
+}
+
+/* footer */
+.hl__footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 22px;
+  font-size: 0.8rem;
+  color: #8a9b8b;
+  border-top: 1px solid rgba(1, 47, 19, 0.06);
+}
+.hl__footer-dot {
+  opacity: 0.6;
+}
+
+@media (max-width: 640px) {
+  .hl__header {
+    padding: 14px 18px;
+  }
+  .hl__main {
+    padding: 30px 18px 48px;
+  }
+  .hl__title {
+    font-size: 1.55rem;
+  }
+  .hl__card {
+    padding: 18px;
+    gap: 14px;
+  }
+  .hl__herbs {
+    grid-template-columns: 1fr;
+  }
+}

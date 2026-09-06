@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../auth/AuthContext';
-import { IconScan, IconHistory, IconLogout, IconChevronRight } from '../dashboard/icons';
+import { IconScan, IconHistory, IconLeaf, IconLogout, IconChevronRight } from '../dashboard/icons';
 import RobotDoctor from '../../components/RobotDoctor';
 import logo from '../../assets/logo.svg';
 import './HomeHub.css';
@@ -29,6 +29,14 @@ const OPTIONS = [
     desc: 'Review your past brews, doses, and formulations.',
     accent: '#0b7a3b',
     tint: 'rgba(11, 122, 59, 0.14)',
+  },
+  {
+    to: '/herbs',
+    icon: IconLeaf,
+    title: 'Herbs Library',
+    desc: 'Explore each Kashaya — the herbs inside it, what they do, and where the recipe comes from.',
+    accent: '#4c7a1f',
+    tint: 'rgba(76, 122, 31, 0.14)',
   },
 ];
 
