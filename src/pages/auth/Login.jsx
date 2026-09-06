@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../auth/AuthContext';
 import { isAdmin } from '../../auth/AdminRoute';
+import { usePortal } from '../../portal/PortalContext';
+import { parseUsername } from '../../portal/portalData';
 import logo from '../../assets/logo.svg';
 import './Auth.css';
 
@@ -14,8 +16,12 @@ const VIDEO_PLAYBACK_RATE = 0.7;
 const FADE_WINDOW = 0.4; // video-seconds from a loop boundary that count as "near the cut"
 const TAIL_TRIM = 1.0; // seconds of the clip's tail (steam thinning out) to never show
 
+// DR2024@apollohospital.com / PT1042@apollohospital.com style logins
+const PORTAL_LIKE = /^(dr|pt)\d/i;
+
 export default function Login() {
   const { login } = useAuth();
+  const { portalLogin } = usePortal();
   const navigate = useNavigate();
   const location = useLocation();
   const [email, setEmail] = useState('');
@@ -94,7 +100,17 @@ export default function Login() {
     setError('');
     setLoading(true);
     try {
-      const data = await login(email, password);
+      const trimmed = email.trim();
+
+      // Role-based portal login (DR####@domain / PT####@domain)
+      if (PORTAL_LIKE.test(trimmed) || parseUsername(trimmed).valid) {
+        if (!parseUsername(trimmed).valid) throw new Error('Invalid username format');
+        const sess = await portalLogin(trimmed, password);
+        navigate(sess.role === 'doctor' ? '/doctor/dashboard' : '/patient/dashboard', { replace: true });
+        return;
+      }
+
+      const data = await login(trimmed, password);
       const redirectTo = isAdmin(data?.user) ? '/admin' : location.state?.from || '/home';
       navigate(redirectTo, { replace: true });
     } catch (err) {

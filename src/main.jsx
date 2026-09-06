@@ -17,6 +17,9 @@ import HerbsLibrary from './pages/herbs/HerbsLibrary.jsx'
 import KashayaDetail from './pages/herbs/KashayaDetail.jsx'
 import AdminDashboard from './pages/admin/AdminDashboard.jsx'
 import RouteLoading from './components/RouteLoading.jsx'
+import { PortalProvider } from './portal/PortalContext.jsx'
+import PortalRoute from './portal/PortalRoute.jsx'
+import { ToastHost } from './pages/portal/shared.jsx'
 
 // amCharts pulls in a lot of weight — load it only when someone actually
 // visits /sensors instead of bundling it into every page's initial load.
@@ -24,11 +27,35 @@ const SensorsPage = lazy(() => import('./pages/sensors/SensorsPage.jsx'))
 // jsQR adds real weight too — only needed on the scan page.
 const ScanPod = lazy(() => import('./pages/scan/ScanPod.jsx'))
 
+// Doctor / Patient portals — separate bundle, only pulled when used.
+const DoctorDashboard = lazy(() => import('./pages/portal/doctor/DoctorDashboard.jsx'))
+const PatientDetail = lazy(() => import('./pages/portal/doctor/PatientDetail.jsx'))
+const BrewMonitor = lazy(() => import('./pages/portal/doctor/BrewMonitor.jsx'))
+const DoctorChat = lazy(() => import('./pages/portal/doctor/DoctorChat.jsx'))
+const PatientDashboard = lazy(() => import('./pages/portal/patient/PatientDashboard.jsx'))
+const PatientCompliance = lazy(() => import('./pages/portal/patient/PatientCompliance.jsx'))
+const PatientPrescription = lazy(() => import('./pages/portal/patient/PatientPrescription.jsx'))
+const PatientSymptoms = lazy(() => import('./pages/portal/patient/PatientSymptoms.jsx'))
+const PatientChat = lazy(() => import('./pages/portal/patient/PatientChat.jsx'))
+
+const doctorRoute = (el) => (
+  <PortalRoute role="doctor">
+    <Suspense fallback={<RouteLoading />}>{el}</Suspense>
+  </PortalRoute>
+)
+const patientRoute = (el) => (
+  <PortalRoute role="patient">
+    <Suspense fallback={<RouteLoading />}>{el}</Suspense>
+  </PortalRoute>
+)
+
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
       <AuthProvider>
         <KashayaProvider>
+          <PortalProvider>
+          <ToastHost>
           <Routes>
           <Route path="/" element={<App />} />
           <Route path="/login" element={<Login />} />
@@ -110,7 +137,22 @@ createRoot(document.getElementById('root')).render(
               </ProtectedRoute>
             }
           />
+
+          {/* Doctor portal */}
+          <Route path="/doctor/dashboard" element={doctorRoute(<DoctorDashboard />)} />
+          <Route path="/doctor/patient/:id" element={doctorRoute(<PatientDetail />)} />
+          <Route path="/doctor/brew" element={doctorRoute(<BrewMonitor />)} />
+          <Route path="/doctor/chat" element={doctorRoute(<DoctorChat />)} />
+
+          {/* Patient portal */}
+          <Route path="/patient/dashboard" element={patientRoute(<PatientDashboard />)} />
+          <Route path="/patient/compliance" element={patientRoute(<PatientCompliance />)} />
+          <Route path="/patient/prescription" element={patientRoute(<PatientPrescription />)} />
+          <Route path="/patient/symptoms" element={patientRoute(<PatientSymptoms />)} />
+          <Route path="/patient/chat" element={patientRoute(<PatientChat />)} />
           </Routes>
+          </ToastHost>
+          </PortalProvider>
         </KashayaProvider>
       </AuthProvider>
     </BrowserRouter>
