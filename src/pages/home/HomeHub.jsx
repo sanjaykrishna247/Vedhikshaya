@@ -1,6 +1,7 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../auth/AuthContext';
 import { isAdmin } from '../../auth/AdminRoute';
+import { usePortal } from '../../portal/PortalContext';
 import { IconScan, IconHistory, IconLeaf, IconGrid, IconLogout, IconChevronRight } from '../dashboard/icons';
 import RobotDoctor from '../../components/RobotDoctor';
 import logo from '../../assets/logo.svg';
@@ -52,8 +53,16 @@ const ADMIN_OPTION = {
 
 export default function HomeHub() {
   const { user, logout } = useAuth();
+  const { session, portalLogout } = usePortal();
+  const navigate = useNavigate();
   const firstName = user?.name ? user.name.split(' ')[0] : null;
   const options = isAdmin(user) ? [...OPTIONS, ADMIN_OPTION] : OPTIONS;
+
+  const handleLogout = () => {
+    logout();
+    if (session) portalLogout();
+    navigate('/login', { replace: true });
+  };
 
   return (
     <div className="hub">
@@ -66,7 +75,7 @@ export default function HomeHub() {
             Vediks<span>haya</span>
           </span>
         </Link>
-        <button className="hub__logout" onClick={logout}>
+        <button className="hub__logout" onClick={handleLogout}>
           <IconLogout />
           Log out
         </button>
