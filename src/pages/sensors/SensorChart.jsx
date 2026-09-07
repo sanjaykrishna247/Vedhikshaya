@@ -10,6 +10,7 @@ export default function SensorChart({ title, unit, color = '#8bc53d', data, icon
   const rawId = useId();
   const domId = `sensorchart-${rawId.replace(/[^a-zA-Z0-9]/g, '')}`;
   const rootRef = useRef(null);
+  const seriesRef = useRef(null);
 
   useEffect(() => {
     const root = am5.Root.new(domId);
@@ -33,9 +34,11 @@ export default function SensorChart({ title, unit, color = '#8bc53d', data, icon
 
     const xAxis = chart.xAxes.push(
       am5xy.DateAxis.new(root, {
-        baseInterval: { timeUnit: 'minute', count: 5 },
-        renderer: am5xy.AxisRendererX.new(root, { minGridDistance: 55, minorGridEnabled: false }),
+        baseInterval: { timeUnit: 'second', count: 2 },
+        renderer: am5xy.AxisRendererX.new(root, { minGridDistance: 62, minorGridEnabled: false }),
         tooltip: am5.Tooltip.new(root, {}),
+        dateFormats: { second: 'HH:mm:ss', minute: 'HH:mm:ss' },
+        periodChangeDateFormats: { second: 'HH:mm:ss', minute: 'HH:mm:ss' },
       })
     );
     xAxis.get('renderer').labels.template.setAll({ fontSize: 10, fill: am5.color(MUTED) });
@@ -77,13 +80,26 @@ export default function SensorChart({ title, unit, color = '#8bc53d', data, icon
       }),
     });
 
+    seriesRef.current = series;
     series.data.setAll(data);
     series.appear(700);
     chart.appear(700, 50);
 
-    return () => root.dispose();
+    return () => {
+      seriesRef.current = null;
+      root.dispose();
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [domId]);
+
+  // live updates — feed each new reading into the existing series so the line
+  // animates (Animated theme) instead of the whole chart re-mounting
+  useEffect(() => {
+    const series = seriesRef.current;
+    if (!series) return;
+    series.data.setAll(data);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data]);
 
   const latest = data[data.length - 1]?.value;
 

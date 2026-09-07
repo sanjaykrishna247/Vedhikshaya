@@ -90,6 +90,18 @@ const STRINGS = {
   'pod.drMode': { en: 'Dr. Mode', hi: 'डॉक्टर मोड', ta: 'மருத்துவர் பயன்முறை' },
   'pod.logout': { en: 'Log Out', hi: 'लॉग आउट', ta: 'வெளியேறு' },
 
+  // sensors page
+  'sensor.pageTitle': { en: 'Sensors', hi: 'सेंसर', ta: 'உணரிகள்' },
+  'sensor.pageSub': {
+    en: 'Live readings, updating with the brew.',
+    hi: 'लाइव रीडिंग, काढ़े के साथ अपडेट होती हुई।',
+    ta: 'நேரடி அளவீடுகள், காய்ச்சலுடன் புதுப்பிக்கப்படுகிறது.',
+  },
+  'sensor.humidity': { en: 'Ambient Humidity', hi: 'परिवेश आर्द्रता', ta: 'சுற்றுப்புற ஈரப்பதம்' },
+  'sensor.pressure': { en: 'Vessel Pressure', hi: 'पात्र दाब', ta: 'பாத்திர அழுத்தம்' },
+  'sensor.rpm': { en: 'Stirrer Speed', hi: 'मथनी गति', ta: 'கிளறி வேகம்' },
+  'sensor.flow': { en: 'Flow Rate', hi: 'प्रवाह दर', ta: 'ஓட்ட விகிதம்' },
+
   // sidebar — nav
   'nav.brewStatus': { en: 'Brew Status', hi: 'काढ़ा स्थिति', ta: 'காய்ச்சல் நிலை' },
   'nav.sensors': { en: 'Sensors', hi: 'सेंसर', ta: 'உணரிகள்' },

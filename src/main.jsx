@@ -20,6 +20,8 @@ import RouteLoading from './components/RouteLoading.jsx'
 import { PortalProvider } from './portal/PortalContext.jsx'
 import PortalRoute from './portal/PortalRoute.jsx'
 import { ToastHost } from './pages/portal/shared.jsx'
+import { DashLangProvider } from './pages/dashboard/dashI18n.jsx'
+import { BrewSimProvider } from './pages/dashboard/BrewSim.jsx'
 
 // amCharts pulls in a lot of weight — load it only when someone actually
 // visits /sensors instead of bundling it into every page's initial load.
@@ -54,6 +56,8 @@ createRoot(document.getElementById('root')).render(
     <BrowserRouter>
       <AuthProvider>
         <KashayaProvider>
+          <DashLangProvider>
+          <BrewSimProvider>
           <PortalProvider>
           <ToastHost>
           <Routes>
@@ -153,6 +157,8 @@ createRoot(document.getElementById('root')).render(
           </Routes>
           </ToastHost>
           </PortalProvider>
+          </BrewSimProvider>
+          </DashLangProvider>
         </KashayaProvider>
       </AuthProvider>
     </BrowserRouter>

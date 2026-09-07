@@ -7,11 +7,9 @@ import TemperatureGauge from './TemperatureGauge';
 import ReductionLiquid from './ReductionLiquid';
 import ConsistencyRing from './ConsistencyRing';
 import FloatingChat from './FloatingChat';
-import { BrewSimProvider } from './BrewSim';
-import { DashLangProvider } from './dashI18n';
 import './DashboardPage.css';
 
-function DashboardInner() {
+export default function DashboardPage() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   // Lock background scroll while the mobile drawer is open — otherwise the
@@ -59,15 +57,5 @@ function DashboardInner() {
 
       <FloatingChat />
     </div>
-  );
-}
-
-export default function DashboardPage() {
-  return (
-    <DashLangProvider>
-      <BrewSimProvider>
-        <DashboardInner />
-      </BrewSimProvider>
-    </DashLangProvider>
   );
 }
