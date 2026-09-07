@@ -24,6 +24,14 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
+  // lock page scroll while the mobile menu is open
+  useEffect(() => {
+    document.body.style.overflow = open ? 'hidden' : '';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [open]);
+
   const handleLinkClick = () => setOpen(false);
 
   return (
@@ -59,6 +67,8 @@ export default function Navbar() {
           <span />
         </button>
       </div>
+
+      {open && <div className="navbar__scrim" onClick={() => setOpen(false)} aria-hidden="true" />}
     </header>
   );
 }
