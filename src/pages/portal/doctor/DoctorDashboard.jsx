@@ -10,6 +10,7 @@ import {
 import { PortalShell, Modal, Loading, personInitials, useToast } from '../shared';
 import { useDoctorNav } from './useDoctorNav';
 import { downloadXls } from '../../../portal/xlsx';
+import { useDashLang } from '../../dashboard/dashI18n';
 import '../portal.css';
 
 const BLANK_SCHEDULE = {
@@ -22,6 +23,7 @@ export default function DoctorDashboard() {
   const nav = useDoctorNav();
   const navigate = useNavigate();
   const toast = useToast();
+  const { t } = useDashLang();
   const { patients, addPatient, alerts, dismissAlert, tick } = usePortal();
 
   const [loading, setLoading] = useState(true);
@@ -43,8 +45,8 @@ export default function DoctorDashboard() {
     <PortalShell variant="doctor" nav={nav}>
       <div className="pt__page-head pt__row">
         <div>
-          <h1 className="pt__h1">Patients</h1>
-          <p className="pt__sub">Auto-refreshing every 30s · {active.length} active</p>
+          <h1 className="pt__h1">{t('pnav.patients')}</h1>
+          <p className="pt__sub">{t('dd.autorefresh', { n: active.length })}</p>
         </div>
         <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
           <button
@@ -62,10 +64,10 @@ export default function DoctorDashboard() {
               toast('Excel downloaded');
             }}
           >
-            ⬇ Excel
+            ⬇ {t('p.excel')}
           </button>
           <button className="pt__btn pt__btn--primary" onClick={() => setShowAdd(true)}>
-            + Add patient
+            {t('dd.addPatient')}
           </button>
         </div>
       </div>
@@ -78,7 +80,7 @@ export default function DoctorDashboard() {
                 <strong>{a.patientName}</strong> — {a.type} · {new Date(a.at).toLocaleTimeString()}
               </span>
               <button className="pt__btn pt__btn--sm" onClick={() => dismissAlert(a.id)}>
-                Dismiss
+                {t('bm.dismiss')}
               </button>
             </div>
           ))}
@@ -86,17 +88,17 @@ export default function DoctorDashboard() {
       )}
 
       {loading ? (
-        <Loading label="Fetching patients…" />
+        <Loading label={`${t('pnav.patients')}…`} />
       ) : (
         <>
           <div className="pt__stats">
-            <Stat label="Active patients" value={stats.total} />
-            <Stat label="Compliant today" value={stats.compliantToday} tone="good" />
-            <Stat label="Missed doses today" value={stats.missedToday} tone={stats.missedToday ? 'bad' : 'good'} />
-            <Stat label="Pending (not yet due)" value={stats.pendingToday} tone="warn" />
+            <Stat label={t('dd.activePatients')} value={stats.total} />
+            <Stat label={t('dd.compliantToday')} value={stats.compliantToday} tone="good" />
+            <Stat label={t('dd.missedToday')} value={stats.missedToday} tone={stats.missedToday ? 'bad' : 'good'} />
+            <Stat label={t('dd.pending')} value={stats.pendingToday} tone="warn" />
           </div>
 
-          <h2 className="pt__h2">Active caseload</h2>
+          <h2 className="pt__h2">{t('dd.activeCaseload')}</h2>
           <div className="pt__patients">
             {active.map((p) => {
               const c = complianceStats(p);
@@ -127,15 +129,15 @@ export default function DoctorDashboard() {
 
           {inactive.length > 0 && (
             <>
-              <h2 className="pt__h2">History</h2>
+              <h2 className="pt__h2">{t('dd.history')}</h2>
               <div className="pt__table-wrap">
                 <table className="pt__table">
                   <thead>
                     <tr>
-                      <th>Patient</th>
-                      <th>Kashaya</th>
-                      <th>Condition</th>
-                      <th>Ended</th>
+                      <th>{t('dd.colPatient')}</th>
+                      <th>{t('dd.colKashaya')}</th>
+                      <th>{t('dd.colCondition')}</th>
+                      <th>{t('dd.colEnded')}</th>
                       <th />
                     </tr>
                   </thead>
@@ -148,7 +150,7 @@ export default function DoctorDashboard() {
                         <td>{p.endedAt ? new Date(p.endedAt).toLocaleDateString() : '—'}</td>
                         <td>
                           <button className="pt__linkbtn" onClick={() => navigate(`/doctor/patient/${p.id}`)}>
-                            View
+                            {t('p.view')}
                           </button>
                         </td>
                       </tr>
@@ -174,15 +176,15 @@ export default function DoctorDashboard() {
       )}
 
       {creds && (
-        <Modal title="Patient Added Successfully" size="sm" onClose={() => setCreds(null)}>
-          <p className="pt__modal-sub">Share these credentials with the patient — the password is shown once.</p>
+        <Modal title={t('dd.credsTitle')} size="sm" onClose={() => setCreds(null)}>
+          <p className="pt__modal-sub">{t('dd.credsShare')}</p>
           <div className="pt__cred">
             <div className="pt__cred-row">
-              <span className="pt__cred-key">Username</span>
+              <span className="pt__cred-key">{t('dd.username')}</span>
               <span className="pt__cred-val">{creds.username}</span>
             </div>
             <div className="pt__cred-row">
-              <span className="pt__cred-key">Password</span>
+              <span className="pt__cred-key">{t('dd.password')}</span>
               <span className="pt__cred-val">{creds.temp_password}</span>
             </div>
           </div>
@@ -194,10 +196,10 @@ export default function DoctorDashboard() {
                 toast('Copied');
               }}
             >
-              Copy
+              {t('dd.copy')}
             </button>
             <button className="pt__btn pt__btn--primary" onClick={() => setCreds(null)}>
-              Done
+              {t('p.done')}
             </button>
           </div>
         </Modal>

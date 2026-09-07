@@ -10,6 +10,7 @@ import {
 } from '../../../portal/portalLogic';
 import { usePortal } from '../../../portal/PortalContext';
 import { Loading } from '../shared';
+import { useDashLang } from '../../dashboard/dashI18n';
 import PatientShell from './PatientShell';
 import { usePatient } from './usePatientNav';
 import '../portal.css';
@@ -18,6 +19,7 @@ const MARK = { taken: '✓', missed: '✗', pending: '●', upcoming: '●', due
 
 export default function PatientCompliance() {
   const patient = usePatient();
+  const { t } = useDashLang();
   const { tick } = usePortal();
   const stats = useMemo(() => (patient ? complianceStats(patient) : null), [patient, tick]);
   const streak = useMemo(() => (patient ? currentStreak(patient) : 0), [patient, tick]);
@@ -31,26 +33,26 @@ export default function PatientCompliance() {
   return (
     <PatientShell>
       <div className="pt__page-head">
-        <h1 className="pt__h1">This week</h1>
-        <p className="pt__sub">Every scheduled dose taken keeps your streak alive.</p>
+        <h1 className="pt__h1">{t('pc.thisWeek')}</h1>
+        <p className="pt__sub">{t('pc.sub')}</p>
       </div>
 
       <div className="pt__stats">
         <div className="pt__stat pt__stat--good">
           <span className="pt__stat-value">{stats.pct}%</span>
-          <span className="pt__stat-label">Weekly compliance</span>
+          <span className="pt__stat-label">{t('pc.weeklyCompliance')}</span>
         </div>
         <div className="pt__stat">
-          <span className="pt__stat-value">🔥 {streak}d</span>
-          <span className="pt__stat-label">Current streak</span>
+          <span className="pt__stat-value">🔥 {streak}{t('ppd.dayShort')}</span>
+          <span className="pt__stat-label">{t('pc.currentStreak')}</span>
         </div>
         <div className="pt__stat">
-          <span className="pt__stat-value">{Math.max(streak, patient.bestStreak)}d</span>
-          <span className="pt__stat-label">Personal best</span>
+          <span className="pt__stat-value">{Math.max(streak, patient.bestStreak)}{t('ppd.dayShort')}</span>
+          <span className="pt__stat-label">{t('pc.personalBest')}</span>
         </div>
         <div className="pt__stat">
           <span className="pt__stat-value">{perfect ? '🏅' : '—'}</span>
-          <span className="pt__stat-label">{perfect ? 'Perfect Week' : 'Keep going'}</span>
+          <span className="pt__stat-label">{perfect ? t('pc.perfectWeek') : t('pc.keepGoing')}</span>
         </div>
       </div>
 
@@ -66,7 +68,7 @@ export default function PatientCompliance() {
           ))}
           {slots.map((slot) => (
             <Fragment key={slot}>
-              <div className="pt__grid-rowlabel">{slotLabel(slot)}</div>
+              <div className="pt__grid-rowlabel">{t(`slot.${slot}`)}</div>
               {days.map((d) => {
                 const st = doseStatus(patient, d, slot);
                 return (
@@ -81,8 +83,8 @@ export default function PatientCompliance() {
       </div>
 
       <p className="pt__sub" style={{ marginTop: 14 }}>
-        ✓ taken · ✗ missed · ● upcoming · ! overdue
-        {stats.mostMissed && ` · most missed slot: ${slotLabel(stats.mostMissed)}`}
+        {t('pc.legend')}
+        {stats.mostMissed && ` · ${t('pc.mostMissed', { slot: t(`slot.${stats.mostMissed}`) })}`}
       </p>
     </PatientShell>
   );

@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { SYMPTOM_OPTIONS, todayYmd } from '../../../portal/portalData';
 import { usePortal } from '../../../portal/PortalContext';
 import { Loading, useToast, ago } from '../shared';
+import { useDashLang } from '../../dashboard/dashI18n';
 import PatientShell from './PatientShell';
 import { usePatient } from './usePatientNav';
 import '../portal.css';
@@ -11,7 +12,9 @@ const optByValue = (v) => SYMPTOM_OPTIONS.find((o) => o.value === v);
 export default function PatientSymptoms() {
   const patient = usePatient();
   const toast = useToast();
+  const { t } = useDashLang();
   const { logSymptom, tick } = usePortal();
+  const symLabel = (v) => t(`sym.${v}`);
   const [feeling, setFeeling] = useState(null);
   const [note, setNote] = useState('');
 
@@ -36,18 +39,18 @@ export default function PatientSymptoms() {
   return (
     <PatientShell>
       <div className="pt__page-head">
-        <h1 className="pt__h1">How are you feeling today?</h1>
-        <p className="pt__sub">One check-in per day — your doctor sees the trend.</p>
+        <h1 className="pt__h1">{t('ps.title')}</h1>
+        <p className="pt__sub">{t('ps.sub')}</p>
       </div>
 
       {todayLog ? (
         <div className="pt__card">
           <div style={{ fontSize: '2rem' }}>{optByValue(todayLog.feeling)?.emoji}</div>
-          <div style={{ fontWeight: 700, marginTop: 4 }}>{optByValue(todayLog.feeling)?.label}</div>
+          <div style={{ fontWeight: 700, marginTop: 4 }}>{symLabel(todayLog.feeling)}</div>
           {todayLog.note && (
             <p style={{ color: 'var(--pt-body)', fontSize: '0.9rem', marginTop: 8 }}>"{todayLog.note}"</p>
           )}
-          <p className="pt__sub" style={{ marginTop: 8 }}>Logged {ago(todayLog.at)} · come back tomorrow.</p>
+          <p className="pt__sub" style={{ marginTop: 8 }}>{t('ps.loggedAgo', { t: ago(todayLog.at) })}</p>
         </div>
       ) : (
         <div className="pt__card">
@@ -60,46 +63,46 @@ export default function PatientSymptoms() {
                 style={{ cursor: 'pointer', flex: '1 1 120px' }}
               >
                 <div className="pt__badge-emoji">{o.emoji}</div>
-                <div className="pt__badge-title">{o.label}</div>
+                <div className="pt__badge-title">{symLabel(o.value)}</div>
               </button>
             ))}
           </div>
           <div className="pt__field" style={{ marginTop: 14 }}>
-            <span className="pt__label">Optional note</span>
+            <span className="pt__label">{t('ps.optionalNote')}</span>
             <textarea
               className="pt__textarea"
               value={note}
               onChange={(e) => setNote(e.target.value)}
-              placeholder="Anything you want your doctor to know…"
+              placeholder={t('ps.notePlaceholder')}
             />
           </div>
           <button className="pt__btn pt__btn--primary" style={{ marginTop: 12 }} disabled={!feeling} onClick={submit}>
-            Submit check-in
+            {t('ps.submit')}
           </button>
         </div>
       )}
 
-      <h2 className="pt__h2">Recent check-ins</h2>
+      <h2 className="pt__h2">{t('ps.recent')}</h2>
       <div className="pt__table-wrap">
         <table className="pt__table">
           <thead>
             <tr>
-              <th>Date</th>
-              <th>Feeling</th>
-              <th>Note</th>
+              <th>{t('ps.colDate')}</th>
+              <th>{t('ps.colFeeling')}</th>
+              <th>{t('ps.colNote')}</th>
             </tr>
           </thead>
           <tbody>
             {history.length === 0 && (
               <tr>
-                <td colSpan={3} style={{ color: 'var(--pt-muted)' }}>No check-ins yet.</td>
+                <td colSpan={3} style={{ color: 'var(--pt-muted)' }}>{t('ps.noCheckins')}</td>
               </tr>
             )}
             {history.map(([date, s]) => (
               <tr key={date}>
                 <td>{date}</td>
                 <td>
-                  {optByValue(s.feeling)?.emoji} {optByValue(s.feeling)?.label}
+                  {optByValue(s.feeling)?.emoji} {symLabel(s.feeling)}
                 </td>
                 <td>{s.note || '—'}</td>
               </tr>

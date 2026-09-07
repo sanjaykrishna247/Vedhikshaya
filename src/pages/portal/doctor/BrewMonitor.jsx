@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { usePortal } from '../../../portal/PortalContext';
 import { PortalShell, useToast } from '../shared';
 import { useDoctorNav } from './useDoctorNav';
+import { useDashLang } from '../../dashboard/dashI18n';
 import '../portal.css';
 
 const ERROR_LABEL = {
@@ -17,6 +18,7 @@ export default function BrewMonitor() {
   const nav = useDoctorNav();
   const navigate = useNavigate();
   const toast = useToast();
+  const { t } = useDashLang();
   const { brewFeed, patients, alerts, allAlerts, dismissAlert, triggerAlert, tick } = usePortal();
 
   const rows = useMemo(
@@ -31,8 +33,8 @@ export default function BrewMonitor() {
   return (
     <PortalShell variant="doctor" nav={nav}>
       <div className="pt__page-head">
-        <h1 className="pt__h1">Brew Monitor</h1>
-        <p className="pt__sub">Live decoction sessions across your caseload · {rows.length} brewing now</p>
+        <h1 className="pt__h1">{t('bm.title')}</h1>
+        <p className="pt__sub">{t('bm.sub', { n: rows.length })}</p>
       </div>
 
       {alerts.length > 0 && (
@@ -44,7 +46,7 @@ export default function BrewMonitor() {
                 {new Date(a.at).toLocaleTimeString()}
               </span>
               <button className="pt__btn pt__btn--sm" onClick={() => dismissAlert(a.id)}>
-                Dismiss
+                {t('bm.dismiss')}
               </button>
             </div>
           ))}
@@ -52,7 +54,7 @@ export default function BrewMonitor() {
       )}
 
       {rows.length === 0 ? (
-        <div className="pt__empty">No patients are brewing right now.</div>
+        <div className="pt__empty">{t('bm.noBrewing')}</div>
       ) : (
         <div className="pt__patients" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))' }}>
           {rows.map((b) => (
@@ -71,19 +73,19 @@ export default function BrewMonitor() {
 
               <div className="pt__brew-metrics">
                 <div>
-                  <div className="pt__brew-metric-label">Temp</div>
+                  <div className="pt__brew-metric-label">{t('bm.temp')}</div>
                   <div className="pt__brew-metric-value">{b.tempC}°C</div>
                 </div>
                 <div>
-                  <div className="pt__brew-metric-label">Phase</div>
+                  <div className="pt__brew-metric-label">{t('bm.phase')}</div>
                   <div className="pt__brew-metric-value">{b.phase}</div>
                 </div>
                 <div>
-                  <div className="pt__brew-metric-label">Remaining</div>
+                  <div className="pt__brew-metric-label">{t('bm.remaining')}</div>
                   <div className="pt__brew-metric-value">{Math.ceil(b.remainingMin)}m</div>
                 </div>
                 <div>
-                  <div className="pt__brew-metric-label">Consistency</div>
+                  <div className="pt__brew-metric-label">{t('bm.consistency')}</div>
                   <div className="pt__brew-metric-value">{b.score}%</div>
                 </div>
               </div>
@@ -93,7 +95,7 @@ export default function BrewMonitor() {
                   className="pt__btn pt__btn--sm"
                   onClick={() => navigate(`/doctor/patient/${b.patientId}`)}
                 >
-                  Open patient
+                  {t('bm.openPatient')}
                 </button>
                 {b.error && (
                   <button
@@ -103,7 +105,7 @@ export default function BrewMonitor() {
                       toast('Alert logged');
                     }}
                   >
-                    Log alert
+                    {t('bm.logAlert')}
                   </button>
                 )}
               </div>
@@ -112,22 +114,22 @@ export default function BrewMonitor() {
         </div>
       )}
 
-      <h2 className="pt__h2">Alert log</h2>
+      <h2 className="pt__h2">{t('bm.alertLog')}</h2>
       <div className="pt__table-wrap">
         <table className="pt__table">
           <thead>
             <tr>
-              <th>Patient</th>
-              <th>Error</th>
-              <th>Time</th>
-              <th>Status</th>
+              <th>{t('dd.colPatient')}</th>
+              <th>{t('bm.colError')}</th>
+              <th>{t('bm.colTime')}</th>
+              <th>{t('bm.colStatus')}</th>
             </tr>
           </thead>
           <tbody>
             {allAlerts.length === 0 && (
               <tr>
                 <td colSpan={4} style={{ color: 'var(--pt-muted)' }}>
-                  No alerts logged.
+                  {t('bm.noAlerts')}
                 </td>
               </tr>
             )}
@@ -138,7 +140,7 @@ export default function BrewMonitor() {
                 <td>{new Date(a.at).toLocaleString()}</td>
                 <td>
                   <span className={`pt__pill ${a.dismissed ? 'pt__pill--muted' : 'pt__pill--bad'}`}>
-                    {a.dismissed ? 'Dismissed' : 'Open'}
+                    {a.dismissed ? t('bm.dismissed') : t('bm.open')}
                   </span>
                 </td>
               </tr>

@@ -13,6 +13,7 @@ import { exportPatientReport } from '../../../portal/report';
 import { downloadXls } from '../../../portal/xlsx';
 import { PortalShell, Modal, personInitials, useToast, clockTime } from '../shared';
 import { useDoctorNav } from './useDoctorNav';
+import { useDashLang } from '../../dashboard/dashI18n';
 import '../portal.css';
 
 const CELL_MARK = { taken: '✓', missed: '✗', pending: '●', upcoming: '●', due: '!' };
@@ -22,6 +23,7 @@ export default function PatientDetail() {
   const nav = useDoctorNav();
   const navigate = useNavigate();
   const toast = useToast();
+  const { t } = useDashLang();
   const { patients, doctor, updatePrescription, endTreatment, getChat, tick } = usePortal();
 
   const patient = patients.find((p) => p.id === id);
@@ -37,10 +39,10 @@ export default function PatientDetail() {
     return (
       <PortalShell variant="doctor" nav={nav}>
         <div className="pt__empty">
-          Patient not found.
+          {t('pd.patientNotFound')}
           <div style={{ marginTop: 12 }}>
             <button className="pt__btn" onClick={() => navigate('/doctor/dashboard')}>
-              Back to patients
+              {t('pd.backToPatients')}
             </button>
           </div>
         </div>
@@ -53,7 +55,7 @@ export default function PatientDetail() {
   return (
     <PortalShell variant="doctor" nav={nav}>
       <button className="pt__linkbtn" onClick={() => navigate('/doctor/dashboard')} style={{ marginBottom: 12 }}>
-        ← All patients
+        {t('pd.allPatients')}
       </button>
 
       <div className="pt__page-head pt__row">
@@ -65,13 +67,13 @@ export default function PatientDetail() {
             <h1 className="pt__h1">{patient.name}</h1>
             <p className="pt__sub">
               {patient.id} · {patient.age} · {patient.gender} · {patient.phone}
-              {!patient.active && ' · treatment completed'}
+              {!patient.active && ` · ${t('pd.treatmentCompleted')}`}
             </p>
           </div>
         </div>
         <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
           <button className="pt__btn" onClick={() => (exportPatientReport(patient, doctor) ? toast('Opening report…') : toast('Allow pop-ups to export'))}>
-            Export PDF
+            {t('p.exportPdf')}
           </button>
           <button
             className="pt__btn"
@@ -121,18 +123,18 @@ export default function PatientDetail() {
               toast('Excel downloaded');
             }}
           >
-            ⬇ Excel
+            ⬇ {t('p.excel')}
           </button>
           <button className="pt__btn" onClick={() => navigate('/doctor/chat', { state: { patientId: patient.id } })}>
-            Message{unread > 0 ? ` (${unread})` : ''}
+            {t('p.message')}{unread > 0 ? ` (${unread})` : ''}
           </button>
           {patient.active && (
             <>
               <button className="pt__btn pt__btn--primary" onClick={() => setShowEdit(true)}>
-                Edit prescription
+                {t('p.editRx')}
               </button>
               <button className="pt__btn pt__btn--danger" onClick={() => setShowEnd(true)}>
-                End treatment
+                {t('p.endTreatment')}
               </button>
             </>
           )}
@@ -140,13 +142,13 @@ export default function PatientDetail() {
       </div>
 
       <div className="pt__stats">
-        <Stat label="Weekly compliance" value={`${stats.pct}%`} tone={stats.pct >= 80 ? 'good' : stats.pct >= 60 ? 'warn' : 'bad'} />
-        <Stat label="Current streak" value={`${streak}d`} />
-        <Stat label="Doses taken / scheduled" value={`${stats.taken}/${stats.scheduled}`} />
-        <Stat label="Most missed slot" value={stats.mostMissed ? slotLabel(stats.mostMissed) : '—'} tone={stats.mostMissed ? 'warn' : 'good'} />
+        <Stat label={t('pd.weeklyCompliance')} value={`${stats.pct}%`} tone={stats.pct >= 80 ? 'good' : stats.pct >= 60 ? 'warn' : 'bad'} />
+        <Stat label={t('pd.currentStreak')} value={`${streak}${t('ppd.dayShort')}`} />
+        <Stat label={t('pd.dosesTaken')} value={`${stats.taken}/${stats.scheduled}`} />
+        <Stat label={t('pd.mostMissed')} value={stats.mostMissed ? t(`slot.${stats.mostMissed}`) : '—'} tone={stats.mostMissed ? 'warn' : 'good'} />
       </div>
 
-      <h2 className="pt__h2">Compliance — last 7 days</h2>
+      <h2 className="pt__h2">{t('pd.compliance7')}</h2>
       <div className="pt__card">
         <div className="pt__grid">
           <div className="pt__grid-h" />
@@ -156,53 +158,52 @@ export default function PatientDetail() {
             </div>
           ))}
           {slots.map((slot) => (
-            <Row key={slot} slot={slot} patient={patient} days={days} />
+            <Row key={slot} slot={slot} patient={patient} days={days} label={t(`slot.${slot}`)} />
           ))}
         </div>
       </div>
 
-      <h2 className="pt__h2">Current prescription</h2>
+      <h2 className="pt__h2">{t('pd.currentRx')}</h2>
       <div className="pt__card">
         <dl className="pt__dl">
-          <dt style={dt}>Kashaya</dt>
+          <dt style={dt}>{t('dd.colKashaya')}</dt>
           <dd style={dd}>{patient.prescription.kashaya}</dd>
-          <dt style={dt}>Schedule</dt>
+          <dt style={dt}>{t('pd.schedule')}</dt>
           <dd style={dd}>
             {slots.map((s) => (
               <div key={s}>
-                {slotLabel(s)} — {patient.prescription.schedule[s].time} ({patient.prescription.schedule[s].food} food)
+                {t(`slot.${s}`)} — {patient.prescription.schedule[s].time} (
+                {t(patient.prescription.schedule[s].food === 'before' ? 'slot.beforeFood' : 'slot.afterFood')})
               </div>
             ))}
           </dd>
-          <dt style={dt}>Duration</dt>
-          <dd style={dd}>
-            Week {patient.prescription.weekOf} of {patient.prescription.durationWeeks}
-          </dd>
-          <dt style={dt}>Notes</dt>
+          <dt style={dt}>{t('pd.duration')}</dt>
+          <dd style={dd}>{t('pd.week', { a: patient.prescription.weekOf, b: patient.prescription.durationWeeks })}</dd>
+          <dt style={dt}>{t('pd.notes')}</dt>
           <dd style={dd}>{patient.prescription.notes}</dd>
-          <dt style={dt}>Last updated</dt>
+          <dt style={dt}>{t('pd.lastUpdated')}</dt>
           <dd style={dd}>
             {new Date(patient.prescription.updatedAt).toLocaleString()} · {patient.prescription.updatedBy}
           </dd>
         </dl>
       </div>
 
-      <h2 className="pt__h2">Recent brew sessions</h2>
+      <h2 className="pt__h2">{t('pd.recentBrews')}</h2>
       <div className="pt__table-wrap">
         <table className="pt__table">
           <thead>
             <tr>
-              <th>Date</th>
-              <th>Kashaya</th>
-              <th>Consistency</th>
-              <th>Duration</th>
+              <th>{t('pd.colDate')}</th>
+              <th>{t('dd.colKashaya')}</th>
+              <th>{t('pd.colConsistency')}</th>
+              <th>{t('pd.colDuration')}</th>
             </tr>
           </thead>
           <tbody>
             {patient.brews.length === 0 && (
               <tr>
                 <td colSpan={4} style={{ color: 'var(--pt-muted)' }}>
-                  No brew sessions recorded yet.
+                  {t('pd.noBrews')}
                 </td>
               </tr>
             )}
@@ -231,10 +232,8 @@ export default function PatientDetail() {
       )}
 
       {showEnd && (
-        <Modal title={`End treatment for ${patient.name}?`} size="sm" onClose={() => setShowEnd(false)}>
-          <p className="pt__modal-sub">
-            The patient moves to History and is removed from your active caseload. They'll be asked to book a review.
-          </p>
+        <Modal title={t('pd.endTitle', { name: patient.name })} size="sm" onClose={() => setShowEnd(false)}>
+          <p className="pt__modal-sub">{t('pd.endSub')}</p>
           <EndTreatmentForm
             onCancel={() => setShowEnd(false)}
             onConfirm={(reason) => {
@@ -253,14 +252,14 @@ export default function PatientDetail() {
 const dt = { fontWeight: 700, color: 'var(--pt-muted)' };
 const dd = { margin: 0, color: 'var(--pt-body)' };
 
-function Row({ slot, patient, days }) {
+function Row({ slot, patient, days, label }) {
   return (
     <>
-      <div className="pt__grid-rowlabel">{slotLabel(slot)}</div>
+      <div className="pt__grid-rowlabel">{label || slotLabel(slot)}</div>
       {days.map((d) => {
         const st = doseStatus(patient, d, slot);
         return (
-          <div key={d} className={`pt__cell pt__cell--${st}`} title={`${d} · ${slotLabel(slot)} · ${st}`}>
+          <div key={d} className={`pt__cell pt__cell--${st}`} title={`${d} · ${label || slotLabel(slot)} · ${st}`}>
             {CELL_MARK[st] || '·'}
           </div>
         );

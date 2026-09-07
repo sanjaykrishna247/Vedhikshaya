@@ -1,13 +1,17 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { usePortal } from '../../../portal/PortalContext';
-import { PATIENT_QUERY_TEMPLATES, SYMPTOM_OPTIONS, todayYmd } from '../../../portal/portalData';
+import { todayYmd } from '../../../portal/portalData';
 import { Loading, clockTime } from '../shared';
+import { useDashLang } from '../../dashboard/dashI18n';
 import PatientShell from './PatientShell';
 import { usePatient } from './usePatientNav';
 import '../portal.css';
 
+const QUERY_TEMPLATE_KEYS = ['qt.missedDose', 'qt.withFood', 'qt.sideEffects', 'qt.appointment'];
+
 export default function PatientChat() {
   const patient = usePatient();
+  const { t } = useDashLang();
   const { doctor, getChat, sendMessage, markChatRead, tick } = usePortal();
   const [draft, setDraft] = useState('');
   const scrollRef = useRef(null);
@@ -26,26 +30,26 @@ export default function PatientChat() {
   if (!patient) return <PatientShell><Loading /></PatientShell>;
 
   const send = (text) => {
-    const t = text.trim();
-    if (!t) return;
-    sendMessage(patient.id, { sender: 'patient', text: t });
+    const value = text.trim();
+    if (!value) return;
+    sendMessage(patient.id, { sender: 'patient', text: value });
     setDraft('');
   };
 
   const attachSymptom = () => {
     const log = patient.symptoms?.[todayYmd()];
     if (!log) {
-      send('I have not logged my symptom check-in yet today.');
+      send(t('pch.noSymptomYet'));
       return;
     }
-    const label = SYMPTOM_OPTIONS.find((o) => o.value === log.feeling)?.label || log.feeling;
-    send(`Feeling: ${label} today${log.note ? ` — ${log.note}` : ''}`);
+    const label = t(`sym.${log.feeling}`);
+    send(`${t('pch.feeling', { label })}${log.note ? ` — ${log.note}` : ''}`);
   };
 
   return (
     <PatientShell>
       <div className="pt__page-head">
-        <h1 className="pt__h1">Chat with your doctor</h1>
+        <h1 className="pt__h1">{t('pch.title')}</h1>
       </div>
 
       <div className="pt__chat" style={{ gridTemplateColumns: '1fr' }}>
@@ -56,13 +60,13 @@ export default function PatientChat() {
               <div className="pt__chat-head-sub">{doctor.hospitalName}</div>
             </div>
             <span className={`pt__pill ${doctor.available ? 'pt__pill--good' : 'pt__pill--bad'}`}>
-              {doctor.available ? '🟢 Available' : '🔴 Busy'}
+              {doctor.available ? `🟢 ${t('pt.available')}` : `🔴 ${t('pt.busy')}`}
             </span>
           </div>
 
           <div className="pt__chat-scroll" ref={scrollRef}>
             {messages.length === 0 && (
-              <div className="pt__notif-empty">No messages yet. Use a template below or type your question.</div>
+              <div className="pt__notif-empty">{t('dc.noMsgsPatient')}</div>
             )}
             {messages.map((m) => (
               <div
@@ -72,19 +76,19 @@ export default function PatientChat() {
                 {m.message}
                 <span className="pt__msg-time">
                   {clockTime(m.timestamp)}
-                  {m.sender === 'patient' && (m.read ? ' · ✓✓ Read' : ' · ✓ Sent')}
+                  {m.sender === 'patient' && (m.read ? ` · ✓✓ ${t('p.read')}` : ` · ✓ ${t('p.sent')}`)}
                 </span>
               </div>
             ))}
           </div>
 
           <div className="pt__quick">
-            {PATIENT_QUERY_TEMPLATES.map((q) => (
-              <button key={q} onClick={() => send(q)}>
-                {q}
+            {QUERY_TEMPLATE_KEYS.map((key) => (
+              <button key={key} onClick={() => send(t(key))}>
+                {t(key)}
               </button>
             ))}
-            <button onClick={attachSymptom}>📎 Attach today's symptom</button>
+            <button onClick={attachSymptom}>{t('pch.attachSymptom')}</button>
           </div>
 
           <form
@@ -94,9 +98,9 @@ export default function PatientChat() {
               send(draft);
             }}
           >
-            <input value={draft} onChange={(e) => setDraft(e.target.value)} placeholder="Type a message…" />
+            <input value={draft} onChange={(e) => setDraft(e.target.value)} placeholder={t('p.typeMessage')} />
             <button className="pt__btn pt__btn--primary" type="submit">
-              Send
+              {t('p.send')}
             </button>
           </form>
         </div>

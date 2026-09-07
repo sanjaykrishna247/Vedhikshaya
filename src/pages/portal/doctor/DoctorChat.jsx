@@ -1,14 +1,17 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { usePortal } from '../../../portal/PortalContext';
-import { DOCTOR_QUICK_REPLIES } from '../../../portal/portalData';
 import { PortalShell, personInitials, clockTime, Icon } from '../shared';
 import { useDoctorNav } from './useDoctorNav';
+import { useDashLang } from '../../dashboard/dashI18n';
 import '../portal.css';
+
+const QUICK_REPLY_KEYS = ['qr.continueRx', 'qr.dontMiss', 'qr.followUp', 'qr.improving'];
 
 export default function DoctorChat() {
   const nav = useDoctorNav();
   const location = useLocation();
+  const { t } = useDashLang();
   const { patients, doctor, getChat, sendMessage, markChatRead, tick } = usePortal();
 
   const active = useMemo(() => patients.filter((p) => p.active || getChat(p.id).length), [patients, tick]);
@@ -61,16 +64,14 @@ export default function DoctorChat() {
     <PortalShell variant="doctor" nav={nav}>
       <div className="pt__page-head pt__row">
         <div>
-          <h1 className="pt__h1">Chat</h1>
-          <p className="pt__sub">
-            You are {doctor.available ? 'Available' : 'Busy'} — patients see this in real time.
-          </p>
+          <h1 className="pt__h1">{t('pnav.chat')}</h1>
+          <p className="pt__sub">{t('dc.youAre', { s: doctor.available ? t('pt.available') : t('pt.busy') })}</p>
         </div>
       </div>
 
       <div className="pt__chat">
         <div className={`pt__chat-list ${selected ? 'is-hidden-mobile' : ''}`}>
-          {threads.length === 0 && <div className="pt__notif-empty">No conversations yet.</div>}
+          {threads.length === 0 && <div className="pt__notif-empty">{t('dc.noConv')}</div>}
           {threads.map(({ p, last, unread }) => (
             <button
               key={p.id}
@@ -86,7 +87,7 @@ export default function DoctorChat() {
                   <span className="pt__online-dot">{p.online ? '🟢' : '⚫'}</span>
                 </div>
                 <div className="pt__chat-listitem-preview">
-                  {last ? last.message.slice(0, 40) : 'No messages yet'}
+                  {last ? last.message.slice(0, 40) : t('dc.noMsgsShort')}
                 </div>
               </div>
               <div className="pt__chat-listitem-meta">
@@ -100,25 +101,25 @@ export default function DoctorChat() {
         <div className={`pt__chat-panel ${selected ? '' : 'is-hidden-mobile'}`}>
           {!current ? (
             <div className="pt__notif-empty" style={{ margin: 'auto' }}>
-              Select a patient to start chatting.
+              {t('dc.selectPatient')}
             </div>
           ) : (
             <>
               <div className="pt__chat-head">
                 <button className="pt__chat-back pt__linkbtn" onClick={() => setSelected(null)}>
-                  {Icon.back} Back
+                  {Icon.back} {t('p.back')}
                 </button>
                 <div style={{ flex: 1 }}>
                   <div className="pt__chat-head-name">{current.name}</div>
                   <div className="pt__chat-head-sub">
-                    {current.id} · {current.online ? '🟢 Online' : '⚫ Offline'}
+                    {current.id} · {current.online ? `🟢 ${t('p.online')}` : `⚫ ${t('p.offline')}`}
                   </div>
                 </div>
               </div>
 
               <div className="pt__chat-scroll" ref={scrollRef}>
                 {messages.length === 0 && (
-                  <div className="pt__notif-empty">No messages yet — say hello.</div>
+                  <div className="pt__notif-empty">{t('dc.noMsgs')}</div>
                 )}
                 {messages.map((m) => (
                   <div
@@ -130,16 +131,16 @@ export default function DoctorChat() {
                     {m.message}
                     <span className="pt__msg-time">
                       {clockTime(m.timestamp)}
-                      {m.sender === 'doctor' && (m.read ? ' · ✓✓ Read' : ' · ✓ Sent')}
+                      {m.sender === 'doctor' && (m.read ? ` · ✓✓ ${t('p.read')}` : ` · ✓ ${t('p.sent')}`)}
                     </span>
                   </div>
                 ))}
               </div>
 
               <div className="pt__quick">
-                {DOCTOR_QUICK_REPLIES.map((q) => (
-                  <button key={q} onClick={() => send(q)}>
-                    {q}
+                {QUICK_REPLY_KEYS.map((key) => (
+                  <button key={key} onClick={() => send(t(key))}>
+                    {t(key)}
                   </button>
                 ))}
               </div>
@@ -154,10 +155,10 @@ export default function DoctorChat() {
                 <input
                   value={draft}
                   onChange={(e) => setDraft(e.target.value)}
-                  placeholder="Type a message…"
+                  placeholder={t('p.typeMessage')}
                 />
                 <button className="pt__btn pt__btn--primary" type="submit">
-                  Send
+                  {t('p.send')}
                 </button>
               </form>
             </>

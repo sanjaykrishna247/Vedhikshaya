@@ -3,6 +3,7 @@ import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import logo from '../../assets/logo.svg';
 import { usePortal } from '../../portal/PortalContext';
 import { LANGS, useDashLang } from '../dashboard/dashI18n';
+import { IconTranslateHi, IconBell } from '../dashboard/icons';
 
 // ---------------------------------------------------------------------------
 // icons (stroke, 24 grid) — match the dashboard sidebar weight
@@ -86,6 +87,7 @@ export function clockTime(ts) {
 // dashboard, restyled to sit flush (no boxed background)
 // ---------------------------------------------------------------------------
 function NotifBell({ items, onOpen }) {
+  const { t } = useDashLang();
   const [open, setOpen] = useState(false);
   const unread = items.filter((n) => !n.read).length;
   return (
@@ -98,15 +100,15 @@ function NotifBell({ items, onOpen }) {
           if (!open) onOpen?.();
         }}
       >
-        {Icon.bell}
+        <IconBell />
         {unread > 0 && <span className="pt__bell-count">{unread > 9 ? '9+' : unread}</span>}
       </button>
       {open && (
         <>
           <div style={{ position: 'fixed', inset: 0, zIndex: 39 }} onClick={() => setOpen(false)} />
           <div className="pt__notif-panel">
-            <div className="pt__notif-head">Notifications</div>
-            {items.length === 0 && <div className="pt__notif-empty">You're all caught up.</div>}
+            <div className="pt__notif-head">{t('p.notifications')}</div>
+            {items.length === 0 && <div className="pt__notif-empty">{t('p.caughtUp')}</div>}
             {items.map((n) => (
               <div key={n.id} className={`pt__notif-item ${n.read ? '' : 'is-unread'}`}>
                 {n.text}
@@ -121,18 +123,18 @@ function NotifBell({ items, onOpen }) {
 }
 
 function LangMenu() {
-  const { lang, setLang } = useDashLang();
+  const { lang, setLang, t } = useDashLang();
   const [open, setOpen] = useState(false);
   return (
     <div className="pt__iconwrap">
-      <button className="pt__iconbtn" aria-label="Language" onClick={() => setOpen((v) => !v)}>
-        {Icon.translate}
+      <button className="pt__iconbtn pt__iconbtn--lang" aria-label="Language" onClick={() => setOpen((v) => !v)}>
+        <IconTranslateHi />
       </button>
       {open && (
         <>
           <div style={{ position: 'fixed', inset: 0, zIndex: 39 }} onClick={() => setOpen(false)} />
           <div className="pt__notif-panel pt__lang-panel">
-            <div className="pt__notif-head">Language</div>
+            <div className="pt__notif-head">{t('p.language')}</div>
             {LANGS.map((l) => (
               <button
                 key={l.code}
