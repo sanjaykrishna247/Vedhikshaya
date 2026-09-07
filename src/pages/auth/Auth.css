@@ -41,6 +41,15 @@
   opacity: 1;
   z-index: 0;
 }
+/* static fallback frame — sits under the videos; visible when a phone
+   refuses to autoplay them */
+.auth__video-poster {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-size: cover;
+  background-position: center;
+}
 .auth__video-overlay {
   position: absolute;
   inset: 0;

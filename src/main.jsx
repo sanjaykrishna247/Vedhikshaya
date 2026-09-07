@@ -17,6 +17,7 @@ import HerbsLibrary from './pages/herbs/HerbsLibrary.jsx'
 import KashayaDetail from './pages/herbs/KashayaDetail.jsx'
 import AdminDashboard from './pages/admin/AdminDashboard.jsx'
 import RouteLoading from './components/RouteLoading.jsx'
+import LazyBoundary from './components/LazyBoundary.jsx'
 import { PortalProvider } from './portal/PortalContext.jsx'
 import PortalRoute from './portal/PortalRoute.jsx'
 import { ToastHost } from './pages/portal/shared.jsx'
@@ -60,6 +61,7 @@ createRoot(document.getElementById('root')).render(
           <BrewSimProvider>
           <PortalProvider>
           <ToastHost>
+          <LazyBoundary>
           <Routes>
           <Route path="/" element={<App />} />
           <Route path="/login" element={<Login />} />
@@ -155,6 +157,7 @@ createRoot(document.getElementById('root')).render(
           <Route path="/patient/symptoms" element={patientRoute(<PatientSymptoms />)} />
           <Route path="/patient/chat" element={patientRoute(<PatientChat />)} />
           </Routes>
+          </LazyBoundary>
           </ToastHost>
           </PortalProvider>
           </BrewSimProvider>

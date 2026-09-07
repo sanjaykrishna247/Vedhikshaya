@@ -55,6 +55,23 @@ export default function Login() {
     a.addEventListener('loadedmetadata', applyRate);
     b.addEventListener('loadedmetadata', applyRate);
 
+    // Some mobile browsers (iOS Low-Power Mode, Android Data Saver, strict
+    // Safari) ignore the `autoplay` attribute. Kick playback explicitly, and
+    // retry on the first touch/tap anywhere on the page — by then the browser
+    // treats it as a user gesture and allows it.
+    const kick = () => {
+      a.play?.().catch(() => {});
+      b.play?.().catch(() => {});
+    };
+    kick();
+    const onFirstInteract = () => {
+      kick();
+      window.removeEventListener('pointerdown', onFirstInteract);
+      window.removeEventListener('touchstart', onFirstInteract);
+    };
+    window.addEventListener('pointerdown', onFirstInteract, { passive: true });
+    window.addEventListener('touchstart', onFirstInteract, { passive: true });
+
     const tick = () => {
       if (!offsetApplied && a.duration) {
         b.currentTime = a.duration / 2;
@@ -86,6 +103,8 @@ export default function Login() {
       cancelAnimationFrame(rafId);
       a.removeEventListener('loadedmetadata', applyRate);
       b.removeEventListener('loadedmetadata', applyRate);
+      window.removeEventListener('pointerdown', onFirstInteract);
+      window.removeEventListener('touchstart', onFirstInteract);
     };
   }, []);
 
@@ -142,9 +161,16 @@ export default function Login() {
         muted
         playsInline
         preload="auto"
+        poster="/videos/brew-overhead-poster.jpg"
       >
         <source src="/videos/brew-overhead-v4.mp4" type="video/mp4" />
       </video>
+      {/* poster still shows through when a phone blocks video autoplay */}
+      <div
+        className="auth__video-poster"
+        style={{ backgroundImage: 'url(/videos/brew-overhead-poster.jpg)' }}
+        aria-hidden="true"
+      />
       <div className="auth__video-overlay" />
 
       <div className="auth__card auth__card--glass">
