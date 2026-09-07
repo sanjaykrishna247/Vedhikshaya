@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import logo from '../../assets/logo.svg';
 import {
@@ -52,6 +52,14 @@ export default function AdminDashboard() {
   const [patHospital, setPatHospital] = useState('all');
   const [reportHospital, setReportHospital] = useState('all');
   const [toast, setToast] = useState('');
+  const [navOpen, setNavOpen] = useState(false);
+
+  useEffect(() => {
+    document.body.style.overflow = navOpen ? 'hidden' : '';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [navOpen]);
 
   const hName = (id) => hospitals.find((h) => h.id === id)?.name ?? '—';
   const dName = (id) => doctors.find((d) => d.id === id)?.name ?? '—';
@@ -178,25 +186,36 @@ export default function AdminDashboard() {
   return (
     <div className="adm">
       <header className="adm__topbar">
-        <Link to="/home" className="adm__brand">
-          <img src={logo} alt="" className="adm__logo" aria-hidden="true" />
-          <span className="adm__wordmark">
-            Vediks<span>haya</span>
-          </span>
-          <span className="adm__badge">Admin Console</span>
-        </Link>
+        <div className="adm__topbar-left">
+          <button
+            className="adm__burger"
+            aria-label="Toggle menu"
+            aria-expanded={navOpen}
+            onClick={() => setNavOpen((v) => !v)}
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round">
+              <path d="M4 7h16M4 12h16M4 17h16" />
+            </svg>
+          </button>
+          <Link to="/home" className="adm__brand">
+            <img src={logo} alt="" className="adm__logo" aria-hidden="true" />
+            <span className="adm__wordmark">
+              Vediks<span>haya</span>
+            </span>
+            <span className="adm__badge">Admin Console</span>
+          </Link>
+        </div>
         <Link to="/home" className="adm__exit">
           Exit
         </Link>
       </header>
 
       <div className="adm__shell">
-        <nav className="adm__rail">
+        <nav className={`adm__rail ${navOpen ? 'is-open' : ''}`}>
           <div className="adm__profile">
             <span className="adm__profile-avatar">AD</span>
-            <span>
+            <span className="adm__profile-info">
               <span className="adm__profile-name">Admin</span>
-              <br />
               <span className="adm__profile-role">Vedikshaya Network</span>
             </span>
           </div>
@@ -205,7 +224,10 @@ export default function AdminDashboard() {
             <button
               key={t}
               className={`adm__tab ${tab === t ? 'adm__tab--on' : ''}`}
-              onClick={() => setTab(t)}
+              onClick={() => {
+                setTab(t);
+                setNavOpen(false);
+              }}
             >
               <span className="adm__tab-ic">{TAB_ICON[t]}</span>
               <span className="adm__tab-label">{t}</span>
@@ -215,6 +237,8 @@ export default function AdminDashboard() {
             </button>
           ))}
         </nav>
+
+        {navOpen && <div className="adm__scrim" onClick={() => setNavOpen(false)} aria-hidden="true" />}
 
         <main className="adm__main">
           {toast && <div className="adm__toast">{toast}</div>}

@@ -10,6 +10,7 @@ import {
   slotLabel,
 } from '../../../portal/portalLogic';
 import { exportPatientReport } from '../../../portal/report';
+import { downloadXls } from '../../../portal/xlsx';
 import { PortalShell, Modal, personInitials, useToast, clockTime } from '../shared';
 import { useDoctorNav } from './useDoctorNav';
 import '../portal.css';
@@ -70,7 +71,57 @@ export default function PatientDetail() {
         </div>
         <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
           <button className="pt__btn" onClick={() => (exportPatientReport(patient, doctor) ? toast('Opening report…') : toast('Allow pop-ups to export'))}>
-            Export report
+            Export PDF
+          </button>
+          <button
+            className="pt__btn"
+            onClick={() => {
+              downloadXls(`${patient.id}_${patient.name.replace(/\s+/g, '')}_report`, [
+                {
+                  title: `Patient report · ${patient.name} (${patient.id})`,
+                  headers: ['Field', 'Value'],
+                  rows: [
+                    ['Name', patient.name],
+                    ['Patient ID', patient.id],
+                    ['Age / Gender', `${patient.age ?? '—'} · ${patient.gender}`],
+                    ['Phone', patient.phone],
+                    ['Condition', patient.condition],
+                    ['Hospital', doctor.hospitalName],
+                    ['Treating doctor', doctor.name],
+                    ['Kashaya', patient.prescription.kashaya],
+                    ['Schedule', slots.map((s) => `${slotLabel(s)} ${patient.prescription.schedule[s].time}`).join('; ')],
+                    ['Duration', `Week ${patient.prescription.weekOf} of ${patient.prescription.durationWeeks}`],
+                    ['Weekly compliance', `${stats.pct}%`],
+                    ['Current streak', `${streak} days`],
+                    ['Notes', patient.prescription.notes],
+                    ['Status', patient.active ? 'Active' : 'Treatment completed'],
+                  ],
+                },
+                {
+                  title: 'Compliance — last 7 days',
+                  headers: ['Slot', ...days.map((d) => d.slice(5))],
+                  rows: slots.map((slot) => [
+                    slotLabel(slot),
+                    ...days.map((d) => doseStatus(patient, d, slot)),
+                  ]),
+                },
+                {
+                  title: 'Brew history',
+                  headers: ['Date', 'Kashaya', 'Consistency', 'Duration'],
+                  rows: patient.brews.length
+                    ? patient.brews.map((brew) => [
+                        new Date(brew.startedAt).toLocaleDateString(),
+                        brew.kashaya,
+                        `${brew.score}%`,
+                        `${brew.durationMin} min`,
+                      ])
+                    : [['—', 'No sessions recorded', '', '']],
+                },
+              ]);
+              toast('Excel downloaded');
+            }}
+          >
+            ⬇ Excel
           </button>
           <button className="pt__btn" onClick={() => navigate('/doctor/chat', { state: { patientId: patient.id } })}>
             Message{unread > 0 ? ` (${unread})` : ''}

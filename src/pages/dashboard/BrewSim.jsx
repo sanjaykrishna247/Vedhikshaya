@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useRef, useState } from 'react';
+import { logBrewComplete, logBrewInterrupted, logBrewStart } from '../history/brewLog';
 
 // ---------------------------------------------------------------------------
 // Live brew simulation. One clock drives every card on the dashboard so the
@@ -73,6 +74,7 @@ export function BrewSimProvider({ children }) {
   const [nowTs, setNowTs] = useState(() => Date.now());
   const [sensors, setSensors] = useState(IDLE);
   const intervalRef = useRef(null);
+  const loggedDoneRef = useRef(false);
 
   const elapsed = startedAt ? clamp((nowTs - startedAt) / 1000, 0, TOTAL_SECONDS) : 0;
   const status = !startedAt ? 'idle' : elapsed >= TOTAL_SECONDS ? 'done' : 'running';
@@ -83,10 +85,18 @@ export function BrewSimProvider({ children }) {
   useEffect(() => {
     if (status !== 'running') {
       clearInterval(intervalRef.current);
-      // freeze the final reading once the batch completes
-      if (status === 'done') setSensors(sample(1, false));
+      // freeze the final reading once the batch completes + log it once
+      if (status === 'done') {
+        setSensors(sample(1, false));
+        if (!loggedDoneRef.current) {
+          loggedDoneRef.current = true;
+          const final = sample(1, false);
+          logBrewComplete({ consistencyPct: final.consistency, doseMl: final.waterMl });
+        }
+      }
       return undefined;
     }
+    loggedDoneRef.current = false;
     const startTs = startedAt;
     const tick = () => {
       const now = Date.now();
@@ -99,16 +109,20 @@ export function BrewSimProvider({ children }) {
     return () => clearInterval(intervalRef.current);
   }, [status, startedAt]);
 
-  const start = () => {
+  const start = (label) => {
     const t = Date.now();
     localStorage.setItem(STORAGE_KEY, String(t));
+    loggedDoneRef.current = false;
+    logBrewStart(label || 'Kashaya Kwatha');
     setStartedAt(t);
     setNowTs(t);
     setSensors(sample(0, true));
   };
 
   const reset = () => {
+    if (status === 'running') logBrewInterrupted();
     localStorage.removeItem(STORAGE_KEY);
+    loggedDoneRef.current = false;
     setStartedAt(null);
     setSensors(IDLE);
   };

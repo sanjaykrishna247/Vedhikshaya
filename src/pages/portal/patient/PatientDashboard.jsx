@@ -14,6 +14,7 @@ import {
   slotLabel,
 } from '../../../portal/portalLogic';
 import { Modal, Loading, useToast, useNow } from '../shared';
+import { useBrewSim } from '../../dashboard/BrewSim';
 import PatientShell from './PatientShell';
 import { usePatient } from './usePatientNav';
 import '../portal.css';
@@ -24,6 +25,7 @@ export default function PatientDashboard() {
   const toast = useToast();
   const now = useNow(1000);
   const { markDose, tick } = usePortal();
+  const { start: startBrew } = useBrewSim();
 
   const [confirm, setConfirm] = useState(null); // { slot, scheduled, late }
   const [brew, setBrew] = useState(null); // { slot }
@@ -181,7 +183,8 @@ export default function PatientDashboard() {
         <BrewModal
           prescribed={patient.prescription.kashaya}
           onClose={() => setBrew(null)}
-          onStart={() => {
+          onStart={(kashaya) => {
+            startBrew(kashaya);
             toast('Brew session started');
             setBrew(null);
             navigate('/dashboard');
@@ -213,7 +216,7 @@ function BrewModal({ prescribed, onClose, onStart }) {
         <button className="pt__btn pt__btn--ghost" onClick={onClose}>
           Cancel
         </button>
-        <button className="pt__btn pt__btn--primary" onClick={onStart}>
+        <button className="pt__btn pt__btn--primary" onClick={() => onStart(pick)}>
           Confirm & open brew console
         </button>
       </div>

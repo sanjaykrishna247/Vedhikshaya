@@ -9,6 +9,7 @@ import {
 } from '../../../portal/portalLogic';
 import { PortalShell, Modal, Loading, personInitials, useToast } from '../shared';
 import { useDoctorNav } from './useDoctorNav';
+import { downloadXls } from '../../../portal/xlsx';
 import '../portal.css';
 
 const BLANK_SCHEDULE = {
@@ -45,9 +46,28 @@ export default function DoctorDashboard() {
           <h1 className="pt__h1">Patients</h1>
           <p className="pt__sub">Auto-refreshing every 30s · {active.length} active</p>
         </div>
-        <button className="pt__btn pt__btn--primary" onClick={() => setShowAdd(true)}>
-          + Add patient
-        </button>
+        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+          <button
+            className="pt__btn"
+            onClick={() => {
+              downloadXls(`patient_roster_${new Date().toISOString().slice(0, 10)}`, {
+                title: 'Patient roster · Apollo Hospital',
+                headers: ['Patient ID', 'Name', 'Age', 'Gender', 'Phone', 'Condition', 'Kashaya', 'Week', 'Weekly compliance %', 'Status'],
+                rows: patients.map((p) => [
+                  p.id, p.name, p.age ?? '', p.gender, p.phone, p.condition,
+                  p.prescription.kashaya, `${p.prescription.weekOf}/${p.prescription.durationWeeks}`,
+                  complianceStats(p).pct, p.active ? 'Active' : 'Completed',
+                ]),
+              });
+              toast('Excel downloaded');
+            }}
+          >
+            ⬇ Excel
+          </button>
+          <button className="pt__btn pt__btn--primary" onClick={() => setShowAdd(true)}>
+            + Add patient
+          </button>
+        </div>
       </div>
 
       {alerts.length > 0 && (

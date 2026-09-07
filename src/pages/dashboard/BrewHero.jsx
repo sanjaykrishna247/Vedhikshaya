@@ -92,7 +92,7 @@ export default function BrewHero() {
           <button
             type="button"
             className="d-hero__start"
-            onClick={start}
+            onClick={() => start(kashaya)}
             disabled={status === 'running'}
           >
             {status === 'running' ? `${t('phase.' + ['soaking', 'boil', 'stirring', 'dispense'][phaseIndex])} · ${fmtClock(remaining)}` : t('btn.start')}

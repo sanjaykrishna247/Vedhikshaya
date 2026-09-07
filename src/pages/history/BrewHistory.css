@@ -253,6 +253,18 @@
   border: 1px solid #f0dba8;
   color: #8a6416;
 }
+.bh__status--live {
+  background: #e3efd6;
+  border: 1px solid #bcd89a;
+  color: #3f6d15;
+}
+.bh__status--live .bh__status-dot {
+  animation: bhPulse 1.4s ease-in-out infinite;
+}
+@keyframes bhPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.25; }
+}
 
 /* ---------- Responsive ---------- */
 @media (max-width: 900px) {

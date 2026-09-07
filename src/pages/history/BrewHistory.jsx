@@ -1,6 +1,8 @@
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import logo from '../../assets/logo.svg';
 import { IconLeaf } from '../dashboard/icons';
+import { getBrewLog } from './brewLog';
 import './BrewHistory.css';
 
 const PALETTE = [
@@ -33,20 +35,45 @@ const HISTORY = [
   { date: 'Aug 17, 2026', name: 'Shatavari Kwatha', dose: '100 mL', consistency: '96.3%', status: 'Completed' },
 ];
 
+const mapLog = (e) => ({
+  date: e.date,
+  name: e.name,
+  dose: e.dose,
+  consistency: e.consistency,
+  status: e.status === 'In progress' ? 'In progress' : e.status,
+});
+
 export default function BrewHistory() {
-  const completed = HISTORY.filter((h) => h.status === 'Completed').length;
-  const interrupted = HISTORY.length - completed;
+  const [logged, setLogged] = useState(() => getBrewLog());
 
-  const readings = HISTORY.map((h) => parseFloat(h.consistency)).filter((n) => !Number.isNaN(n));
-  const avgConsistency = (readings.reduce((a, b) => a + b, 0) / readings.length).toFixed(1);
+  useEffect(() => {
+    const refresh = () => setLogged(getBrewLog());
+    window.addEventListener('vedikshaya:brewlog', refresh);
+    window.addEventListener('storage', refresh);
+    window.addEventListener('focus', refresh);
+    return () => {
+      window.removeEventListener('vedikshaya:brewlog', refresh);
+      window.removeEventListener('storage', refresh);
+      window.removeEventListener('focus', refresh);
+    };
+  }, []);
 
-  const counts = HISTORY.reduce((acc, h) => {
+  const history = [...logged.map(mapLog), ...HISTORY];
+  const completed = history.filter((h) => h.status === 'Completed').length;
+  const interrupted = history.filter((h) => h.status === 'Interrupted').length;
+
+  const readings = history.map((h) => parseFloat(h.consistency)).filter((n) => !Number.isNaN(n));
+  const avgConsistency = readings.length
+    ? (readings.reduce((a, b) => a + b, 0) / readings.length).toFixed(1)
+    : '—';
+
+  const counts = history.reduce((acc, h) => {
     acc[h.name] = (acc[h.name] || 0) + 1;
     return acc;
   }, {});
   const [topName, topCount] = Object.entries(counts).sort((a, b) => b[1] - a[1])[0];
 
-  const uniqueNames = [...new Set(HISTORY.map((h) => h.name))];
+  const uniqueNames = [...new Set(history.map((h) => h.name))];
   const colorFor = (name) => PALETTE[uniqueNames.indexOf(name) % PALETTE.length];
 
   return (
@@ -72,7 +99,7 @@ export default function BrewHistory() {
 
           <div className="bh__stats">
             <div className="bh__stat bh__stat--hero">
-              <span className="bh__stat-value">{HISTORY.length}</span>
+              <span className="bh__stat-value">{history.length}</span>
               <span className="bh__stat-label">Brews logged</span>
             </div>
             <div className="bh__stat-row">
@@ -99,9 +126,10 @@ export default function BrewHistory() {
 
         <section className="bh__content">
           <div className="bh__scroll">
-            {HISTORY.map((h, i) => {
+            {history.map((h, i) => {
               const [color, tint] = colorFor(h.name);
               const done = h.status === 'Completed';
+              const live = h.status === 'In progress';
               return (
                 <article key={i} className="bh__row">
                   <span className="bh__badge" style={{ '--c': color, '--ct': tint }}>
@@ -115,11 +143,17 @@ export default function BrewHistory() {
                       <i className="bh__dot" />
                       <span>{h.dose}</span>
                       <i className="bh__dot" />
-                      <span>{done ? `${h.consistency} consistency` : 'no consistency reading'}</span>
+                      <span>
+                        {done
+                          ? `${h.consistency} consistency`
+                          : live
+                            ? 'brewing now'
+                            : 'no consistency reading'}
+                      </span>
                     </span>
                   </div>
 
-                  <span className={`bh__status bh__status--${done ? 'ok' : 'warn'}`}>
+                  <span className={`bh__status bh__status--${done ? 'ok' : live ? 'live' : 'warn'}`}>
                     <span className="bh__status-dot" />
                     {h.status}
                   </span>
