@@ -102,6 +102,17 @@ const STRINGS = {
   'sensor.rpm': { en: 'Stirrer Speed', hi: 'मथनी गति', ta: 'கிளறி வேகம்' },
   'sensor.flow': { en: 'Flow Rate', hi: 'प्रवाह दर', ta: 'ஓட்ட விகிதம்' },
 
+  // portal (doctor / patient)
+  'pt.available': { en: 'Available', hi: 'उपलब्ध', ta: 'கிடைக்கிறது' },
+  'pt.busy': { en: 'Busy', hi: 'व्यस्त', ta: 'பிஸியாக' },
+  'pnav.patients': { en: 'Patients', hi: 'मरीज़', ta: 'நோயாளிகள்' },
+  'pnav.brewMonitor': { en: 'Brew Monitor', hi: 'काढ़ा मॉनिटर', ta: 'காய்ச்சல் கண்காணிப்பு' },
+  'pnav.chat': { en: 'Chat', hi: 'चैट', ta: 'அரட்டை' },
+  'pnav.today': { en: 'Today', hi: 'आज', ta: 'இன்று' },
+  'pnav.compliance': { en: 'Compliance', hi: 'अनुपालन', ta: 'இணக்கம்' },
+  'pnav.prescription': { en: 'Prescription', hi: 'नुस्खा', ta: 'மருந்துச்சீட்டு' },
+  'pnav.symptoms': { en: 'Symptoms', hi: 'लक्षण', ta: 'அறிகுறிகள்' },
+
   // sidebar — nav
   'nav.brewStatus': { en: 'Brew Status', hi: 'काढ़ा स्थिति', ta: 'காய்ச்சல் நிலை' },
   'nav.sensors': { en: 'Sensors', hi: 'सेंसर', ta: 'உணரிகள்' },

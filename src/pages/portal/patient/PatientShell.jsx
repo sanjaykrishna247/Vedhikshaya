@@ -1,20 +1,11 @@
 import { PortalShell } from '../shared';
-import { usePatientNav, usePatient } from './usePatientNav';
-import { currentStreak } from '../../../portal/portalLogic';
+import { usePatientNav } from './usePatientNav';
 
-// Thin wrapper so every patient page gets the nav + the streak chip in the
-// top bar without repeating the wiring.
+// Thin wrapper so every patient page gets the nav + shared top bar.
 export default function PatientShell({ children }) {
   const nav = usePatientNav();
-  const patient = usePatient();
-  const streak = patient ? currentStreak(patient) : 0;
-
   return (
-    <PortalShell
-      variant="patient"
-      nav={nav}
-      headerExtra={<span className="pt__streak-chip">🔥 {streak}d</span>}
-    >
+    <PortalShell variant="patient" nav={nav}>
       {children}
     </PortalShell>
   );

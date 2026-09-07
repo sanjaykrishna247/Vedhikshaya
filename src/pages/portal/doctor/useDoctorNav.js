@@ -1,10 +1,12 @@
 import { useMemo } from 'react';
 import { usePortal } from '../../../portal/PortalContext';
+import { useDashLang } from '../../dashboard/dashI18n';
 import { Icon } from '../shared';
 
 // Builds the doctor sidebar nav with a live unread-chat badge.
 export function useDoctorNav() {
   const { store, patients } = usePortal();
+  const { t } = useDashLang();
   const domain = store.doctor.hospitalDomain;
 
   const unread = useMemo(() => {
@@ -17,8 +19,8 @@ export function useDoctorNav() {
   }, [store.chats, patients, domain]);
 
   return [
-    { to: '/doctor/dashboard', label: 'Patients', icon: Icon.patients, end: true },
-    { to: '/doctor/brew', label: 'Brew Monitor', icon: Icon.brew },
-    { to: '/doctor/chat', label: 'Chat', icon: Icon.chat, badge: unread },
+    { to: '/doctor/dashboard', label: t('pnav.patients'), icon: Icon.patients, end: true },
+    { to: '/doctor/brew', label: t('pnav.brewMonitor'), icon: Icon.brew },
+    { to: '/doctor/chat', label: t('pnav.chat'), icon: Icon.chat, badge: unread },
   ];
 }

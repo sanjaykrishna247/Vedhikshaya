@@ -2,6 +2,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useRef, use
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import logo from '../../assets/logo.svg';
 import { usePortal } from '../../portal/PortalContext';
+import { LANGS, useDashLang } from '../dashboard/dashI18n';
 
 // ---------------------------------------------------------------------------
 // icons (stroke, 24 grid) — match the dashboard sidebar weight
@@ -18,6 +19,8 @@ export const Icon = {
   bell: (<svg viewBox="0 0 24 24" {...S}><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2.5h-15z" /><path d="M10 19a2 2 0 0 0 4 0" /></svg>),
   logout: (<svg viewBox="0 0 24 24" {...S}><path d="M9 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h3" /><path d="M16 17l5-5-5-5M21 12H9" /></svg>),
   back: (<svg viewBox="0 0 24 24" {...S}><path d="M15 5l-7 7 7 7" /></svg>),
+  translate: (<svg viewBox="0 0 24 24" {...S}><path d="M4 5h9M8.5 3v2M6 5c0 5 2.5 8 6 9M11 5c0 4-3 8-7 9" /><path d="M13 20l4-9 4 9M14.4 17h5.2" /></svg>),
+  check: (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M5 13l4 4 10-10" /></svg>),
 };
 
 // ---------------------------------------------------------------------------
@@ -79,15 +82,16 @@ export function clockTime(ts) {
 }
 
 // ---------------------------------------------------------------------------
-// notifications bell
+// top-bar icon menus — same language switcher + notifications as the main
+// dashboard, restyled to sit flush (no boxed background)
 // ---------------------------------------------------------------------------
 function NotifBell({ items, onOpen }) {
   const [open, setOpen] = useState(false);
   const unread = items.filter((n) => !n.read).length;
   return (
-    <div style={{ position: 'relative' }}>
+    <div className="pt__iconwrap">
       <button
-        className="pt__bell"
+        className="pt__iconbtn"
         aria-label="Notifications"
         onClick={() => {
           setOpen((v) => !v);
@@ -116,6 +120,40 @@ function NotifBell({ items, onOpen }) {
   );
 }
 
+function LangMenu() {
+  const { lang, setLang } = useDashLang();
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="pt__iconwrap">
+      <button className="pt__iconbtn" aria-label="Language" onClick={() => setOpen((v) => !v)}>
+        {Icon.translate}
+      </button>
+      {open && (
+        <>
+          <div style={{ position: 'fixed', inset: 0, zIndex: 39 }} onClick={() => setOpen(false)} />
+          <div className="pt__notif-panel pt__lang-panel">
+            <div className="pt__notif-head">Language</div>
+            {LANGS.map((l) => (
+              <button
+                key={l.code}
+                className={`pt__lang-item ${lang === l.code ? 'is-active' : ''}`}
+                onClick={() => {
+                  setLang(l.code);
+                  setOpen(false);
+                }}
+              >
+                <span>{l.native}</span>
+                <small>{l.label}</small>
+                {lang === l.code && <span className="pt__lang-check">{Icon.check}</span>}
+              </button>
+            ))}
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
 // ---------------------------------------------------------------------------
 // portal shell — topbar + sidebar + main
 // ---------------------------------------------------------------------------
@@ -126,8 +164,9 @@ const IconMenu = (
   </svg>
 );
 
-export function PortalShell({ variant, nav, children, headerExtra }) {
+export function PortalShell({ variant, nav, children }) {
   const { session, portalLogout, doctor, setDoctorAvailability, doctorNotifications, patientNotifications, markNotificationsRead } = usePortal();
+  const { t } = useDashLang();
   const navigate = useNavigate();
   const location = useLocation();
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -165,7 +204,7 @@ export function PortalShell({ variant, nav, children, headerExtra }) {
       <header className="pt__topbar">
         <div className="pt__topbar-left">
           <button
-            className="pt__burger"
+            className="pt__iconbtn pt__burger"
             aria-label="Toggle menu"
             aria-expanded={drawerOpen}
             onClick={() => setDrawerOpen((v) => !v)}
@@ -180,16 +219,16 @@ export function PortalShell({ variant, nav, children, headerExtra }) {
         </div>
 
         <div className="pt__topbar-right">
-          {headerExtra}
           {isDoctor && (
             <button
               className={`pt__avail ${doctor.available ? 'pt__avail--on' : 'pt__avail--off'}`}
               onClick={() => setDoctorAvailability(!doctor.available)}
             >
               <span className="pt__avail-dot" />
-              <span className="pt__avail-text">{doctor.available ? 'Available' : 'Busy'}</span>
+              <span className="pt__avail-text">{doctor.available ? t('pt.available') : t('pt.busy')}</span>
             </button>
           )}
+          <LangMenu />
           <NotifBell items={notifItems} onOpen={() => markNotificationsRead(isDoctor ? 'doctor' : session?.id)} />
         </div>
       </header>
@@ -198,9 +237,8 @@ export function PortalShell({ variant, nav, children, headerExtra }) {
         <aside className={`pt__side ${drawerOpen ? 'is-open' : ''}`}>
           <div className="pt__profile">
             <span className="pt__profile-avatar">{initials}</span>
-            <span>
+            <span className="pt__profile-info">
               <span className="pt__profile-name">{session?.name}</span>
-              <br />
               <span className="pt__profile-sub">{session?.hospital_name}</span>
             </span>
           </div>
@@ -223,7 +261,7 @@ export function PortalShell({ variant, nav, children, headerExtra }) {
           <div className="pt__side-spacer" />
           <button className="pt__logout" onClick={handleLogout}>
             {Icon.logout}
-            <span>Log Out</span>
+            <span>{t('pod.logout')}</span>
           </button>
         </aside>
 
