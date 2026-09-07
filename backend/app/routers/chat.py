@@ -11,6 +11,7 @@ The NVIDIA API key lives only here (server-side env var), never in the client.
 from __future__ import annotations
 
 import os
+import re
 
 import httpx
 from fastapi import APIRouter
@@ -21,16 +22,17 @@ router = APIRouter(prefix="/chat", tags=["chat"])
 NVIDIA_URL = "https://integrate.api.nvidia.com/v1/chat/completions"
 NVIDIA_API_KEY = os.getenv("NVIDIA_API_KEY", "")
 
-# Try these in order. NVIDIA retires model ids and then returns 404/410, so we
-# fall through to the next one. Put a preferred id in NVIDIA_MODEL to try first.
+# NVIDIA retires model ids (returns 404/410) fairly often. Try NVIDIA_MODEL
+# first, then these currently-live chat models, falling through on 404/410/422.
+# Check https://integrate.api.nvidia.com/v1/models for the current list.
 NVIDIA_MODELS = [
     m.strip()
     for m in [
         os.getenv("NVIDIA_MODEL", ""),
-        "nvidia/llama-3.1-nemotron-70b-instruct",
-        "meta/llama-3.1-70b-instruct",
-        "meta/llama-3.1-8b-instruct",
-        "mistralai/mixtral-8x7b-instruct-v0.1",
+        "nvidia/nemotron-3-super-120b-a12b",
+        "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "mistralai/mistral-large-2-instruct",
+        "google/gemma-3-12b-it",
     ]
     if m.strip()
 ]
@@ -89,6 +91,8 @@ Caution: not a substitute for medical evaluation in high or persistent fever.
 """
 
 SYSTEM_PROMPT = (
+    # Nemotron models put their chain-of-thought in the reply unless told not to.
+    "detailed thinking off\n\n"
     "You are Dr. Vedik, a careful Ayurvedic assistant for the Vedikshaya app. "
     "Answer ONLY using the physician-reviewed notes below. If the notes do not "
     "cover the question, say you don't have that in your reference material and "
@@ -158,7 +162,7 @@ async def chat(body: ChatIn) -> ChatOut:
                     print(f"[chat] {last_err}")
                     continue
                 r.raise_for_status()
-                reply = (r.json()["choices"][0]["message"]["content"] or "").strip()
+                reply = _clean(r.json()["choices"][0]["message"]["content"])
                 if reply:
                     return ChatOut(reply=reply, source=f"nvidia:{model}")
                 last_err = f"{model}: empty completion"
@@ -167,6 +171,24 @@ async def chat(body: ChatIn) -> ChatOut:
 
     print(f"[chat] NVIDIA call failed, using fallback: {last_err}")
     return ChatOut(reply=_local_fallback(history[-1].text), source="fallback")
+
+
+def _clean(text: str | None) -> str:
+    """Strip any reasoning scaffold a model leaks into its answer."""
+    t = (text or "").strip()
+    # normalise the fancy spaces / hyphens some models emit
+    t = t.replace(" ", " ").replace(" ", " ").replace("‑", "-")
+    # <think> ... </think> blocks
+    t = re.sub(r"<think>.*?</think>", "", t, flags=re.S | re.I).strip()
+    if "</think>" in t:
+        t = t.split("</think>")[-1].strip()
+    # "Here's a thinking process: ... " preambles — keep from the last blank
+    # line if the model dumped a numbered plan before the real answer
+    if re.match(r"(here'?s (a|my) (thinking|thought) process|let me think|okay,? let'?s)", t, re.I):
+        parts = re.split(r"\n\s*\n", t)
+        if len(parts) > 1:
+            t = parts[-1].strip()
+    return t
 
 
 # Keyword fallback so the demo still works if the LLM/network is down.
