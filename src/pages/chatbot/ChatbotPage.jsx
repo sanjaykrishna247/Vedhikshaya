@@ -5,17 +5,42 @@ import { findRecommendation, KASHAYA_CATALOGUE } from './kashayaData';
 import logo from '../../assets/logo.svg';
 import './ChatbotPage.css';
 
+const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:8000';
+
 const WELCOME = {
   role: 'bot',
   text: "Hi, I'm Dr. Vedik — your Ayurvedic assistant. Tell me what you're experiencing (e.g. \"I have a cold and body ache\") and I'll suggest a Kashaya for it.",
 };
 
+// Local keyword fallback — used if the AI service is unreachable.
 function buildReply(userText) {
   const match = findRecommendation(userText);
   if (match) {
     return `Based on what you've described, I'd recommend **${match.name}**. ${match.note}`;
   }
   return "I don't have a specific match for that yet — could you tell me more, or mention symptoms like fever, digestion, immunity, or stress?";
+}
+
+// Ask the backend (which grounds the reply in physician-reviewed notes and
+// calls the LLM). Falls back to the local matcher on any failure.
+async function fetchReply(history) {
+  try {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 35000);
+    const res = await fetch(`${API_BASE}/chat`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ messages: history.map((m) => ({ role: m.role, text: m.text })) }),
+      signal: controller.signal,
+    });
+    clearTimeout(timer);
+    if (!res.ok) throw new Error(`chat ${res.status}`);
+    const data = await res.json();
+    if (data?.reply) return data.reply;
+    throw new Error('empty reply');
+  } catch {
+    return buildReply(history[history.length - 1]?.text || '');
+  }
 }
 
 export default function ChatbotPage() {
@@ -30,13 +55,14 @@ export default function ChatbotPage() {
 
   const send = async (text) => {
     if (!text.trim() || thinking) return;
-    setMessages((m) => [...m, { role: 'user', text }]);
+    const next = [...messages, { role: 'user', text }];
+    setMessages(next);
     setInput('');
     setThinking(true);
 
-    await new Promise((r) => setTimeout(r, 600 + Math.random() * 500));
+    const reply = await fetchReply(next);
 
-    setMessages((m) => [...m, { role: 'bot', text: buildReply(text) }]);
+    setMessages((m) => [...m, { role: 'bot', text: reply }]);
     setThinking(false);
   };
 
