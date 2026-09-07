@@ -19,8 +19,21 @@ from pydantic import BaseModel, Field
 router = APIRouter(prefix="/chat", tags=["chat"])
 
 NVIDIA_URL = "https://integrate.api.nvidia.com/v1/chat/completions"
-NVIDIA_MODEL = os.getenv("NVIDIA_MODEL", "meta/llama-3.3-70b-instruct")
 NVIDIA_API_KEY = os.getenv("NVIDIA_API_KEY", "")
+
+# Try these in order. NVIDIA retires model ids and then returns 404/410, so we
+# fall through to the next one. Put a preferred id in NVIDIA_MODEL to try first.
+NVIDIA_MODELS = [
+    m.strip()
+    for m in [
+        os.getenv("NVIDIA_MODEL", ""),
+        "nvidia/llama-3.1-nemotron-70b-instruct",
+        "meta/llama-3.1-70b-instruct",
+        "meta/llama-3.1-8b-instruct",
+        "mistralai/mixtral-8x7b-instruct-v0.1",
+    ]
+    if m.strip()
+]
 
 # --- physician-reviewed knowledge base -------------------------------------
 # Reviewed by the project's consulting Vaidya. Every answer must be grounded
@@ -114,37 +127,46 @@ async def chat(body: ChatIn) -> ChatOut:
     if not NVIDIA_API_KEY:
         return ChatOut(reply=_local_fallback(history[-1].text), source="fallback")
 
-    payload = {
-        "model": NVIDIA_MODEL,
-        "messages": [
-            {"role": "system", "content": SYSTEM_PROMPT},
-            *[
-                {"role": "assistant" if m.role in ("bot", "assistant") else "user", "content": m.text}
-                for m in history
-            ],
+    convo = [
+        {"role": "system", "content": SYSTEM_PROMPT},
+        *[
+            {"role": "assistant" if m.role in ("bot", "assistant") else "user", "content": m.text}
+            for m in history
         ],
-        "temperature": 0.3,
-        "top_p": 0.9,
-        "max_tokens": 400,
-        "stream": False,
-    }
+    ]
     headers = {
         "Authorization": f"Bearer {NVIDIA_API_KEY}",
         "Accept": "application/json",
     }
 
+    last_err = "no model available"
     try:
         async with httpx.AsyncClient(timeout=30) as client:
-            r = await client.post(NVIDIA_URL, headers=headers, json=payload)
-        r.raise_for_status()
-        data = r.json()
-        reply = (data["choices"][0]["message"]["content"] or "").strip()
-        if not reply:
-            raise ValueError("empty completion")
-        return ChatOut(reply=reply, source="nvidia")
+            for model in NVIDIA_MODELS:
+                payload = {
+                    "model": model,
+                    "messages": convo,
+                    "temperature": 0.3,
+                    "top_p": 0.9,
+                    "max_tokens": 400,
+                    "stream": False,
+                }
+                r = await client.post(NVIDIA_URL, headers=headers, json=payload)
+                if r.status_code in (404, 410, 422):
+                    # model id retired / not valid — try the next one
+                    last_err = f"{model}: {r.status_code} {r.text[:180]}"
+                    print(f"[chat] {last_err}")
+                    continue
+                r.raise_for_status()
+                reply = (r.json()["choices"][0]["message"]["content"] or "").strip()
+                if reply:
+                    return ChatOut(reply=reply, source=f"nvidia:{model}")
+                last_err = f"{model}: empty completion"
     except Exception as exc:  # noqa: BLE001
-        print(f"[chat] NVIDIA call failed: {exc}")
-        return ChatOut(reply=_local_fallback(history[-1].text), source="fallback")
+        last_err = str(exc)
+
+    print(f"[chat] NVIDIA call failed, using fallback: {last_err}")
+    return ChatOut(reply=_local_fallback(history[-1].text), source="fallback")
 
 
 # Keyword fallback so the demo still works if the LLM/network is down.
