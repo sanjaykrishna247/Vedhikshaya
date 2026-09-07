@@ -1,11 +1,8 @@
-import { useEffect, useState } from 'react';
-import useCountUp from './useCountUp';
 import { IconThermo } from './icons';
+import { useBrewSim } from './BrewSim';
+import { useDashLang } from './dashI18n';
 
-const MIN = 60;
-const MAX = 100;
-const TEMP = 87;
-const BAND = [85, 90]; // optimal range
+const BAND = [85, 90]; // optimal draw range
 
 // viewBox geometry (0 0 260 268)
 const VB_W = 260;
@@ -18,27 +15,24 @@ const TUBE_H = TUBE_BOTTOM - TUBE_TOP;
 const SCALE_TOP = 104; // value at tube top  (headroom so 100 sits inside)
 const SCALE_BOT = 56; //  value at tube bottom
 
-const yFor = (t) => TUBE_BOTTOM - ((t - SCALE_BOT) / (SCALE_TOP - SCALE_BOT)) * TUBE_H;
+const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
+const yFor = (t) => TUBE_BOTTOM - ((clamp(t, SCALE_BOT, SCALE_TOP) - SCALE_BOT) / (SCALE_TOP - SCALE_BOT)) * TUBE_H;
 
 export default function TemperatureGauge() {
-  const value = useCountUp(TEMP, { duration: 1600 });
-  const [sweep, setSweep] = useState(false);
+  const { t } = useDashLang();
+  const { tempC } = useBrewSim();
 
-  useEffect(() => {
-    const t = setTimeout(() => setSweep(true), 60);
-    return () => clearTimeout(t);
-  }, []);
-
-  const fillPct = (TUBE_BOTTOM - yFor(TEMP)) / TUBE_H;
-  const levelY = yFor(TEMP);
+  const value = Math.round(tempC);
+  const fillPct = (TUBE_BOTTOM - yFor(tempC)) / TUBE_H;
+  const levelY = yFor(tempC);
   const levelTopPct = (levelY / VB_H) * 100;
 
   const status =
-    TEMP < BAND[0]
-      ? { key: 'low', label: 'Low' }
-      : TEMP > BAND[1]
-        ? { key: 'high', label: 'High' }
-        : { key: 'ok', label: 'Optimal' };
+    tempC < BAND[0]
+      ? { key: 'low', label: t('temp.low') }
+      : tempC > BAND[1]
+        ? { key: 'high', label: t('temp.high') }
+        : { key: 'ok', label: t('temp.optimal') };
 
   return (
     <div className="d-card d-card--temp">
@@ -47,15 +41,14 @@ export default function TemperatureGauge() {
           <span className="d-card__icon">
             <IconThermo />
           </span>
-          <h3>Temperature</h3>
+          <h3>{t('card.temperature')}</h3>
         </div>
       </div>
 
       <div className="therm">
-        {/* left: status indicator, aligned to the reading */}
         <div
           className={`therm__status therm__status--${status.key}`}
-          style={{ top: `${levelTopPct}%` }}
+          style={{ top: `${levelTopPct}%`, transition: 'top 0.5s var(--ease)' }}
         >
           <span className="therm__status-dot" />
           {status.label}
@@ -74,7 +67,6 @@ export default function TemperatureGauge() {
             </clipPath>
           </defs>
 
-          {/* faint full scale */}
           <rect
             x={TUBE_X}
             y={TUBE_TOP}
@@ -85,37 +77,33 @@ export default function TemperatureGauge() {
             opacity="0.2"
           />
 
-          {/* mercury fill */}
           <g clipPath="url(#thermTube)">
             <rect
-              className={`therm__mercury ${sweep ? 'is-filled' : ''}`}
+              className="therm__mercury is-filled"
               x={TUBE_X}
               y={TUBE_TOP}
               width={TUBE_W}
               height={TUBE_H}
               fill="url(#thermScale)"
-              style={{ '--fill': fillPct }}
+              style={{ '--fill': fillPct, transition: 'transform 0.55s var(--ease)' }}
             />
           </g>
 
-          {/* optimal band markers on the tube edge */}
-          {BAND.map((t) => (
+          {BAND.map((b) => (
             <line
-              key={t}
+              key={b}
               x1={TUBE_X + TUBE_W}
-              y1={yFor(t)}
+              y1={yFor(b)}
               x2={TUBE_X + TUBE_W + 6}
-              y2={yFor(t)}
+              y2={yFor(b)}
               stroke="rgba(1,47,19,0.35)"
               strokeWidth="1.5"
             />
           ))}
 
-          {/* neck + bulb (same colour as the scale's cool end so it merges) */}
           <rect x={TUBE_X} y={TUBE_BOTTOM - 20} width={TUBE_W} height="28" fill="#7cc142" />
           <circle cx={TUBE_X + TUBE_W / 2} cy="224" r="18" fill="#7cc142" />
 
-          {/* single continuous dark outline: tube flaring into the bulb */}
           {(() => {
             const cx = TUBE_X + TUBE_W / 2;
             const right = TUBE_X + TUBE_W;
@@ -124,6 +112,7 @@ export default function TemperatureGauge() {
             const bulbCy = 224;
             const topCy = TUBE_TOP + halfW;
             const meetY = bulbCy - Math.sqrt(bulbR * bulbR - halfW * halfW);
+            void cx;
             return (
               <path
                 d={`M ${TUBE_X} ${topCy}
@@ -139,21 +128,19 @@ export default function TemperatureGauge() {
             );
           })()}
 
-          {/* scale ticks */}
-          {[60, 70, 80, 90, 100].map((t) => {
-            const y = yFor(t);
+          {[60, 70, 80, 90, 100].map((tick) => {
+            const y = yFor(tick);
             return (
-              <g key={t} className="therm__tick">
+              <g key={tick} className="therm__tick">
                 <line x1={TUBE_X - 12} y1={y} x2={TUBE_X - 2} y2={y} />
                 <text x={TUBE_X - 18} y={y + 3.5} textAnchor="end">
-                  {t}
+                  {tick}
                 </text>
               </g>
             );
           })}
 
-          {/* current-level marker line (dark) */}
-          <g className={`therm__level ${sweep ? 'is-filled' : ''}`}>
+          <g className="therm__level is-filled" style={{ transition: 'none' }}>
             <line
               x1={TUBE_X + TUBE_W}
               y1={levelY}
@@ -165,15 +152,17 @@ export default function TemperatureGauge() {
           </g>
         </svg>
 
-        {/* right: reading, next to the marker line */}
-        <div className="therm__readout" style={{ top: `${levelTopPct}%` }}>
+        <div
+          className="therm__readout"
+          style={{ top: `${levelTopPct}%`, transition: 'top 0.5s var(--ease)', animation: 'none', opacity: 1 }}
+        >
           <span className="therm__readout-value">{value}°C</span>
-          <span className="therm__readout-sub">holding</span>
+          <span className="therm__readout-sub">{t('temp.holding')}</span>
         </div>
       </div>
 
       <div className="d-card__range">
-        <span>Target range</span>
+        <span>{t('temp.targetRange')}</span>
         <span>85–90°C</span>
       </div>
     </div>

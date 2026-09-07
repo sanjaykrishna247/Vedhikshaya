@@ -10,12 +10,13 @@ import {
 } from './icons';
 import { useAuth } from '../../auth/AuthContext';
 import { useKashaya } from '../../auth/KashayaContext';
+import { useDashLang } from './dashI18n';
 
 const NAV = [
-  { icon: IconBrewStatus, label: 'Brew Status', to: '/dashboard', expandable: true },
-  { icon: IconSensors, label: 'Sensors', to: '/sensors', expandable: true },
-  { icon: IconRobot, label: 'AI Assistant', to: '/chatbot' },
-  { icon: IconHistory, label: 'Brew History', to: '/brew-history', expandable: true },
+  { icon: IconBrewStatus, key: 'nav.brewStatus', to: '/dashboard', expandable: true },
+  { icon: IconSensors, key: 'nav.sensors', to: '/sensors', expandable: true },
+  { icon: IconRobot, key: 'nav.assistant', to: '/chatbot' },
+  { icon: IconHistory, key: 'nav.history', to: '/brew-history', expandable: true },
 ];
 
 const POD_INGREDIENTS = [
@@ -35,6 +36,7 @@ export default function Sidebar({ open = true }) {
   const [drMode, setDrMode] = useState(false);
   const { logout } = useAuth();
   const { kashaya } = useKashaya();
+  const { t } = useDashLang();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -58,14 +60,14 @@ export default function Sidebar({ open = true }) {
         <nav className="d-sidebar__nav">
           {NAV.map((item) => (
             <Link
-              key={item.label}
+              key={item.key}
               to={item.to}
               className={`d-sidebar__link ${location.pathname === item.to ? 'd-sidebar__link--active' : ''}`}
             >
               <span className="d-sidebar__icon">
                 <item.icon />
               </span>
-              <span className="d-sidebar__linklabel">{item.label}</span>
+              <span className="d-sidebar__linklabel">{t(item.key)}</span>
               {item.expandable && <IconChevronRight className="d-sidebar__chevron" />}
             </Link>
           ))}
@@ -78,15 +80,15 @@ export default function Sidebar({ open = true }) {
         <div className="d-sidebar__pod">
           <div className="d-sidebar__pod-top">
             <div>
-              <div className="d-sidebar__pod-label">Current Pod</div>
+              <div className="d-sidebar__pod-label">{t('pod.current')}</div>
               <div className="d-sidebar__pod-name">{kashaya}</div>
             </div>
           </div>
-          <span className="d-badge">AFI Certified</span>
+          <span className="d-badge">{t('pod.afiCertified')}</span>
 
           <div className="d-sidebar__pod-ingredients">
             <div className="d-sidebar__pod-sublabel">
-              Ingredients · {POD_INGREDIENTS.length} roots
+              {t('pod.ingredients')} · {POD_INGREDIENTS.length} {t('pod.roots')}
             </div>
             <div className="d-sidebar__pod-chips">
               {POD_INGREDIENTS.map((name) => (
@@ -105,14 +107,14 @@ export default function Sidebar({ open = true }) {
         <div className="d-sidebar__divider" />
         <button className="d-sidebar__drmode" onClick={() => setDrMode((v) => !v)}>
           <span className="d-sidebar__avatar">Dr</span>
-          <span className="d-sidebar__drmode-label">Dr. Mode</span>
+          <span className="d-sidebar__drmode-label">{t('pod.drMode')}</span>
           <span className={`d-toggle ${drMode ? 'd-toggle--on' : ''}`}>
             <span className="d-toggle__knob" />
           </span>
         </button>
         <button className="d-sidebar__logout" onClick={handleLogout}>
           <IconLogout className="d-sidebar__logout-icon" />
-          <span>Log Out</span>
+          <span>{t('pod.logout')}</span>
         </button>
       </div>
     </aside>

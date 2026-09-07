@@ -1,6 +1,6 @@
 import { IconTarget } from './icons';
-
-const SCORE = 97.4;
+import { useBrewSim } from './BrewSim';
+import { useDashLang } from './dashI18n';
 
 // gauge centre / radii  (viewBox "-15 -50 430 225")
 const CX = 190;
@@ -26,9 +26,14 @@ const ZONES = [
 ];
 
 const MAJORS = [0, 25, 50, 75, 100];
-const finalRot = -90 + (SCORE / 100) * 180;
 
 export default function ConsistencyRing() {
+  const { t } = useDashLang();
+  const { consistency } = useBrewSim();
+
+  const score = Math.max(0, Math.min(100, consistency));
+  const needleRot = -90 + (score / 100) * 180;
+
   const minorTicks = [];
   for (let v = 0; v <= 100; v += 2.5) {
     if (v % 25 === 0) continue;
@@ -56,7 +61,7 @@ export default function ConsistencyRing() {
           <span className="d-card__icon">
             <IconTarget />
           </span>
-          <h3>Brew Consistency Score</h3>
+          <h3>{t('card.consistency')}</h3>
         </div>
       </div>
 
@@ -92,7 +97,6 @@ export default function ConsistencyRing() {
             ))}
           </defs>
 
-          {/* coloured band */}
           <g filter="url(#gmGlow3)">
             {ZONES.map((z) => (
               <path
@@ -106,11 +110,9 @@ export default function ConsistencyRing() {
             ))}
           </g>
 
-          {/* rims */}
           <path d={arcPath(0, 100, R_BAND + 23)} fill="none" stroke="rgba(1,47,19,0.14)" strokeWidth="3" />
           <path d={arcPath(0, 100, R_BAND - 23)} fill="none" stroke="rgba(1,47,19,0.14)" strokeWidth="3" />
 
-          {/* ticks */}
           {minorTicks}
           {MAJORS.map((v) => {
             const [x1, y1] = pt(v, 167);
@@ -135,14 +137,12 @@ export default function ConsistencyRing() {
             );
           })}
 
-          {/* zone dividers */}
           {[25, 50, 75].map((v) => {
             const [x1, y1] = pt(v, R_BAND - 23);
             const [x2, y2] = pt(v, R_BAND + 23);
             return <line key={v} x1={x1} y1={y1} x2={x2} y2={y2} stroke="#ffffff" strokeWidth="3.5" />;
           })}
 
-          {/* zone labels */}
           {ZONES.map((z) => (
             <text key={z.id} className="gm__zlabel" fill="#ffffff" fontSize="9.5" fontWeight="800" letterSpacing="0.9">
               <textPath href={`#gmArc${z.id}`} startOffset="50%" textAnchor="middle" dominantBaseline="middle">
@@ -151,32 +151,28 @@ export default function ConsistencyRing() {
             </text>
           ))}
 
-          {/* needle */}
-          <polygon className="gm__needle" points={`${CX},-8 ${CX - 7},142 ${CX + 7},142`} fill="#111111">
-            <animateTransform
-              attributeName="transform"
-              type="rotate"
-              values={`-90,${CX},${PIVOT_Y}; 90,${CX},${PIVOT_Y}; -90,${CX},${PIVOT_Y}; ${finalRot.toFixed(1)},${CX},${PIVOT_Y}`}
-              keyTimes="0; 0.36; 0.68; 1"
-              calcMode="spline"
-              keySplines="0.4 0 0.6 1; 0.4 0 0.6 1; 0.12 0 0.22 1"
-              dur="3s"
-              fill="freeze"
-            />
-          </polygon>
+          {/* live needle */}
+          <g
+            style={{
+              transform: `rotate(${needleRot.toFixed(2)}deg)`,
+              transformOrigin: `${CX}px ${PIVOT_Y}px`,
+              transition: 'transform 0.7s cubic-bezier(0.22, 1, 0.36, 1)',
+            }}
+          >
+            <polygon points={`${CX},-8 ${CX - 7},142 ${CX + 7},142`} fill="#111111" />
+          </g>
 
-          {/* hub */}
           <circle cx={CX} cy={PIVOT_Y} r="15" fill="#111111" />
           <circle cx={CX} cy={PIVOT_Y} r="6" fill="#ffffff" />
         </svg>
 
         <div className="gm__center">
-          <span className="gm__score">{SCORE}%</span>
-          <span className="gm__cap">Consistency Score</span>
+          <span className="gm__score">{score.toFixed(1)}%</span>
+          <span className="gm__cap">{t('ring.cap')}</span>
         </div>
       </div>
 
-      <p className="gm__afi">Matching AFI Specification</p>
+      <p className="gm__afi">{score < 60 ? t('ring.building') : t('ring.afi')}</p>
     </div>
   );
 }

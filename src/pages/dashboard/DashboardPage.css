@@ -3248,3 +3248,67 @@
     order: -1;
   }
 }
+
+/* ===== Brew start / reset control (hero) ===== */
+.d-hero__control {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  margin-top: 4px;
+}
+.d-hero__start {
+  appearance: none;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  color: #06230f;
+  background: var(--apple);
+  border-radius: 10px;
+  padding: 11px 22px;
+  transition: filter 0.18s var(--ease), transform 0.12s var(--ease), background 0.18s var(--ease);
+}
+.d-hero__start:hover:not(:disabled) {
+  filter: brightness(1.05);
+}
+.d-hero__start:active:not(:disabled) {
+  transform: translateY(1px);
+}
+.d-hero__start:disabled {
+  cursor: default;
+  background: #dfe9d2;
+  color: #4b5f42;
+  font-variant-numeric: tabular-nums;
+}
+.d-hero__start--reset {
+  background: #e9edee;
+  color: #17241b;
+}
+
+.d-live-dot.is-idle {
+  background: #b7c1bb;
+  animation: none;
+}
+
+@media (max-width: 640px) {
+  .d-hero__control {
+    margin-top: 2px;
+  }
+  .d-hero__start {
+    width: 100%;
+  }
+}
+
+/* Water Level — keep the tube from being crushed by the status chip */
+.liquid-tube {
+  flex-shrink: 0;
+}
+.d-card--liquid .liquid-wrap {
+  gap: 16px;
+}
+.liquid-info__status {
+  flex-shrink: 1;
+  min-width: 0;
+}

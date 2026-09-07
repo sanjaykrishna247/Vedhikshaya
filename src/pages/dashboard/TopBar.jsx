@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import logo from '../../assets/logo.svg';
 import { IconMenu, IconSearch, IconSliders, IconTranslateHi, IconBell } from './icons';
+import { LANGS, useDashLang } from './dashI18n';
 
 const IconCheck = (p) => (
   <svg viewBox="0 0 24 24" fill="none" {...p}>
@@ -15,16 +16,10 @@ const ALERTS = [
   { dot: 'green', text: 'pH within AFI range', time: 'Just now' },
 ];
 
-const LANGS = [
-  { code: 'en', label: 'English', native: 'English' },
-  { code: 'hi', label: 'Hindi', native: 'हिंदी' },
-  { code: 'ta', label: 'Tamil', native: 'தமிழ்' },
-];
-
 export default function TopBar({ onMenuClick }) {
+  const { lang, setLang } = useDashLang();
   const [notifOpen, setNotifOpen] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
-  const [lang, setLang] = useState('en');
   const notifRef = useRef(null);
   const langRef = useRef(null);
 

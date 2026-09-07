@@ -5,12 +5,13 @@ import BrewHero from './BrewHero';
 import TopStats from './TopStats';
 import TemperatureGauge from './TemperatureGauge';
 import ReductionLiquid from './ReductionLiquid';
-import PhLevel from './PhLevel';
 import ConsistencyRing from './ConsistencyRing';
 import FloatingChat from './FloatingChat';
+import { BrewSimProvider } from './BrewSim';
+import { DashLangProvider } from './dashI18n';
 import './DashboardPage.css';
 
-export default function DashboardPage() {
+function DashboardInner() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   // Lock background scroll while the mobile drawer is open — otherwise the
@@ -52,15 +53,21 @@ export default function DashboardPage() {
             <div className="d-col-4">
               <ReductionLiquid />
             </div>
-
-            <div className="d-col-12">
-              <PhLevel />
-            </div>
           </div>
         </main>
       </div>
 
       <FloatingChat />
     </div>
+  );
+}
+
+export default function DashboardPage() {
+  return (
+    <DashLangProvider>
+      <BrewSimProvider>
+        <DashboardInner />
+      </BrewSimProvider>
+    </DashLangProvider>
   );
 }
