@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { IconChevronRight } from '../dashboard/icons';
 import BotanicalIcon from './BotanicalIcon';
+import KashayaImage from './KashayaImage';
 import { KASHAYAS } from './herbsData';
 import logo from '../../assets/logo.svg';
 import './HerbsLibrary.css';
@@ -37,7 +38,7 @@ export default function HerbsLibrary() {
           {KASHAYAS.map((k) => (
             <Link key={k.slug} to={`/herbs/${k.slug}`} className="hl__card">
               <span className="hl__card-mark">
-                <BotanicalIcon />
+                <KashayaImage slug={k.slug} className="hl__card-mark-img" />
               </span>
               <span className="hl__card-body">
                 <span className="hl__card-tradition">{k.tradition}</span>

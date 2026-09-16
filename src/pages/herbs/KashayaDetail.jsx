@@ -1,5 +1,6 @@
 import { Link, useParams, Navigate } from 'react-router-dom';
 import BotanicalIcon from './BotanicalIcon';
+import KashayaImage from './KashayaImage';
 import { getKashaya } from './herbsData';
 import logo from '../../assets/logo.svg';
 import './HerbsLibrary.css';
@@ -27,12 +28,19 @@ export default function KashayaDetail() {
       <main className="hl__main hl__detail">
         <div className="hl__hero">
           <BotanicalIcon className="hl__watermark hl__watermark--hero" aria-hidden="true" />
-          <span className="hl__eyebrow">
-            <span className="hl__eyebrow-dot" /> {k.tradition}
-          </span>
-          <h1 className="hl__title">{k.name}</h1>
-          <p className="hl__sub">{k.tagline}</p>
-          <p className="hl__lead">{k.summary}</p>
+          <div className="hl__hero-row">
+            <div className="hl__hero-text">
+              <span className="hl__eyebrow">
+                <span className="hl__eyebrow-dot" /> {k.tradition}
+              </span>
+              <h1 className="hl__title">{k.name}</h1>
+              <p className="hl__sub">{k.tagline}</p>
+              <p className="hl__lead">{k.summary}</p>
+            </div>
+            <span className="hl__hero-mark">
+              <KashayaImage slug={k.slug} className="hl__hero-mark-img" />
+            </span>
+          </div>
         </div>
 
         <section className="hl__section">
