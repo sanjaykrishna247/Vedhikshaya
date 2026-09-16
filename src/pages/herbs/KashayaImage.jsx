@@ -1,8 +1,22 @@
+import { useState } from 'react';
+
+// Real product photos, supplied for this project — one per formulation.
+// Falls back to a hand-drawn depiction (below) if a photo is ever missing.
+const PHOTO = {
+  'nilavembu-kudineer': '/images/herbs/nilavembu-kudineer.webp',
+  'tulsi-dalchini-sunthi-marich': '/images/herbs/tulsi-dalchini-sunthi-marich.webp',
+  'shadanga-paniya': '/images/herbs/shadanga-paniya.webp',
+};
+
+const PHOTO_ALT = {
+  'nilavembu-kudineer': 'Nilavembu Kudineer Chooranam — the Siddha decoction powder, with dried vetiver, black pepper, sandalwood and fresh ginger',
+  'tulsi-dalchini-sunthi-marich': 'Tulsi-Dalchini-Sunthi-Marich Kadha — brewed with fresh tulsi leaves',
+  'shadanga-paniya': "Shadanga Paniya churna — the six-herb powder boiled to make the medicated water",
+};
+
 // Illustrated depictions of each brewed kashaya — a real render of the drink
 // itself (cup, liquid colour, characteristic garnish), not a generic leaf
-// glyph. No photograph exists that's both authentic to these exact classical
-// formulations and safely licensed for use here, so these are drawn instead:
-// each liquid colour, vessel and garnish is accurate to the real preparation.
+// glyph. Used only if a photo above is missing or fails to load.
 
 const STEAM = (x) => (
   <g opacity="0.55" stroke="#ffffff" strokeWidth="1.6" strokeLinecap="round" fill="none">
@@ -109,6 +123,22 @@ const ART = {
 };
 
 export default function KashayaImage({ slug, className, style }) {
+  const [photoFailed, setPhotoFailed] = useState(false);
+  const photo = PHOTO[slug];
+
+  if (photo && !photoFailed) {
+    return (
+      <span className={className} style={style}>
+        <img
+          src={photo}
+          alt={PHOTO_ALT[slug] || ''}
+          loading="lazy"
+          onError={() => setPhotoFailed(true)}
+        />
+      </span>
+    );
+  }
+
   const Art = ART[slug];
   if (!Art) return null;
   return (
