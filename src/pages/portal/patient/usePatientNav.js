@@ -13,6 +13,7 @@ export function usePatientNav() {
     { to: '/patient/prescription', label: t('pnav.prescription'), icon: Icon.rx },
     { to: '/patient/symptoms', label: t('pnav.symptoms'), icon: Icon.symptom },
     { to: '/patient/chat', label: t('pnav.chat'), icon: Icon.chat, badge: unread },
+    { to: '/patient/report', label: t('pnav.report'), icon: Icon.report },
   ];
 }
 

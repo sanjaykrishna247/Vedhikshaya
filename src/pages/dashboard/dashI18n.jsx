@@ -112,6 +112,7 @@ const STRINGS = {
   'pnav.compliance': { en: 'Compliance', hi: 'अनुपालन', ta: 'இணக்கம்' },
   'pnav.prescription': { en: 'Prescription', hi: 'नुस्खा', ta: 'மருந்துச்சீட்டு' },
   'pnav.symptoms': { en: 'Symptoms', hi: 'लक्षण', ta: 'அறிகுறிகள்' },
+  'pnav.report': { en: 'Report / Complaint', hi: 'रिपोर्ट / शिकायत', ta: 'புகார் / அறிக்கை' },
 
   // sidebar — nav
   'nav.brewStatus': { en: 'Brew Status', hi: 'काढ़ा स्थिति', ta: 'காய்ச்சல் நிலை' },
@@ -317,6 +318,43 @@ const STRINGS = {
   'sym.same': { en: 'Same', hi: 'वही', ta: 'அதே' },
   'sym.worse': { en: 'Worse', hi: 'बदतर', ta: 'மோசம்' },
   'sym.much_worse': { en: 'Much Worse', hi: 'बहुत बदतर', ta: 'மிக மோசம்' },
+
+  // ---- patient report / complaint ----
+  'pr.title': { en: 'Report a Problem', hi: 'समस्या दर्ज करें', ta: 'சிக்கலைப் புகாரளி' },
+  'pr.sub': {
+    en: "Tell us what went wrong — with the pod, a dose, billing, the app, or anything else. It goes straight to your care team.",
+    hi: 'क्या गलत हुआ बताएं — पॉड, खुराक, बिलिंग, ऐप या कुछ और। यह सीधे आपकी देखभाल टीम तक जाता है।',
+    ta: 'என்ன தவறு நடந்தது என்று சொல்லுங்கள் — பாட், அளவு, பில்லிங், ஆப் அல்லது வேறு எதுவும். இது நேரடியாக உங்கள் பராமரிப்புக் குழுவை அடையும்.',
+  },
+  'pr.category': { en: 'Category', hi: 'श्रेणी', ta: 'வகை' },
+  'pr.subject': { en: 'Subject', hi: 'विषय', ta: 'தலைப்பு' },
+  'pr.subjectPlaceholder': { en: 'Short summary of the issue', hi: 'समस्या का संक्षिप्त सारांश', ta: 'சிக்கலின் சுருக்கம்' },
+  'pr.description': { en: 'Description', hi: 'विवरण', ta: 'விளக்கம்' },
+  'pr.descriptionPlaceholder': {
+    en: 'What happened, when, and anything that would help us fix it…',
+    hi: 'क्या हुआ, कब हुआ, और ठीक करने में मदद करने वाली कोई भी जानकारी…',
+    ta: 'என்ன நடந்தது, எப்போது, மற்றும் சரிசெய்ய உதவும் எதுவும்…',
+  },
+  'pr.priority': { en: 'Priority', hi: 'प्राथमिकता', ta: 'முன்னுரிமை' },
+  'pr.submit': { en: 'Submit report', hi: 'रिपोर्ट सबमिट करें', ta: 'அறிக்கையைச் சமர்ப்பி' },
+  'pr.submitted': { en: 'Report submitted — your care team has been notified.', hi: 'रिपोर्ट सबमिट हुई — आपकी देखभाल टीम को सूचित कर दिया गया है।', ta: 'அறிக்கை சமர்ப்பிக்கப்பட்டது — உங்கள் பராமரிப்புக் குழுவிற்கு தெரிவிக்கப்பட்டது.' },
+  'pr.history': { en: 'Your reports', hi: 'आपकी रिपोर्ट्स', ta: 'உங்கள் அறிக்கைகள்' },
+  'pr.noHistory': { en: "You haven't submitted any reports yet.", hi: 'आपने अभी तक कोई रिपोर्ट सबमिट नहीं की है।', ta: 'நீங்கள் இதுவரை எந்த அறிக்கையும் சமர்ப்பிக்கவில்லை.' },
+  'pr.colDate': { en: 'Date', hi: 'तारीख़', ta: 'தேதி' },
+  'pr.colCategory': { en: 'Category', hi: 'श्रेणी', ta: 'வகை' },
+  'pr.colSubject': { en: 'Subject', hi: 'विषय', ta: 'தலைப்பு' },
+  'pr.colPriority': { en: 'Priority', hi: 'प्राथमिकता', ta: 'முன்னுரிமை' },
+  'pr.colStatus': { en: 'Status', hi: 'स्थिति', ta: 'நிலை' },
+  'pr.statusOpen': { en: 'Open', hi: 'खुला', ta: 'திறந்தது' },
+  'pr.statusReview': { en: 'In Review', hi: 'समीक्षा में', ta: 'மறுஆய்வில்' },
+  'pr.statusRouted': { en: 'Routed → Customer Care', hi: 'ग्राहक सेवा को भेजा गया', ta: 'வாடிக்கையாளர் சேவைக்கு அனுப்பப்பட்டது' },
+  'pr.statusResolved': { en: 'Resolved', hi: 'हल हो गया', ta: 'தீர்க்கப்பட்டது' },
+  'cat.pod': { en: 'Pod / Device issue', hi: 'पॉड / डिवाइस समस्या', ta: 'பாட் / சாதன சிக்கல்' },
+  'cat.dose': { en: 'Dose / Prescription issue', hi: 'खुराक / नुस्खा समस्या', ta: 'அளவு / மருந்துச்சீட்டு சிக்கல்' },
+  'cat.billing': { en: 'Billing / Payment', hi: 'बिलिंग / भुगतान', ta: 'பில்லிங் / கட்டணம்' },
+  'cat.app': { en: 'App / Technical issue', hi: 'ऐप / तकनीकी समस्या', ta: 'ஆப் / தொழில்நுட்ப சிக்கல்' },
+  'cat.doctor': { en: 'Doctor / Treatment concern', hi: 'डॉक्टर / उपचार संबंधी चिंता', ta: 'மருத்துவர் / சிகிச்சை கவலை' },
+  'cat.other': { en: 'Other', hi: 'अन्य', ta: 'மற்றவை' },
 
   // ---- patient chat ----
   'pch.title': { en: 'Chat with your doctor', hi: 'अपने डॉक्टर से चैट करें', ta: 'உங்கள் மருத்துவருடன் அரட்டை' },

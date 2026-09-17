@@ -63,6 +63,16 @@ export const SYMPTOM_OPTIONS = [
   { value: 'much_worse', emoji: '😞', label: 'Much Worse', score: 1 },
 ];
 
+// Categories for the patient-facing report/complaint form.
+export const COMPLAINT_CATEGORIES = [
+  'pod', // pod / device issue
+  'dose', // dose or prescription issue
+  'billing', // billing or payment
+  'app', // app or technical issue
+  'doctor', // doctor or treatment concern
+  'other',
+];
+
 export const BADGES = [
   { days: 3, icon: '🌱', title: 'Getting Started' },
   { days: 7, icon: '🌿', title: 'One Week Strong' },
@@ -279,13 +289,14 @@ export function seedStore() {
   ];
 
   return {
-    version: 4,
+    version: 5,
     doctor,
     patients,
     counters: { patient: 1045 },
     chats: {}, // `${domain}/${patientId}` -> message[]
     alerts: { doctor: [] }, // doctor-facing alerts
     notifications: { doctor: [], byPatient: {} },
+    complaints: [], // patient-submitted reports/complaints — see submitComplaint
     brewFeed: [
       {
         patientId: 'PT1044', kashaya: 'Guduchi Kwatha', tempC: 88, phase: 'Stirring',

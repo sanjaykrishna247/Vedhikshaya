@@ -9,7 +9,7 @@ import {
   todayYmd,
 } from './portalData';
 
-const STORE_KEY = 'vedikshaya_portal_store_v4';
+const STORE_KEY = 'vedikshaya_portal_store_v5';
 const SESSION_KEY = 'vedikshaya_portal_session';
 const REFRESH_MS = 30_000;
 
@@ -22,7 +22,7 @@ function loadStore() {
     const raw = localStorage.getItem(STORE_KEY);
     if (raw) {
       const parsed = JSON.parse(raw);
-      if (parsed?.version === 4) return parsed;
+      if (parsed?.version === 5) return parsed;
     }
   } catch {
     /* ignore corrupt / unavailable storage */
@@ -367,6 +367,38 @@ export function PortalProvider({ children }) {
     [patch, notifyDoctor, store],
   );
 
+  // ---- reports / complaints -------------------------------------------
+
+  const submitComplaint = useCallback(
+    (patientId, { category, subject, description, priority }) => {
+      const id = `cp_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`;
+      const entry = {
+        id,
+        patientId,
+        hospitalDomain: store.doctor.hospitalDomain,
+        category: category || 'other',
+        subject: subject.trim(),
+        description: description.trim(),
+        priority: priority || 'Medium',
+        status: 'Open',
+        openedAt: Date.now(),
+      };
+      patch((s) => {
+        s.complaints = s.complaints || [];
+        s.complaints.unshift(entry);
+        return s;
+      });
+      notifyDoctor(`New complaint from ${storePatientName(store, patientId)}: ${entry.subject}`, 'complaint');
+      return id;
+    },
+    [patch, notifyDoctor, store],
+  );
+
+  const patientComplaints = useCallback(
+    (patientId) => (store.complaints || []).filter((c) => c.patientId === patientId),
+    [store.complaints],
+  );
+
   // ---- chat ----------------------------------------------------------
 
   const chatKey = (domain, patientId) => `${domain}/${patientId}`;
@@ -475,6 +507,10 @@ export function PortalProvider({ children }) {
       // patient
       markDose,
       logSymptom,
+      // reports / complaints
+      submitComplaint,
+      patientComplaints,
+      allComplaints: store.complaints || [],
       // chat
       getChat: (patientId) => store.chats[`${store.doctor.hospitalDomain}/${patientId}`] || [],
       sendMessage,
@@ -498,6 +534,7 @@ export function PortalProvider({ children }) {
     [
       store, session, tick, portalLogin, portalLogout, registerListener, addPatient,
       updatePrescription, updateDoctorNotes, endTreatment, setDoctorAvailability, markDose, logSymptom,
+      submitComplaint, patientComplaints,
       sendMessage, markChatRead, dismissAlert, triggerAlert, notifyPatient, notifyDoctor,
       markNotificationsRead,
     ],

@@ -40,6 +40,7 @@ const PatientCompliance = lazy(() => import('./pages/portal/patient/PatientCompl
 const PatientPrescription = lazy(() => import('./pages/portal/patient/PatientPrescription.jsx'))
 const PatientSymptoms = lazy(() => import('./pages/portal/patient/PatientSymptoms.jsx'))
 const PatientChat = lazy(() => import('./pages/portal/patient/PatientChat.jsx'))
+const PatientReport = lazy(() => import('./pages/portal/patient/PatientReport.jsx'))
 
 const doctorRoute = (el) => (
   <PortalRoute role="doctor">
@@ -156,6 +157,7 @@ createRoot(document.getElementById('root')).render(
           <Route path="/patient/prescription" element={patientRoute(<PatientPrescription />)} />
           <Route path="/patient/symptoms" element={patientRoute(<PatientSymptoms />)} />
           <Route path="/patient/chat" element={patientRoute(<PatientChat />)} />
+          <Route path="/patient/report" element={patientRoute(<PatientReport />)} />
           </Routes>
           </LazyBoundary>
           </ToastHost>
