@@ -2,15 +2,48 @@ import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import AnimatedDoctor from '../../components/AnimatedDoctor';
 import { findRecommendation, KASHAYA_CATALOGUE } from './kashayaData';
+import { useBrewSim, fmtClock } from '../dashboard/BrewSim';
 import logo from '../../assets/logo.svg';
 import './ChatbotPage.css';
 
 const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:8000';
+const PHASE_NAMES = ['Soaking', 'Boil', 'Stirring', 'Dispense'];
 
 const WELCOME = {
   role: 'bot',
   text: "Hi, I'm Dr. Vedik — your Ayurvedic assistant. Tell me what you're experiencing (e.g. \"I have a cold and body ache\") and I'll suggest a Kashaya for it.",
 };
+
+// Questions about the live batch — answered instantly from the running
+// simulation instead of round-tripping to the LLM, so it's always accurate
+// and works even if the AI service is down.
+const STATUS_RE = /\b(status|remaining|time left|how (much|long)|almost (done|ready)|when.*(ready|done|finish)|brewing progress|still brewing)\b/i;
+
+function describeBrewStatus(sim) {
+  if (sim.status === 'idle') {
+    return "No brew is running right now — scan a pod or hit Start Brew on the dashboard and I can track it for you.";
+  }
+  if (sim.status === 'done') {
+    return `Your last batch is done — ${Math.round(sim.waterMl)} mL ready at ${sim.consistency.toFixed(1)}% consistency. Reset the console when you're ready to start another.`;
+  }
+  return (
+    `You're in the **${PHASE_NAMES[sim.phaseIndex]}** phase — ${Math.round(sim.tempC)}°C, ` +
+    `${sim.consistency.toFixed(1)}% consistency, about **${fmtClock(sim.remaining)}** remaining.`
+  );
+}
+
+// A short context line handed to the LLM so differently-phrased status
+// questions ("is it almost over?") still get an accurate, live answer.
+function brewContextLine(sim) {
+  if (sim.status === 'idle') return null;
+  if (sim.status === 'done') {
+    return `Live brew status: batch complete — ${Math.round(sim.waterMl)} mL, ${sim.consistency.toFixed(1)}% consistency.`;
+  }
+  return (
+    `Live brew status: phase ${PHASE_NAMES[sim.phaseIndex]}, ${Math.round(sim.tempC)}°C, ` +
+    `${sim.consistency.toFixed(1)}% consistency, ${fmtClock(sim.remaining)} remaining of 20:00 total.`
+  );
+}
 
 // Local keyword fallback — used if the AI service is unreachable.
 function buildReply(userText) {
@@ -23,14 +56,17 @@ function buildReply(userText) {
 
 // Ask the backend (which grounds the reply in physician-reviewed notes and
 // calls the LLM). Falls back to the local matcher on any failure.
-async function fetchReply(history) {
+async function fetchReply(history, brewContext) {
   try {
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), 35000);
     const res = await fetch(`${API_BASE}/chat`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ messages: history.map((m) => ({ role: m.role, text: m.text })) }),
+      body: JSON.stringify({
+        messages: history.map((m) => ({ role: m.role, text: m.text })),
+        brewContext: brewContext || undefined,
+      }),
       signal: controller.signal,
     });
     clearTimeout(timer);
@@ -48,6 +84,7 @@ export default function ChatbotPage() {
   const [input, setInput] = useState('');
   const [thinking, setThinking] = useState(false);
   const scrollRef = useRef(null);
+  const brewSim = useBrewSim();
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });
@@ -58,10 +95,16 @@ export default function ChatbotPage() {
     const next = [...messages, { role: 'user', text }];
     setMessages(next);
     setInput('');
+
+    // fast path: a live-status question, answered instantly from the running
+    // brew — accurate and works even if the AI backend is unreachable
+    if (brewSim.status !== 'idle' && STATUS_RE.test(text)) {
+      setMessages((m) => [...m, { role: 'bot', text: describeBrewStatus(brewSim) }]);
+      return;
+    }
+
     setThinking(true);
-
-    const reply = await fetchReply(next);
-
+    const reply = await fetchReply(next, brewContextLine(brewSim));
     setMessages((m) => [...m, { role: 'bot', text: reply }]);
     setThinking(false);
   };

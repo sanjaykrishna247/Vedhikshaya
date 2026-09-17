@@ -243,6 +243,17 @@
   margin-bottom: 14px;
 }
 
+.auth__hint {
+  margin: 10px 0 0;
+  font-size: 0.78rem;
+  line-height: 1.4;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.75);
+}
+.auth__card:not(.auth__card--glass) .auth__hint {
+  color: #5f7568;
+}
+
 .auth__submit {
   width: 100%;
   padding: 12px;

@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import jsQR from 'jsqr';
 import { IconPod } from '../dashboard/icons';
 import { useKashaya } from '../../auth/KashayaContext';
+import { useBrewSim, fmtClock } from '../dashboard/BrewSim';
 import logo from '../../assets/logo.svg';
 import './ScanPod.css';
 
@@ -50,6 +51,7 @@ async function resolveKashayaFromUrl(url) {
 export default function ScanPod() {
   const navigate = useNavigate();
   const { setKashaya } = useKashaya();
+  const brewSim = useBrewSim();
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const streamRef = useRef(null);
@@ -58,7 +60,12 @@ export default function ScanPod() {
   const [errorMsg, setErrorMsg] = useState('');
   const [detectedName, setDetectedName] = useState('');
 
+  // A brew is already running (started from here, the dashboard, or a
+  // patient's own "Start Brew") — no need to scan again until it finishes.
+  const alreadyBrewing = brewSim.status === 'running';
+
   useEffect(() => {
+    if (alreadyBrewing) return undefined;
     let cancelled = false;
 
     async function startCamera() {
@@ -93,12 +100,12 @@ export default function ScanPod() {
       cancelled = true;
       streamRef.current?.getTracks().forEach((t) => t.stop());
     };
-  }, []);
+  }, [alreadyBrewing]);
 
   // Real-time QR scanning: sample video frames onto an offscreen canvas and
   // run jsQR against the pixel data until a code is found.
   useEffect(() => {
-    if (status !== 'live') return undefined;
+    if (alreadyBrewing || status !== 'live') return undefined;
 
     const video = videoRef.current;
     const canvas = canvasRef.current;
@@ -154,6 +161,7 @@ export default function ScanPod() {
   const handleStartBrewing = () => {
     if (detectedName) setKashaya(detectedName);
     streamRef.current?.getTracks().forEach((t) => t.stop());
+    brewSim.start(detectedName || undefined);
     navigate('/dashboard');
   };
 
@@ -177,6 +185,47 @@ export default function ScanPod() {
         </Link>
       </header>
 
+      {alreadyBrewing ? (
+        <main className="scan__main">
+          <span className="scan__eyebrow">
+            <span className="scan__eyebrow-dot" /> Brewing
+          </span>
+          <h1 className="scan__title">Already brewing</h1>
+          <p className="scan__sub">
+            A batch is already on — no need to scan again until it's done.
+          </p>
+
+          <div className="scan__status">
+            <div className="scan__status-ring">
+              <span className="scan__status-time">{fmtClock(brewSim.remaining)}</span>
+              <span className="scan__status-label">remaining</span>
+            </div>
+            <div className="scan__status-rows">
+              <div className="scan__status-row">
+                <span>Phase</span>
+                <strong>{['Soaking', 'Boil', 'Stirring', 'Dispense'][brewSim.phaseIndex]}</strong>
+              </div>
+              <div className="scan__status-row">
+                <span>Temperature</span>
+                <strong>{Math.round(brewSim.tempC)}°C</strong>
+              </div>
+              <div className="scan__status-row">
+                <span>Consistency</span>
+                <strong>{brewSim.consistency.toFixed(1)}%</strong>
+              </div>
+            </div>
+          </div>
+
+          <div className="scan__actions">
+            <button className="scan__btn scan__btn--primary" onClick={() => navigate('/dashboard')}>
+              Open Brew Console
+            </button>
+            <Link to="/home" className="scan__btn scan__btn--ghost">
+              Back to Home
+            </Link>
+          </div>
+        </main>
+      ) : (
       <main className="scan__main">
         <span className="scan__eyebrow">
           <span className="scan__eyebrow-dot" /> Pod Scanner
@@ -269,6 +318,7 @@ export default function ScanPod() {
           )}
         </div>
       </main>
+      )}
     </div>
   );
 }

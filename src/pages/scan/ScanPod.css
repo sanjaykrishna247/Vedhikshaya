@@ -313,3 +313,76 @@
     border-radius: 18px;
   }
 }
+
+/* ===== Already-brewing status panel (replaces the camera view) ===== */
+.scan__status {
+  width: 100%;
+  margin-top: 28px;
+  padding: 26px 22px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(139, 197, 61, 0.22);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 22px;
+}
+.scan__status-ring {
+  width: 148px;
+  height: 148px;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at 50% 35%, rgba(139, 197, 61, 0.16), transparent 70%);
+  border: 3px solid rgba(139, 197, 61, 0.4);
+}
+.scan__status-time {
+  font-family: var(--font-display);
+  font-size: 1.9rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.scan__status-label {
+  margin-top: 4px;
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5);
+}
+.scan__status-rows {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.scan__status-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.03);
+  font-size: 0.88rem;
+}
+.scan__status-row span {
+  color: rgba(255, 255, 255, 0.55);
+}
+.scan__status-row strong {
+  font-weight: 700;
+}
+
+@media (max-width: 420px) {
+  .scan__status {
+    padding: 20px 16px;
+    margin-top: 20px;
+  }
+  .scan__status-ring {
+    width: 124px;
+    height: 124px;
+  }
+  .scan__status-time {
+    font-size: 1.5rem;
+  }
+}

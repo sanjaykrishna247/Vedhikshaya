@@ -28,6 +28,7 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [slowHint, setSlowHint] = useState(false);
   const [activeVideo, setActiveVideo] = useState('a');
   const videoARef = useRef(null);
   const videoBRef = useRef(null);
@@ -113,6 +114,17 @@ export default function Login() {
     setPassword(DEMO_PASSWORD);
     setError('');
   };
+
+  // Surface a reassuring hint once a login has been hanging a few seconds —
+  // that's almost always the free-tier backend waking up, not a real stall.
+  useEffect(() => {
+    if (!loading) {
+      setSlowHint(false);
+      return undefined;
+    }
+    const t = setTimeout(() => setSlowHint(true), 3500);
+    return () => clearTimeout(t);
+  }, [loading]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -214,6 +226,11 @@ export default function Login() {
           <button type="submit" className="auth__submit" disabled={loading}>
             {loading ? 'Logging in…' : 'Log In'}
           </button>
+          {slowHint && (
+            <p className="auth__hint" role="status">
+              Still connecting — the server can take up to a minute to wake up on its first request.
+            </p>
+          )}
         </form>
 
         <div className="auth__divider">

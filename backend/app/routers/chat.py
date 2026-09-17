@@ -114,6 +114,11 @@ class Msg(BaseModel):
 
 class ChatIn(BaseModel):
     messages: list[Msg] = Field(default_factory=list)
+    # optional one-line live reading from the patient's own brew session
+    # (phase, temp, consistency, time remaining) — the frontend fills this in
+    # when a batch is running, so "is it almost done?" gets a real answer
+    # instead of the model guessing.
+    brewContext: str | None = None
 
 
 class ChatOut(BaseModel):
@@ -131,8 +136,17 @@ async def chat(body: ChatIn) -> ChatOut:
     if not NVIDIA_API_KEY:
         return ChatOut(reply=_local_fallback(history[-1].text), source="fallback")
 
+    system_prompt = SYSTEM_PROMPT
+    if body.brewContext:
+        system_prompt += (
+            "\n\n=== LIVE BREW STATUS (for this patient, right now) ===\n"
+            + body.brewContext.strip()
+            + "\nIf the user asks about brewing progress, time remaining, or whether it's "
+            "ready, answer using this live reading instead of the general notes above."
+        )
+
     convo = [
-        {"role": "system", "content": SYSTEM_PROMPT},
+        {"role": "system", "content": system_prompt},
         *[
             {"role": "assistant" if m.role in ("bot", "assistant") else "user", "content": m.text}
             for m in history

@@ -6,17 +6,36 @@ const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:8000';
 const TOKEN_KEY = 'vedikshaya_token';
 const USER_KEY = 'vedikshaya_user';
 
-async function request(path, body) {
-  const res = await fetch(`${API_BASE}${path}`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body),
-  });
-  const data = await res.json().catch(() => ({}));
-  if (!res.ok) {
-    throw new Error(data.detail || 'Something went wrong. Please try again.');
+// The free-tier backend sleeps after ~15 min idle; the very first request
+// after that often aborts or drops outright while it wakes up, even though a
+// near-immediate retry succeeds. One silent retry here turns that into a
+// slightly slower login instead of a confusing "stuck on the login page".
+async function request(path, body, attempt = 0) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 20000);
+  try {
+    const res = await fetch(`${API_BASE}${path}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+      signal: controller.signal,
+    });
+    clearTimeout(timer);
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      throw new Error(data.detail || 'Something went wrong. Please try again.');
+    }
+    return data;
+  } catch (err) {
+    clearTimeout(timer);
+    if (attempt === 0 && (err.name === 'AbortError' || err instanceof TypeError)) {
+      return request(path, body, 1);
+    }
+    if (err.name === 'AbortError') {
+      throw new Error('The server is taking a while to wake up. Please try again in a moment.');
+    }
+    throw err;
   }
-  return data;
 }
 
 export function AuthProvider({ children }) {
