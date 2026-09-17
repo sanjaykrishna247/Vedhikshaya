@@ -1,47 +1,84 @@
 import { useEffect, useRef, useState } from 'react';
 import { useKashaya } from '../../auth/KashayaContext';
+import { useBrewSim, fmtClock } from './BrewSim';
 
-function buildSeedMessages(kashaya) {
-  return [
-    { role: 'bot', text: `Brew started. ${kashaya} detected. Estimated time: 14 min.` },
-    { role: 'bot', text: 'Temperature stabilized at 87°C. Stirring at 30%.' },
-    { role: 'user', text: 'Is this brew safe for evening use?' },
-    {
-      role: 'bot',
-      text: `Yes — ${kashaya} is recommended post-sunset. Avoid food 30 min before consuming.`,
-    },
-  ];
+const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:8000';
+const PHASE_NAMES = ['Soaking', 'Boil', 'Stirring', 'Dispense'];
+
+// Questions about the live batch — answered instantly from the running
+// simulation instead of round-tripping to the LLM, so it's always accurate.
+const STATUS_RE = /\b(status|remaining|time left|how (much|long)|almost (done|ready)|when.*(ready|done|finish)|brewing progress|still brewing)\b/i;
+
+function describeBrewStatus(sim, kashaya) {
+  if (sim.status === 'idle') {
+    return 'No brew is running right now — scan a pod or hit Start Brew and I can track it for you.';
+  }
+  if (sim.status === 'done') {
+    return `Your batch is done — ${Math.round(sim.waterMl)} mL ready at ${sim.consistency.toFixed(1)}% consistency. Reset the console when you're ready to start another.`;
+  }
+  return (
+    `${kashaya} is in the **${PHASE_NAMES[sim.phaseIndex]}** phase — ${Math.round(sim.tempC)}°C, ` +
+    `${sim.consistency.toFixed(1)}% consistency, about **${fmtClock(sim.remaining)}** remaining.`
+  );
 }
 
-const SYSTEM_PROMPT =
-  'You are Vedikshaya AI, an Ayurvedic brew assistant. Answer only about the current brew, ' +
-  'herb formulations, usage timing, dosage, and Ayurvedic guidance. Be concise, warm, and knowledgeable.';
+function brewContextLine(sim, kashaya) {
+  if (sim.status === 'idle') return null;
+  if (sim.status === 'done') {
+    return `Live brew status: batch complete — ${kashaya}, ${Math.round(sim.waterMl)} mL, ${sim.consistency.toFixed(1)}% consistency.`;
+  }
+  return (
+    `Live brew status: ${kashaya}, phase ${PHASE_NAMES[sim.phaseIndex]}, ${Math.round(sim.tempC)}°C, ` +
+    `${sim.consistency.toFixed(1)}% consistency, ${fmtClock(sim.remaining)} remaining of 20:00 total.`
+  );
+}
 
-// Placeholder for a real backend call. Never call api.anthropic.com directly from the
-// browser with an embedded key — route this through your own server, which holds the
-// key server-side and forwards { systemPrompt, messages } to the Claude API.
-async function askVedikshayaAI(messages) {
-  // const res = await fetch('/api/brew-assistant', {
-  //   method: 'POST',
-  //   headers: { 'Content-Type': 'application/json' },
-  //   body: JSON.stringify({ system: SYSTEM_PROMPT, messages }),
-  // });
-  // const data = await res.json();
-  // return data.reply;
+function seedMessages(sim, kashaya) {
+  if (sim.status === 'idle') {
+    return [{ role: 'bot', text: `Ready when you are — scan a ${kashaya} pod or hit Start Brew and I'll track it live.` }];
+  }
+  return [{ role: 'bot', text: `Brew started. ${kashaya} detected.` }, { role: 'bot', text: describeBrewStatus(sim, kashaya) }];
+}
 
-  await new Promise((r) => setTimeout(r, 700 + Math.random() * 500));
-  const last = messages[messages.length - 1]?.text.toLowerCase() ?? '';
+// Local keyword fallback — used if the AI service is unreachable.
+function buildReply(userText) {
+  const last = userText.toLowerCase();
   if (last.includes('dose') || last.includes('how much')) {
     return 'A standard dose is 100 mL, once daily unless your practitioner advises otherwise.';
   }
   if (last.includes('time') || last.includes('when')) {
     return 'Best taken 30 minutes before or after meals, ideally at the same time each day.';
   }
-  return "I'm monitoring this brew closely — ask me about dosage, timing, or the herbs in this formulation.";
+  return "I'm monitoring this brew closely — ask me about dosage, timing, or the current status.";
+}
+
+// Ask the backend (grounds the reply in physician-reviewed notes + live brew data).
+async function askVedikshayaAI(history, brewContext) {
+  try {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 35000);
+    const res = await fetch(`${API_BASE}/chat`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        messages: history.map((m) => ({ role: m.role, text: m.text })),
+        brewContext: brewContext || undefined,
+      }),
+      signal: controller.signal,
+    });
+    clearTimeout(timer);
+    if (!res.ok) throw new Error(`chat ${res.status}`);
+    const data = await res.json();
+    if (data?.reply) return data.reply;
+    throw new Error('empty reply');
+  } catch {
+    return buildReply(history[history.length - 1]?.text || '');
+  }
 }
 
 export default function AIChat() {
   const { kashaya } = useKashaya();
+  const brewSim = useBrewSim();
   const [messages, setMessages] = useState([]);
   const [visibleCount, setVisibleCount] = useState(0);
   const [input, setInput] = useState('');
@@ -49,8 +86,9 @@ export default function AIChat() {
   const scrollRef = useRef(null);
 
   useEffect(() => {
-    setMessages(buildSeedMessages(kashaya));
-  }, [kashaya]);
+    setMessages(seedMessages(brewSim, kashaya));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [kashaya, brewSim.status]);
 
   useEffect(() => {
     if (visibleCount >= messages.length) return;
@@ -71,9 +109,20 @@ export default function AIChat() {
     setMessages(next);
     setVisibleCount(next.length);
     setInput('');
-    setThinking(true);
 
-    const reply = await askVedikshayaAI(next);
+    // fast path: a live-status question, answered instantly from the running
+    // brew — accurate and works even if the AI backend is unreachable
+    if (brewSim.status !== 'idle' && STATUS_RE.test(text)) {
+      setMessages((m) => {
+        const updated = [...m, { role: 'bot', text: describeBrewStatus(brewSim, kashaya) }];
+        setVisibleCount(updated.length);
+        return updated;
+      });
+      return;
+    }
+
+    setThinking(true);
+    const reply = await askVedikshayaAI(next, brewContextLine(brewSim, kashaya));
 
     setMessages((m) => {
       const updated = [...m, { role: 'bot', text: reply }];
@@ -92,9 +141,11 @@ export default function AIChat() {
 
       <div className="d-chat__window" ref={scrollRef}>
         {messages.slice(0, visibleCount).map((m, i) => (
-          <div key={i} className={`d-chat__msg d-chat__msg--${m.role} d-chat__msg--in`}>
-            {m.text}
-          </div>
+          <div
+            key={i}
+            className={`d-chat__msg d-chat__msg--${m.role} d-chat__msg--in`}
+            dangerouslySetInnerHTML={{ __html: m.text.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>') }}
+          />
         ))}
         {thinking && (
           <div className="d-chat__msg d-chat__msg--bot d-chat__msg--in d-chat__typing">
