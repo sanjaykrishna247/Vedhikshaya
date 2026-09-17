@@ -266,6 +266,26 @@ export function PortalProvider({ children }) {
     [patch, notifyPatient, store.doctor.name],
   );
 
+  // Quick per-patient clinical notes — separate from a full prescription
+  // edit so a doctor can jot an observation without touching dose/kashaya
+  // and without pinging the patient every time.
+  const updateDoctorNotes = useCallback(
+    (patientId, notes) => {
+      patch((s) => {
+        const p = s.patients.find((x) => x.id === patientId);
+        if (!p) return s;
+        p.prescription = {
+          ...p.prescription,
+          notes,
+          notesUpdatedAt: Date.now(),
+          notesUpdatedBy: s.doctor.name,
+        };
+        return s;
+      });
+    },
+    [patch],
+  );
+
   const endTreatment = useCallback(
     (patientId, reason = '') => {
       let name = '';
@@ -449,6 +469,7 @@ export function PortalProvider({ children }) {
       patients: store.patients,
       addPatient,
       updatePrescription,
+      updateDoctorNotes,
       endTreatment,
       setDoctorAvailability,
       // patient
@@ -476,7 +497,7 @@ export function PortalProvider({ children }) {
     }),
     [
       store, session, tick, portalLogin, portalLogout, registerListener, addPatient,
-      updatePrescription, endTreatment, setDoctorAvailability, markDose, logSymptom,
+      updatePrescription, updateDoctorNotes, endTreatment, setDoctorAvailability, markDose, logSymptom,
       sendMessage, markChatRead, dismissAlert, triggerAlert, notifyPatient, notifyDoctor,
       markNotificationsRead,
     ],

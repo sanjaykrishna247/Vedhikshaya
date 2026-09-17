@@ -24,11 +24,12 @@ export default function PatientDetail() {
   const navigate = useNavigate();
   const toast = useToast();
   const { t } = useDashLang();
-  const { patients, doctor, updatePrescription, endTreatment, getChat, tick } = usePortal();
+  const { patients, doctor, updatePrescription, updateDoctorNotes, endTreatment, getChat, tick } = usePortal();
 
   const patient = patients.find((p) => p.id === id);
   const [showEdit, setShowEdit] = useState(false);
   const [showEnd, setShowEnd] = useState(false);
+  const [showNotes, setShowNotes] = useState(false);
 
   const stats = useMemo(() => (patient ? complianceStats(patient) : null), [patient, tick]);
   const streak = useMemo(() => (patient ? currentStreak(patient) : 0), [patient, tick]);
@@ -179,13 +180,34 @@ export default function PatientDetail() {
           </dd>
           <dt style={dt}>{t('pd.duration')}</dt>
           <dd style={dd}>{t('pd.week', { a: patient.prescription.weekOf, b: patient.prescription.durationWeeks })}</dd>
-          <dt style={dt}>{t('pd.notes')}</dt>
-          <dd style={dd}>{patient.prescription.notes}</dd>
           <dt style={dt}>{t('pd.lastUpdated')}</dt>
           <dd style={dd}>
             {new Date(patient.prescription.updatedAt).toLocaleString()} · {patient.prescription.updatedBy}
           </dd>
         </dl>
+      </div>
+
+      <div className="pt__row" style={{ marginTop: 28, marginBottom: 14 }}>
+        <h2 className="pt__h2" style={{ margin: 0 }}>{t('pd.doctorNotes')}</h2>
+        <button className="pt__linkbtn" onClick={() => setShowNotes(true)}>
+          {patient.prescription.notes ? t('pd.editNotes') : t('pd.addNotes')}
+        </button>
+      </div>
+      <div className="pt__card">
+        {patient.prescription.notes ? (
+          <>
+            <p style={{ margin: 0, color: 'var(--pt-body)', fontSize: '0.9rem', lineHeight: 1.6, whiteSpace: 'pre-wrap' }}>
+              {patient.prescription.notes}
+            </p>
+            {patient.prescription.notesUpdatedAt && (
+              <p className="pt__sub" style={{ marginTop: 10, marginBottom: 0 }}>
+                {t('pd.lastUpdated')}: {new Date(patient.prescription.notesUpdatedAt).toLocaleString()} · {patient.prescription.notesUpdatedBy}
+              </p>
+            )}
+          </>
+        ) : (
+          <p style={{ margin: 0, color: 'var(--pt-muted)', fontSize: '0.9rem' }}>{t('pd.noNotes')}</p>
+        )}
       </div>
 
       <h2 className="pt__h2">{t('pd.recentBrews')}</h2>
@@ -227,6 +249,19 @@ export default function PatientDetail() {
             updatePrescription(patient.id, next);
             setShowEdit(false);
             toast('Prescription updated · patient notified');
+          }}
+        />
+      )}
+
+      {showNotes && (
+        <NotesModal
+          t={t}
+          patient={patient}
+          onClose={() => setShowNotes(false)}
+          onSave={(text) => {
+            updateDoctorNotes(patient.id, text);
+            setShowNotes(false);
+            toast('Notes saved');
           }}
         />
       )}
@@ -297,11 +332,41 @@ function EndTreatmentForm({ onCancel, onConfirm }) {
   );
 }
 
+function NotesModal({ t, patient, onClose, onSave }) {
+  const [text, setText] = useState(patient.prescription.notes || '');
+  return (
+    <Modal
+      title={t('pd.doctorNotes')}
+      sub={t('pd.notesSub', { name: patient.name })}
+      size="sm"
+      onClose={onClose}
+    >
+      <div className="pt__field">
+        <textarea
+          className="pt__textarea"
+          style={{ minHeight: 140 }}
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          placeholder={t('pd.notesPlaceholder')}
+          autoFocus
+        />
+      </div>
+      <div className="pt__modal-actions">
+        <button className="pt__btn pt__btn--ghost" onClick={onClose}>
+          {t('p.cancel')}
+        </button>
+        <button className="pt__btn pt__btn--primary" onClick={() => onSave(text.trim())}>
+          {t('p.save')}
+        </button>
+      </div>
+    </Modal>
+  );
+}
+
 function EditPrescriptionModal({ patient, onClose, onSave }) {
   const [kashaya, setKashaya] = useState(patient.prescription.kashaya);
   const [schedule, setSchedule] = useState(structuredClone(patient.prescription.schedule));
   const [durationWeeks, setDurationWeeks] = useState(String(patient.prescription.durationWeeks));
-  const [notes, setNotes] = useState(patient.prescription.notes);
 
   const setSlot = (slot, key, v) =>
     setSchedule((s) => ({ ...s, [slot]: { ...s[slot], [key]: v } }));
@@ -361,11 +426,6 @@ function EditPrescriptionModal({ patient, onClose, onSave }) {
         </div>
       </div>
 
-      <div className="pt__field" style={{ marginTop: 14 }}>
-        <span className="pt__label">Notes</span>
-        <textarea className="pt__textarea" value={notes} onChange={(e) => setNotes(e.target.value)} />
-      </div>
-
       <div className="pt__modal-actions">
         <button className="pt__btn pt__btn--ghost" onClick={onClose}>
           Cancel
@@ -377,7 +437,6 @@ function EditPrescriptionModal({ patient, onClose, onSave }) {
               kashaya,
               schedule,
               durationWeeks: Number(durationWeeks) || patient.prescription.durationWeeks,
-              notes,
             })
           }
         >
