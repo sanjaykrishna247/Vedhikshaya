@@ -36,11 +36,11 @@ export default function ReductionLiquid() {
             <span className="bubble b4" />
             <span className="liquid-tube__wave" />
           </div>
-          <div className="liquid-tube__mark" style={{ bottom: `${fillFor(300, WATER_END, WATER_START)}%` }}>
-            <span>300 mL</span>
+          <div className="liquid-tube__mark" style={{ bottom: `${fillFor(250, WATER_END, WATER_START)}%` }}>
+            <span>250 mL</span>
           </div>
           <div className="liquid-tube__mark" style={{ bottom: `${fillFor(WATER_START, WATER_END, WATER_START)}%` }}>
-            <span>600 mL</span>
+            <span>{WATER_START} mL</span>
           </div>
         </div>
 

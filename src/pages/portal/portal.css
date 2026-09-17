@@ -490,6 +490,64 @@
 .pt__stat--warn .pt__stat-value { color: #b26a00; }
 .pt__stat--bad .pt__stat-value { color: #c23b30; }
 
+/* ---- streak hero (patient dashboard) ---- */
+.pt__streak-hero {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 20px 24px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, var(--pt-side) 0%, #123c22 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 10px 28px rgba(1, 47, 19, 0.22);
+  margin-bottom: 14px;
+}
+.pt__streak-hero-icon {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 40%, rgba(255, 178, 32, 0.22), transparent 70%);
+}
+.pt__streak-hero-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.pt__streak-hero-value {
+  font-size: 2.1rem;
+  font-weight: 800;
+  line-height: 1;
+  color: #fff;
+  letter-spacing: -0.02em;
+}
+.pt__streak-hero-value small {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-left: 3px;
+  color: rgba(255, 255, 255, 0.7);
+}
+.pt__streak-hero-label {
+  margin-top: 6px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+}
+.pt__streak-hero-next {
+  margin-top: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #e2f0cc;
+}
+.pt__stats--pair {
+  grid-template-columns: repeat(2, 1fr);
+}
+
 /* ---- patient grid (doctor) ---- */
 .pt__patients {
   display: grid;
@@ -1250,6 +1308,10 @@
 
 @media (max-width: 560px) {
   .pt__stats { grid-template-columns: 1fr; }
+  .pt__stats--pair { grid-template-columns: 1fr 1fr; }
+  .pt__streak-hero { padding: 16px 18px; gap: 14px; }
+  .pt__streak-hero-icon { width: 52px; height: 52px; }
+  .pt__streak-hero-value { font-size: 1.7rem; }
   .pt__form-grid { grid-template-columns: 1fr; }
   .pt__form-grid .pt__col-2 { grid-column: span 1; }
   .pt__brew-metrics { grid-template-columns: 1fr 1fr; }

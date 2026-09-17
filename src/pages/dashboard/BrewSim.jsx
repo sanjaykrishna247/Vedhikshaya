@@ -6,17 +6,19 @@ import { logBrewComplete, logBrewInterrupted, logBrewStart } from '../history/br
 // numbers stay consistent with each other and move like a real batch would.
 //
 //   • 20 min total, 4 phases of 5 min each (Soak → Boil → Stir → Dispense)
-//   • water reduces 600 mL → ~151 mL (AFI 4:1 reduction)
+//   • water reduces 400 mL → ~101-102 mL, never dropping below 100 mL
 //   • temperature is held in the 85–90 °C draw band with small deflection
 //   • consistency score builds as the extract concentrates
 // ---------------------------------------------------------------------------
 
 export const TOTAL_SECONDS = 20 * 60;
 export const PHASE_SECONDS = 5 * 60;
-export const WATER_START = 600;
-export const WATER_END = 151;
+export const WATER_START = 400;
+export const WATER_END = 101;
+export const WATER_FLOOR = 100; // hard floor — the reading must never read below this
 
 const STORAGE_KEY = 'vedikshaya_brew_started_at';
+const WATER_END_KEY = 'vedikshaya_brew_water_end';
 const TICK_MS = 500;
 
 const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
@@ -35,11 +37,15 @@ function baseTemp(p) {
   return 87 + Math.sin(p * Math.PI * 5.5) * 0.9; // gentle hold around 87 °C
 }
 
-function baseWater(p) {
+function baseWater(p, endTarget) {
   // slow while it heats, quicker through the rolling reduction, lands exactly
-  // on WATER_END at p = 1
-  return WATER_START - (WATER_START - WATER_END) * Math.pow(clamp(p, 0, 1), 1.32);
+  // on the session's end target (101 or 102 mL) at p = 1
+  return WATER_START - (WATER_START - endTarget) * Math.pow(clamp(p, 0, 1), 1.32);
 }
+
+// picked once per brew so the batch consistently lands on 101 or 102, never
+// exactly the same every time but never below the 100 mL floor
+const pickWaterEndTarget = () => (Math.random() < 0.5 ? 101 : 102);
 
 function baseConsistency(p) {
   // extract concentration — near zero early, plateaus at ~97.4 %
@@ -54,10 +60,12 @@ function baseStir(p) {
 
 const IDLE = { tempC: 28.5, waterMl: WATER_START, consistency: 0, stir: 0 };
 
-function sample(p, jitter) {
+function sample(p, jitter, endTarget = WATER_END) {
   return {
     tempC: clamp(baseTemp(p) + (jitter ? noise(0.5) : 0), 24, 94),
-    waterMl: clamp(baseWater(p) + (jitter ? noise(0.7) : 0), WATER_END, WATER_START),
+    // hard floor at WATER_FLOOR (100 mL) — the reading must never read below it,
+    // regardless of jitter or which end target this session landed on
+    waterMl: clamp(baseWater(p, endTarget) + (jitter ? noise(0.7) : 0), WATER_FLOOR, WATER_START),
     consistency: clamp(baseConsistency(p) + (jitter ? noise(0.45) : 0), 0, 99),
     stir: clamp(Math.round(baseStir(p) + (jitter ? noise(0.35) : 0)), 0, 10),
   };
@@ -73,6 +81,10 @@ export function BrewSimProvider({ children }) {
   });
   const [nowTs, setNowTs] = useState(() => Date.now());
   const [sensors, setSensors] = useState(IDLE);
+  const [waterEndTarget, setWaterEndTarget] = useState(() => {
+    const saved = Number(localStorage.getItem(WATER_END_KEY));
+    return saved === 101 || saved === 102 ? saved : WATER_END;
+  });
   const intervalRef = useRef(null);
   const loggedDoneRef = useRef(false);
 
@@ -87,10 +99,10 @@ export function BrewSimProvider({ children }) {
       clearInterval(intervalRef.current);
       // freeze the final reading once the batch completes + log it once
       if (status === 'done') {
-        setSensors(sample(1, false));
+        setSensors(sample(1, false, waterEndTarget));
         if (!loggedDoneRef.current) {
           loggedDoneRef.current = true;
-          const final = sample(1, false);
+          const final = sample(1, false, waterEndTarget);
           logBrewComplete({ consistencyPct: final.consistency, doseMl: final.waterMl });
         }
       }
@@ -102,26 +114,30 @@ export function BrewSimProvider({ children }) {
       const now = Date.now();
       setNowTs(now);
       const p = clamp((now - startTs) / 1000, 0, TOTAL_SECONDS) / TOTAL_SECONDS;
-      setSensors(sample(p, true));
+      setSensors(sample(p, true, waterEndTarget));
     };
     tick();
     intervalRef.current = setInterval(tick, TICK_MS);
     return () => clearInterval(intervalRef.current);
-  }, [status, startedAt]);
+  }, [status, startedAt, waterEndTarget]);
 
   const start = (label) => {
     const t = Date.now();
+    const endTarget = pickWaterEndTarget();
     localStorage.setItem(STORAGE_KEY, String(t));
+    localStorage.setItem(WATER_END_KEY, String(endTarget));
     loggedDoneRef.current = false;
     logBrewStart(label || 'Kashaya Kwatha');
+    setWaterEndTarget(endTarget);
     setStartedAt(t);
     setNowTs(t);
-    setSensors(sample(0, true));
+    setSensors(sample(0, true, endTarget));
   };
 
   const reset = () => {
     if (status === 'running') logBrewInterrupted();
     localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem(WATER_END_KEY);
     loggedDoneRef.current = false;
     setStartedAt(null);
     setSensors(IDLE);
@@ -141,7 +157,7 @@ export function BrewSimProvider({ children }) {
     reset,
     TOTAL_SECONDS,
     WATER_START,
-    WATER_END,
+    WATER_END: waterEndTarget, // this session's actual floor — 101 or 102 mL
   };
 
   return <BrewSimContext.Provider value={value}>{children}</BrewSimContext.Provider>;

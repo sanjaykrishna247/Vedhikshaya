@@ -13,6 +13,7 @@ import { Loading } from '../shared';
 import { useDashLang } from '../../dashboard/dashI18n';
 import PatientShell from './PatientShell';
 import { usePatient } from './usePatientNav';
+import FlameIcon from './FlameIcon';
 import '../portal.css';
 
 const MARK = { taken: '✓', missed: '✗', pending: '●', upcoming: '●', due: '!' };
@@ -43,7 +44,10 @@ export default function PatientCompliance() {
           <span className="pt__stat-label">{t('pc.weeklyCompliance')}</span>
         </div>
         <div className="pt__stat">
-          <span className="pt__stat-value">🔥 {streak}{t('ppd.dayShort')}</span>
+          <span className="pt__stat-value" style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+            <FlameIcon size={22} lit={streak > 0} />
+            {streak}{t('ppd.dayShort')}
+          </span>
           <span className="pt__stat-label">{t('pc.currentStreak')}</span>
         </div>
         <div className="pt__stat">

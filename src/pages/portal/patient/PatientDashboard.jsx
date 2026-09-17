@@ -18,6 +18,7 @@ import { useBrewSim } from '../../dashboard/BrewSim';
 import { useDashLang } from '../../dashboard/dashI18n';
 import PatientShell from './PatientShell';
 import { usePatient } from './usePatientNav';
+import FlameIcon from './FlameIcon';
 import '../portal.css';
 
 export default function PatientDashboard() {
@@ -121,11 +122,25 @@ export default function PatientDashboard() {
       </div>
 
       <h2 className="pt__h2">{t('ppd.yourStreak')}</h2>
-      <div className="pt__stats">
-        <div className="pt__stat">
-          <span className="pt__stat-value">🔥 {streak}{t('ppd.dayShort')}</span>
-          <span className="pt__stat-label">{t('pd.currentStreak')}</span>
+      <div className="pt__streak-hero">
+        <span className="pt__streak-hero-icon">
+          <FlameIcon size={44} lit={streak > 0} />
+        </span>
+        <div className="pt__streak-hero-body">
+          <span className="pt__streak-hero-value">
+            {streak}
+            <small>{t('ppd.dayShort')}</small>
+          </span>
+          <span className="pt__streak-hero-label">{t('pd.currentStreak')}</span>
+          <span className="pt__streak-hero-next">
+            {badges.next
+              ? t('ppd.toNext', { icon: badges.next.icon, title: t(`badge.${badges.next.days}`) }) +
+                ` · ${badges.toNext}${t('ppd.dayShort')}`
+              : t('ppd.allBadges')}
+          </span>
         </div>
+      </div>
+      <div className="pt__stats pt__stats--pair">
         <div className="pt__stat">
           <span className="pt__stat-value">{Math.max(streak, patient.bestStreak)}{t('ppd.dayShort')}</span>
           <span className="pt__stat-label">{t('ppd.personalBest')}</span>
@@ -133,14 +148,6 @@ export default function PatientDashboard() {
         <div className="pt__stat pt__stat--good">
           <span className="pt__stat-value">{stats.pct}%</span>
           <span className="pt__stat-label">{t('ppd.thisWeek')}</span>
-        </div>
-        <div className="pt__stat">
-          <span className="pt__stat-value">
-            {badges.next ? `${badges.toNext}${t('ppd.dayShort')}` : t('ppd.maxed')}
-          </span>
-          <span className="pt__stat-label">
-            {badges.next ? t('ppd.toNext', { icon: badges.next.icon, title: t(`badge.${badges.next.days}`) }) : t('ppd.allBadges')}
-          </span>
         </div>
       </div>
 
