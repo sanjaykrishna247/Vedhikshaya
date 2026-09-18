@@ -17,7 +17,7 @@ const WELCOME = {
 // Questions about the live batch — answered instantly from the running
 // simulation instead of round-tripping to the LLM, so it's always accurate
 // and works even if the AI service is down.
-const STATUS_RE = /\b(status|remaining|time left|how (much|long)|almost (done|ready)|when.*(ready|done|finish)|brewing progress|still brewing)\b/i;
+const STATUS_RE = /\b(status|stats?|remaining|time left|how (much|long)|almost (done|ready)|when.*(ready|done|finish)|brewing progress|progress|still brewing|update)\b/i;
 
 function describeBrewStatus(sim) {
   if (sim.status === 'idle') {

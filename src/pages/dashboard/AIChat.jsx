@@ -7,7 +7,7 @@ const PHASE_NAMES = ['Soaking', 'Boil', 'Stirring', 'Dispense'];
 
 // Questions about the live batch — answered instantly from the running
 // simulation instead of round-tripping to the LLM, so it's always accurate.
-const STATUS_RE = /\b(status|remaining|time left|how (much|long)|almost (done|ready)|when.*(ready|done|finish)|brewing progress|still brewing)\b/i;
+const STATUS_RE = /\b(status|stats?|remaining|time left|how (much|long)|almost (done|ready)|when.*(ready|done|finish)|brewing progress|progress|still brewing|update)\b/i;
 
 function describeBrewStatus(sim, kashaya) {
   if (sim.status === 'idle') {
