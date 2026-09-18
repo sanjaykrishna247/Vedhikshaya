@@ -20,34 +20,56 @@ class ResolveResponse(BaseModel):
     name: str
 
 
+# Hosted "text QR" pages are built for humans, not scrapers: a language
+# switcher, cookie banner, or nav item often renders as a <p> tag that sits
+# earlier in the HTML than the actual encoded content, so grabbing the
+# very first <p> on the page is unreliable — it sometimes wins the race.
+_SKIP_ANCESTOR_TAGS = {"nav", "header", "footer", "script", "style", "noscript", "form"}
+_CHROME_KEYWORDS = (
+    "select language", "choose language", "choose your language",
+    "cookie", "sign in", "sign up", "log in", "login", "subscribe",
+    "newsletter", "privacy policy", "terms of service", "show more",
+    "read more", "get started", "learn more", "menu",
+)
+
+
 class _FirstParagraphExtractor(HTMLParser):
-    """Grabs the text of the first non-empty <p> tag, falling back to <title>."""
+    """Collects every non-empty <p> outside nav/header/footer chrome, in
+    document order, plus <title>, so the caller can pick the first one that
+    doesn't look like site chrome."""
 
     def __init__(self):
         super().__init__()
+        self._skip_stack = []
         self._in_p = False
         self._in_title = False
-        self.paragraph = ""
+        self._current_p = ""
+        self.candidates = []
         self.title = ""
-        self._done_paragraph = False
 
     def handle_starttag(self, tag, attrs):
-        if tag == "p" and not self._done_paragraph:
+        if tag in _SKIP_ANCESTOR_TAGS:
+            self._skip_stack.append(tag)
+        if tag == "p" and not self._skip_stack:
             self._in_p = True
+            self._current_p = ""
         elif tag == "title":
             self._in_title = True
 
     def handle_endtag(self, tag):
+        if tag in _SKIP_ANCESTOR_TAGS and self._skip_stack and self._skip_stack[-1] == tag:
+            self._skip_stack.pop()
         if tag == "p" and self._in_p:
             self._in_p = False
-            if self.paragraph.strip():
-                self._done_paragraph = True
+            text = " ".join(self._current_p.split())
+            if text:
+                self.candidates.append(text)
         elif tag == "title":
             self._in_title = False
 
     def handle_data(self, data):
-        if self._in_p and not self._done_paragraph:
-            self.paragraph += data
+        if self._in_p:
+            self._current_p += data
         elif self._in_title:
             self.title += data
 
@@ -55,8 +77,12 @@ class _FirstParagraphExtractor(HTMLParser):
 def _extract_name(html: str) -> str:
     parser = _FirstParagraphExtractor()
     parser.feed(html)
-    candidate = parser.paragraph.strip()
-    if candidate:
+    for candidate in parser.candidates:
+        low = candidate.lower()
+        if len(candidate) > 200:
+            continue
+        if any(kw in low for kw in _CHROME_KEYWORDS):
+            continue
         return candidate
     return parser.title.strip()
 
