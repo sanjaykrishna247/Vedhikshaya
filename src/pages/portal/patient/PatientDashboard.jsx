@@ -128,10 +128,6 @@ export default function PatientDashboard() {
         </div>
       </div>
 
-      <div className="pt-today__section-head">
-        <h2 className="pt__h2">{t('ppd.weeklyOverview')}</h2>
-        <p className="pt-today__section-sub">{t('ppd.weeklyOverviewSub')}</p>
-      </div>
       <WeekHeatmap patient={patient} slots={slots} now={now} t={t} />
 
       {confirm && (
@@ -179,16 +175,70 @@ export default function PatientDashboard() {
 
 const HEATMAP_DAYS = 7;
 
+const HM_ICON_S = { fill: 'none', stroke: 'currentColor', strokeWidth: 1.8, strokeLinecap: 'round', strokeLinejoin: 'round' };
+const SLOT_ICON = {
+  morning: (
+    <svg viewBox="0 0 24 24" {...HM_ICON_S}>
+      <circle cx="12" cy="12" r="3.6" />
+      <path d="M12 3.5v2.4M12 18.1v2.4M4.4 4.4l1.7 1.7M17.9 17.9l1.7 1.7M3.5 12h2.4M18.1 12h2.4M4.4 19.6l1.7-1.7M17.9 6.1l1.7-1.7" />
+    </svg>
+  ),
+  afternoon: (
+    <svg viewBox="0 0 24 24" {...HM_ICON_S}>
+      <circle cx="12" cy="12" r="4.2" />
+      <path d="M12 2.5v2M4.9 4.9l1.4 1.4M2.5 12h2M19.1 6.3l1.4-1.4" />
+    </svg>
+  ),
+  night: (
+    <svg viewBox="0 0 24 24" {...HM_ICON_S}>
+      <path d="M20.2 14.7A8.4 8.4 0 1 1 9.3 3.8a6.7 6.7 0 0 0 10.9 10.9z" />
+    </svg>
+  ),
+};
+const CALENDAR_ICON = (
+  <svg viewBox="0 0 24 24" {...HM_ICON_S}>
+    <rect x="3.5" y="5" width="17" height="15.5" rx="2.5" />
+    <path d="M3.5 9.5h17M8 3v3.4M16 3v3.4" />
+  </svg>
+);
+const CELL_GLYPH = {
+  taken: (
+    <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#ffffff" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M5 12.5l4.2 4.2L19 6.3" />
+    </svg>
+  ),
+  due: (
+    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#805d00" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="8.2" />
+      <path d="M12 7.5V12l3 2.2" />
+    </svg>
+  ),
+  missed: (
+    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#ffffff" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M6.5 6.5l11 11M17.5 6.5l-11 11" />
+    </svg>
+  ),
+  upcoming: null,
+};
+
 function WeekHeatmap({ patient, slots, now, t }) {
   const days = useMemo(() => lastNDates(HEATMAP_DAYS), []);
   const todayStr = days[days.length - 1];
 
   return (
     <div className="pt-today__heatmap-card">
+      <div className="pt-today__hm-head">
+        <span className="pt-today__hm-head-icon">{CALENDAR_ICON}</span>
+        <div>
+          <div className="pt-today__hm-head-title">{t('ppd.weeklyOverview')}</div>
+          <div className="pt-today__hm-head-sub">{t('ppd.weeklyOverviewSub')}</div>
+        </div>
+      </div>
+
       <div className="pt-today__heatmap-scroll">
         <div
           className="pt-today__heatmap-grid"
-          style={{ gridTemplateColumns: `88px repeat(${days.length}, minmax(38px, 1fr))` }}
+          style={{ gridTemplateColumns: `104px repeat(${days.length}, minmax(42px, 1fr))` }}
         >
           <div className="pt-today__hm-corner" />
           {days.map((d) => {
@@ -203,7 +253,10 @@ function WeekHeatmap({ patient, slots, now, t }) {
 
           {slots.map((slot) => (
             <Fragment key={slot}>
-              <div className="pt-today__hm-sessionlabel">{t(`slot.${slot}`)}</div>
+              <div className="pt-today__hm-sessionlabel">
+                <span className="pt-today__hm-sessionlabel-icon">{SLOT_ICON[slot]}</span>
+                {t(`slot.${slot}`)}
+              </div>
               {days.map((d) => {
                 // 'pending' (a grace/unlogged state from seed data) reads the
                 // same as 'upcoming' everywhere else in the app (see
@@ -216,7 +269,9 @@ function WeekHeatmap({ patient, slots, now, t }) {
                     key={d}
                     className={`pt-today__hm-cell pt-today__hm-cell--${st}`}
                     title={`${t(`slot.${slot}`)} · ${d}`}
-                  />
+                  >
+                    {CELL_GLYPH[st]}
+                  </div>
                 );
               })}
             </Fragment>
