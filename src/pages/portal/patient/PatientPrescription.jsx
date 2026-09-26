@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { kashayaByName } from '../../../portal/portalData';
 import { activeSlots } from '../../../portal/portalLogic';
 import { usePortal } from '../../../portal/PortalContext';
-import { Loading } from '../shared';
+import { Loading, ago } from '../shared';
 import { useDashLang } from '../../dashboard/dashI18n';
 import PatientShell from './PatientShell';
 import { usePatient } from './usePatientNav';
@@ -12,6 +12,18 @@ import { SLOT_ICON } from './slotIcons';
 import '../portal.css';
 
 const fmtDate = (ts) => new Date(ts).toLocaleDateString([], { day: 'numeric', month: 'long', year: 'numeric' });
+
+const S = { fill: 'none', stroke: 'currentColor', strokeWidth: 1.8, strokeLinecap: 'round', strokeLinejoin: 'round' };
+const ICON = {
+  pill: <svg viewBox="0 0 24 24" {...S}><rect x="3" y="8.5" width="18" height="7" rx="3.5" transform="rotate(-35 12 12)" /><path d="m9.5 8.2 5 7.6" /></svg>,
+  doctor: <svg viewBox="0 0 24 24" {...S}><circle cx="12" cy="7.5" r="3.5" /><path d="M5 20.5a7 7 0 0 1 14 0" /><path d="M12 14v3M10.5 15.5h3" /></svg>,
+  clipboard: <svg viewBox="0 0 24 24" {...S}><rect x="5" y="4.5" width="14" height="16.5" rx="2" /><path d="M9 4.5V3.5h6v1M8.5 10h7M8.5 13.5h7M8.5 17h4" /></svg>,
+  note: <svg viewBox="0 0 24 24" {...S}><path d="M5 4.5h10l4 4v11a1.5 1.5 0 0 1-1.5 1.5h-12A1.5 1.5 0 0 1 4 19.5v-13A2 2 0 0 1 5 4.5z" /><path d="M8 11h8M8 14.5h8M8 18h5" /></svg>,
+  shield: <svg viewBox="0 0 24 24" {...S}><path d="M12 3 5 6v5.5c0 4.3 3 7.8 7 9.5 4-1.7 7-5.2 7-9.5V6z" /><path d="M12 8.5v4.5M12 16h.01" /></svg>,
+  heart: <svg viewBox="0 0 24 24" {...S}><path d="M3 12h4l2-4 3 8 2-4h7" /></svg>,
+  doc: <svg viewBox="0 0 24 24" {...S}><path d="M6 3h8l4 4v14H6z" /><path d="M14 3v4h4M9 12h6M9 16h6" /></svg>,
+  chat: <svg viewBox="0 0 24 24" {...S}><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v8a2.5 2.5 0 0 1-2.5 2.5H10l-4.5 4v-4H6.5A2.5 2.5 0 0 1 4 13.5z" /></svg>,
+};
 
 function bmiOf(v) {
   if (!v?.heightCm || !v?.weightKg) return null;
@@ -32,6 +44,20 @@ function bpCategory(bp) {
   if (sys >= 120) return ['bp.elevated', 'warn'];
   return ['bp.normal', 'good'];
 }
+function pulseCategory(p) {
+  if (p < 60 || p > 100) return ['pulse.out', 'warn'];
+  return ['bp.normal', 'good'];
+}
+
+function CardHead({ icon, title, aside }) {
+  return (
+    <header className="rxp__head">
+      <span className="rxp__head-icon">{icon}</span>
+      <h2 className="rxp__head-title">{title}</h2>
+      {aside && <span className="rxp__head-aside">{aside}</span>}
+    </header>
+  );
+}
 
 export default function PatientPrescription() {
   const patient = usePatient();
@@ -44,151 +70,184 @@ export default function PatientPrescription() {
   const k = kashayaByName(rx.kashaya);
   const slots = activeSlots(rx.schedule);
   const weeksLeft = Math.max(0, rx.durationWeeks - rx.weekOf);
+  const progress = Math.min(100, Math.round((rx.weekOf / rx.durationWeeks) * 100));
   const initials = rx.updatedBy.replace(/^Dr\.?\s*/i, '').split(' ').map((w) => w[0]).slice(0, 2).join('');
   const vitals = patient.vitals;
   const bmi = bmiOf(vitals);
   const clinical = patient.clinical;
+  const startedAt = clinical?.notedAt || vitals?.recordedAt;
 
   return (
     <PatientShell>
-      <div className="rxc">
-        <section className="rxc__card rxc__medicine">
-          <p className="rxc__label">{t('pp.medicine')}</p>
-          <h1 className="rxc__med-name">{k.name}</h1>
-          {/* the native name is stored in Devanagari only, so it's shown for Hindi */}
-          {lang === 'hi' && k.sanskrit && <p className="rxc__med-native">{k.sanskrit}</p>}
-          <p className="rxc__text">{k.benefit}</p>
-          <div className="rxc__med-facts">
-            <span>{t('pp.dosesDaily', { n: slots.length })}</span>
-            <span>{t('pp.courseLabel', { n: rx.durationWeeks })}</span>
+      <div className="rxp">
+        <header className="rxp__page">
+          <div>
+            <div className="rxp__page-title">
+              <h1>{t('pp.title')}</h1>
+              <span className="rxp__status">{t('pp.active')}</span>
+            </div>
+            <p className="rxp__page-sub">
+              {startedAt ? `${t('pp.started', { d: fmtDate(startedAt) })} · ` : ''}
+              {t('pp.updated', { t: ago(rx.updatedAt || Date.now()) })}
+            </p>
+          </div>
+          <div className="rxp__page-actions">
+            <Link to="/patient/chat" className="rxp__btn rxp__btn--ghost">
+              {ICON.chat}
+              {t('pp.messageDoctor')}
+            </Link>
+            <button type="button" className="rxp__btn" onClick={() => setPaperOpen(true)}>
+              {ICON.doc}
+              {t('pp.viewPaper')}
+            </button>
+          </div>
+        </header>
+
+        <section className="rxp__card rxp__medicine">
+          <CardHead icon={ICON.pill} title={t('pp.medicine')} />
+          <div className="rxp__med-body">
+            <div className="rxp__med-main">
+              <p className="rxp__med-name">{k.name}</p>
+              {/* the native name is stored in Devanagari only, so it's shown for Hindi */}
+              {lang === 'hi' && k.sanskrit && <p className="rxp__med-native">{k.sanskrit}</p>}
+              <p className="rxp__text">{k.benefit}</p>
+
+              <dl className="rxp__facts">
+                <div>
+                  <dt>{t('pp.dosesPerDay')}</dt>
+                  <dd>{slots.length}</dd>
+                </div>
+                <div>
+                  <dt>{t('pp.duration')}</dt>
+                  <dd>{t('pp.weeksN', { n: rx.durationWeeks })}</dd>
+                </div>
+                <div className="rxp__facts-progress">
+                  <dt>{t('pp.progress')}</dt>
+                  <dd>
+                    {t('pp.weekN', { n: rx.weekOf })} <small>{t('pp.weeksLeft', { n: weeksLeft })}</small>
+                  </dd>
+                  <div className="rxp__bar" aria-hidden="true"><i style={{ width: `${progress}%` }} /></div>
+                </div>
+              </dl>
+            </div>
+
+            <div className="rxp__schedule">
+              <p className="rxp__sub-title">{t('pp.howToTake')}</p>
+              <ul>
+                {slots.map((s) => (
+                  <li key={s} className={`is-${s}`}>
+                    <span className="rxp__slot-icon">{SLOT_ICON[s]}</span>
+                    <span className="rxp__slot-name">{t(`slot.${s}`)}</span>
+                    <span className="rxp__slot-time">{rx.schedule[s].time}</span>
+                    <span className="rxp__slot-food">
+                      {t(rx.schedule[s].food === 'before' ? 'slot.beforeFood' : 'slot.afterFood')}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+              <p className="rxp__prep">
+                <b>{t('pp.preparation')}</b> {k.afi}
+              </p>
+            </div>
           </div>
         </section>
 
-        <section className="rxc__card rxc__condition">
-          <p className="rxc__label">{t('pp.yourCondition')}</p>
-          <p className="rxc__condition-name">{patient.condition}</p>
+        <section className="rxp__card rxp__doctor">
+          <CardHead icon={ICON.doctor} title={t('pp.yourDoctor')} />
+          <div className="rxp__doc-id">
+            <span className="rxp__avatar">{initials}</span>
+            <div>
+              <p className="rxp__doc-name">{rx.updatedBy}</p>
+              <p className="rxp__muted">{doctor.speciality}</p>
+            </div>
+          </div>
+          <dl className="rxp__rows">
+            <div>
+              <dt>{t('pp.hospital')}</dt>
+              <dd>{doctor.hospitalName}</dd>
+            </div>
+            <div>
+              <dt>{t('pp.statusLabel')}</dt>
+              <dd>
+                <span className={`rxp__presence ${doctor.available ? 'is-on' : ''}`}>
+                  <i />
+                  {doctor.available ? t('pt.available') : t('pt.busy')}
+                </span>
+              </dd>
+            </div>
+            <div>
+              <dt>{t('pp.lastReview')}</dt>
+              <dd>{fmtDate(rx.updatedAt || Date.now())}</dd>
+            </div>
+          </dl>
+        </section>
+
+        <section className="rxp__card rxp__third">
+          <CardHead icon={ICON.clipboard} title={t('pp.yourCondition')} />
+          <p className="rxp__condition">{patient.condition}</p>
           {clinical?.symptoms?.length ? (
             <>
-              <p className="rxc__sublabel">{t('pp.notedBy', { name: clinical.notedBy })}</p>
-              <ul className="rxc__symptoms">
+              <p className="rxp__sub-title">{t('pp.notedBy', { name: clinical.notedBy })}</p>
+              <ul className="rxp__bullets">
                 {clinical.symptoms.map((s) => (
                   <li key={s}>{s}</li>
                 ))}
               </ul>
             </>
           ) : (
-            <p className="rxc__muted">{t('pp.notRecorded')}</p>
+            <p className="rxp__muted">{t('pp.notRecorded')}</p>
           )}
         </section>
 
-        <section className="rxc__card rxc__doctor">
-          <p className="rxc__label">{t('pp.yourDoctor')}</p>
-          <div className="rxc__doctor-row">
-            <span className="rxc__avatar">{initials}</span>
-            <div>
-              <p className="rxc__doctor-name">{rx.updatedBy}</p>
-              <p className="rxc__muted">{doctor.speciality}</p>
+        <section className="rxp__card rxp__third">
+          <CardHead icon={ICON.note} title={t('pp.doctorNotes')} />
+          <p className="rxp__note">{rx.notes}</p>
+          <p className="rxp__sign">— {rx.updatedBy}</p>
+        </section>
+
+        <section className="rxp__card rxp__third rxp__warn">
+          <CardHead icon={ICON.shield} title={t('pp.contra')} />
+          <p className="rxp__text">{k.contraindications}</p>
+        </section>
+
+        <section className="rxp__card rxp__vitals">
+          <CardHead
+            icon={ICON.heart}
+            title={t('pp.vitals')}
+            aside={vitals?.recordedAt ? t('pp.recordedOn', { d: fmtDate(vitals.recordedAt) }) : null}
+          />
+          {vitals ? (
+            <div className="rxp__vitals-grid">
+              <Vital label={t('pp.height')} value={vitals.heightCm} unit="cm" />
+              <Vital label={t('pp.weight')} value={vitals.weightKg} unit="kg" />
+              <Vital
+                label={t('pp.bp')}
+                value={vitals.bp}
+                unit="mmHg"
+                status={bpCategory(vitals.bp)}
+                range={t('pp.refBp')}
+                t={t}
+              />
+              <Vital
+                label={t('pp.pulse')}
+                value={vitals.pulse}
+                unit="bpm"
+                status={pulseCategory(vitals.pulse)}
+                range={t('pp.refPulse')}
+                t={t}
+              />
+              <Vital
+                label={t('pp.bmi')}
+                value={bmi ? bmi.toFixed(1) : '—'}
+                unit="kg/m²"
+                status={bmi ? bmiCategory(bmi) : null}
+                range={t('pp.refBmi')}
+                t={t}
+              />
             </div>
-          </div>
-          <p className="rxc__muted rxc__hospital">{doctor.hospitalName}</p>
-          <div className="rxc__doctor-foot">
-            <span className={`rxc__presence ${doctor.available ? 'is-on' : ''}`}>
-              <i />
-              {doctor.available ? t('pt.available') : t('pt.busy')}
-            </span>
-            <Link to="/patient/chat" className="rxc__btn rxc__btn--ghost">{t('pp.message')}</Link>
-          </div>
-        </section>
-
-        <section className="rxc__card rxc__schedule">
-          <p className="rxc__label">{t('pp.howToTake')}</p>
-          <div className="rxc__doses">
-            {slots.map((s) => {
-              const [clock, ampm] = rx.schedule[s].time.split(' ');
-              return (
-                <div key={s} className={`rxc__dose is-${s}`}>
-                  <span className="rxc__dose-icon">{SLOT_ICON[s]}</span>
-                  <div>
-                    <p className="rxc__dose-slot">{t(`slot.${s}`)}</p>
-                    <p className="rxc__dose-time">
-                      {clock} <small>{ampm}</small>
-                    </p>
-                    <p className="rxc__dose-food">
-                      {t(rx.schedule[s].food === 'before' ? 'slot.beforeFood' : 'slot.afterFood')}
-                    </p>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </section>
-
-        <section className="rxc__card rxc__notes">
-          <p className="rxc__label">{t('pp.doctorNotes')}</p>
-          <p className="rxc__notes-text">{rx.notes}</p>
-          <p className="rxc__muted">— {rx.updatedBy}</p>
-        </section>
-
-        <section className="rxc__card rxc__course">
-          <p className="rxc__label">{t('pp.courseLabel', { n: rx.durationWeeks })}</p>
-          <p className="rxc__course-now">
-            {t('pp.weekN', { n: rx.weekOf })} <small>{t('pp.of', { n: rx.durationWeeks })}</small>
-          </p>
-          <ol className="rxc__weeks" aria-hidden="true">
-            {Array.from({ length: rx.durationWeeks }, (_, i) => (
-              <li key={i} className={i + 1 < rx.weekOf ? 'is-done' : i + 1 === rx.weekOf ? 'is-now' : ''} />
-            ))}
-          </ol>
-          <p className="rxc__muted">{t('pp.weeksLeft', { n: weeksLeft })}</p>
-        </section>
-
-        <section className="rxc__card rxc__caution">
-          <p className="rxc__label">{t('pp.contra')}</p>
-          <p className="rxc__text">{k.contraindications}</p>
-        </section>
-
-        <section className="rxc__card rxc__afi">
-          <p className="rxc__label">{t('pp.afiSpec')}</p>
-          <p className="rxc__text rxc__text--sm">{k.afi}</p>
-        </section>
-
-        <div className="rxc__section-head">
-          <h2>{t('pp.vitals')}</h2>
-          {vitals?.recordedAt && <p>{t('pp.recordedOn', { d: fmtDate(vitals.recordedAt) })}</p>}
-        </div>
-
-        {vitals ? (
-          <>
-            <Vital label={t('pp.height')} value={vitals.heightCm} unit="cm" />
-            <Vital label={t('pp.weight')} value={vitals.weightKg} unit="kg" />
-            <Vital
-              label={t('pp.bp')}
-              value={vitals.bp}
-              unit="mmHg"
-              note={t(bpCategory(vitals.bp)[0])}
-              tone={bpCategory(vitals.bp)[1]}
-            />
-            <Vital
-              label={t('pp.bmi')}
-              value={bmi ? bmi.toFixed(1) : '—'}
-              note={bmi ? t(bmiCategory(bmi)[0]) : undefined}
-              tone={bmi ? bmiCategory(bmi)[1] : undefined}
-            />
-          </>
-        ) : (
-          <section className="rxc__card rxc__vitals-empty">
-            <p className="rxc__muted">{t('pp.notRecorded')}</p>
-          </section>
-        )}
-
-        <section className="rxc__card rxc__paper">
-          <div>
-            <p className="rxc__paper-title">{t('pp.paper')}</p>
-            <p className="rxc__muted">{t('pp.paperSub')}</p>
-          </div>
-          <button type="button" className="rxc__btn" onClick={() => setPaperOpen(true)}>
-            {t('pp.viewPaper')}
-          </button>
+          ) : (
+            <p className="rxp__muted">{t('pp.notRecorded')}</p>
+          )}
         </section>
       </div>
 
@@ -208,16 +267,17 @@ export default function PatientPrescription() {
   );
 }
 
-function Vital({ label, value, unit, note, tone }) {
+function Vital({ label, value, unit, status, range, t }) {
   return (
-    <section className="rxc__card rxc__vital">
-      <p className="rxc__label">{label}</p>
-      <p className="rxc__vital-value">
+    <div className="rxp__vital">
+      <p className="rxp__vital-label">{label}</p>
+      <p className="rxp__vital-value">
         {value}
-        {unit && <small>{unit}</small>}
+        <small>{unit}</small>
       </p>
-      {note && <p className={`rxc__vital-note is-${tone}`}>{note}</p>}
-    </section>
+      {status && <span className={`rxp__chip is-${status[1]}`}>{t(status[0])}</span>}
+      {range && <p className="rxp__vital-range">{range}</p>}
+    </div>
   );
 }
 
@@ -242,8 +302,8 @@ function PrescriptionPaper({ patient, doctor, kashaya: k, slots, bmi, lang, t, o
     <div className="pt--patient rx-paper-scrim" onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
       <div className="rx-paper-wrap" role="dialog" aria-modal="true" aria-label={t('pp.paper')}>
         <div className="rx-paper-actions">
-          <button type="button" className="rxc__btn" onClick={() => window.print()}>{t('pp.print')}</button>
-          <button type="button" className="rxc__btn rxc__btn--ghost" onClick={onClose}>{t('pp.close')}</button>
+          <button type="button" className="rxp__btn" onClick={() => window.print()}>{t('pp.print')}</button>
+          <button type="button" className="rxp__btn rxp__btn--ghost" onClick={onClose}>{t('pp.close')}</button>
         </div>
 
         <article className="rx-paper">
