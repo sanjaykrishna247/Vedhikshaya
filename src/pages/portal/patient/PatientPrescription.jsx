@@ -15,12 +15,6 @@ const fmtDate = (ts) => new Date(ts).toLocaleDateString([], { day: 'numeric', mo
 
 const S = { fill: 'none', stroke: 'currentColor', strokeWidth: 1.8, strokeLinecap: 'round', strokeLinejoin: 'round' };
 const ICON = {
-  pill: <svg viewBox="0 0 24 24" {...S}><rect x="3" y="8.5" width="18" height="7" rx="3.5" transform="rotate(-35 12 12)" /><path d="m9.5 8.2 5 7.6" /></svg>,
-  doctor: <svg viewBox="0 0 24 24" {...S}><circle cx="12" cy="7.5" r="3.5" /><path d="M5 20.5a7 7 0 0 1 14 0" /><path d="M12 14v3M10.5 15.5h3" /></svg>,
-  clipboard: <svg viewBox="0 0 24 24" {...S}><rect x="5" y="4.5" width="14" height="16.5" rx="2" /><path d="M9 4.5V3.5h6v1M8.5 10h7M8.5 13.5h7M8.5 17h4" /></svg>,
-  note: <svg viewBox="0 0 24 24" {...S}><path d="M5 4.5h10l4 4v11a1.5 1.5 0 0 1-1.5 1.5h-12A1.5 1.5 0 0 1 4 19.5v-13A2 2 0 0 1 5 4.5z" /><path d="M8 11h8M8 14.5h8M8 18h5" /></svg>,
-  shield: <svg viewBox="0 0 24 24" {...S}><path d="M12 3 5 6v5.5c0 4.3 3 7.8 7 9.5 4-1.7 7-5.2 7-9.5V6z" /><path d="M12 8.5v4.5M12 16h.01" /></svg>,
-  heart: <svg viewBox="0 0 24 24" {...S}><path d="M3 12h4l2-4 3 8 2-4h7" /></svg>,
   doc: <svg viewBox="0 0 24 24" {...S}><path d="M6 3h8l4 4v14H6z" /><path d="M14 3v4h4M9 12h6M9 16h6" /></svg>,
   chat: <svg viewBox="0 0 24 24" {...S}><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v8a2.5 2.5 0 0 1-2.5 2.5H10l-4.5 4v-4H6.5A2.5 2.5 0 0 1 4 13.5z" /></svg>,
 };
@@ -49,10 +43,9 @@ function pulseCategory(p) {
   return ['bp.normal', 'good'];
 }
 
-function CardHead({ icon, title, aside }) {
+function CardHead({ title, aside }) {
   return (
     <header className="rxp__head">
-      <span className="rxp__head-icon">{icon}</span>
       <h2 className="rxp__head-title">{title}</h2>
       {aside && <span className="rxp__head-aside">{aside}</span>}
     </header>
@@ -104,7 +97,7 @@ export default function PatientPrescription() {
         </header>
 
         <section className="rxp__card rxp__medicine">
-          <CardHead icon={ICON.pill} title={t('pp.medicine')} />
+          <CardHead title={t('pp.medicine')} />
           <div className="rxp__med-body">
             <div className="rxp__med-main">
               <p className="rxp__med-name">{k.name}</p>
@@ -153,7 +146,7 @@ export default function PatientPrescription() {
         </section>
 
         <section className="rxp__card rxp__doctor">
-          <CardHead icon={ICON.doctor} title={t('pp.yourDoctor')} />
+          <CardHead title={t('pp.yourDoctor')} />
           <div className="rxp__doc-id">
             <span className="rxp__avatar">{initials}</span>
             <div>
@@ -183,7 +176,7 @@ export default function PatientPrescription() {
         </section>
 
         <section className="rxp__card rxp__third">
-          <CardHead icon={ICON.clipboard} title={t('pp.yourCondition')} />
+          <CardHead title={t('pp.yourCondition')} />
           <p className="rxp__condition">{patient.condition}</p>
           {clinical?.symptoms?.length ? (
             <>
@@ -200,20 +193,18 @@ export default function PatientPrescription() {
         </section>
 
         <section className="rxp__card rxp__third">
-          <CardHead icon={ICON.note} title={t('pp.doctorNotes')} />
+          <CardHead title={t('pp.doctorNotes')} />
           <p className="rxp__note">{rx.notes}</p>
           <p className="rxp__sign">— {rx.updatedBy}</p>
         </section>
 
         <section className="rxp__card rxp__third rxp__warn">
-          <CardHead icon={ICON.shield} title={t('pp.contra')} />
+          <CardHead title={t('pp.contra')} />
           <p className="rxp__text">{k.contraindications}</p>
         </section>
 
         <section className="rxp__card rxp__vitals">
-          <CardHead
-            icon={ICON.heart}
-            title={t('pp.vitals')}
+          <CardHead title={t('pp.vitals')}
             aside={vitals?.recordedAt ? t('pp.recordedOn', { d: fmtDate(vitals.recordedAt) }) : null}
           />
           {vitals ? (
