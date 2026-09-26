@@ -6,6 +6,7 @@ import {
   activeSlots,
   canStartBrew,
   complianceStats,
+  currentStreak,
   doseStatus,
   humanCountdown,
   minutesUntil,
@@ -31,6 +32,7 @@ export default function PatientDashboard() {
   const [brew, setBrew] = useState(null); // { slot }
 
   const stats = useMemo(() => (patient ? complianceStats(patient) : null), [patient, tick]);
+  const streak = useMemo(() => (patient ? currentStreak(patient) : 0), [patient, tick]);
 
   if (!patient) return <PatientShell><Loading label="Loading your dashboard…" /></PatientShell>;
 
@@ -119,10 +121,27 @@ export default function PatientDashboard() {
         })}
       </div>
 
-      <div className="pt-today__overview">
-        <WeekHeatmap patient={patient} slots={slots} now={now} t={t} />
-        <WeekSummary patient={patient} slots={slots} now={now} stats={stats} t={t} />
+      <h2 className="pt__h2">{t('pc.thisWeek')}</h2>
+      <div className="pt__stats">
+        <div className="pt__stat pt__stat--good">
+          <span className="pt__stat-value">{stats.pct}%</span>
+          <span className="pt__stat-label">{t('pc.weeklyCompliance')}</span>
+        </div>
+        <div className="pt__stat">
+          <span className="pt__stat-value">{stats.taken}/{stats.scheduled}</span>
+          <span className="pt__stat-label">{t('ppd.dosesTaken')}</span>
+        </div>
+        <div className="pt__stat">
+          <span className="pt__stat-value">{streak}{t('ppd.dayShort')}</span>
+          <span className="pt__stat-label">{t('pc.currentStreak')}</span>
+        </div>
+        <div className="pt__stat">
+          <span className="pt__stat-value">{Math.max(streak, patient.bestStreak)}{t('ppd.dayShort')}</span>
+          <span className="pt__stat-label">{t('pc.personalBest')}</span>
+        </div>
       </div>
+
+      <WeekHeatmap patient={patient} slots={slots} now={now} mostMissed={stats.mostMissed} t={t} />
 
       {confirm && (
         <Modal title={t('ppd.markTitle', { slot: t(`slot.${confirm.slot}`) })} size="sm" onClose={() => setConfirm(null)}>
@@ -213,7 +232,7 @@ function useWeekCells(patient, slots, now) {
   return { days, rows };
 }
 
-function WeekHeatmap({ patient, slots, now, t }) {
+function WeekHeatmap({ patient, slots, now, mostMissed, t }) {
   const { days, rows } = useWeekCells(patient, slots, now);
   const todayStr = days[days.length - 1];
   const [sel, setSel] = useState(null); // { date, slot, status }
@@ -278,61 +297,21 @@ function WeekHeatmap({ patient, slots, now, t }) {
             </span>
           </>
         ) : (
-          <span className="pt-today__hm-legend">
-            {['taken', 'due', 'missed', 'unlogged'].map((k) => (
-              <span key={k}>
-                <i className={`pt-today__dot is-${k}`} />
-                {t(STATUS_LABEL_KEY[k])}
-              </span>
-            ))}
-          </span>
+          <>
+            <span className="pt-today__hm-legend">
+              {['taken', 'due', 'missed', 'upcoming', 'unlogged'].map((k) => (
+                <span key={k}>
+                  <i className={`pt-today__dot is-${k}`} />
+                  {t(STATUS_LABEL_KEY[k])}
+                </span>
+              ))}
+            </span>
+            {mostMissed && (
+              <span className="pt-today__hm-note">{t('pc.mostMissed', { slot: t(`slot.${mostMissed}`) })}</span>
+            )}
+          </>
         )}
       </div>
-    </section>
-  );
-}
-
-function WeekSummary({ patient, slots, now, stats, t }) {
-  const { rows } = useWeekCells(patient, slots, now);
-  const counts = { taken: 0, missed: 0, due: 0 };
-  rows.forEach((r) => r.cells.forEach((c) => {
-    if (c.status in counts) counts[c.status] += 1;
-  }));
-  const total = counts.taken + counts.missed + counts.due || 1;
-
-  return (
-    <section className="pt-today__card pt-today__sum">
-      <header className="pt-today__card-head">
-        <h2 className="pt-today__card-title">{t('ppd.adherence')}</h2>
-        <p className="pt-today__card-sub">{t('ppd.last7')}</p>
-      </header>
-
-      <div className="pt-today__sum-figure">
-        {stats.pct}
-        <span>%</span>
-      </div>
-
-      <div className="pt-today__sum-bar" aria-hidden="true">
-        {['taken', 'due', 'missed'].map((k) =>
-          counts[k] ? <i key={k} className={`is-${k}`} style={{ flexGrow: counts[k] / total }} /> : null
-        )}
-      </div>
-
-      <dl className="pt-today__sum-stats">
-        {[
-          ['taken', 'ppd.legendTaken'],
-          ['missed', 'ppd.legendMissed'],
-          ['due', 'ppd.legendDue'],
-        ].map(([k, key]) => (
-          <div key={k}>
-            <dt>
-              <i className={`pt-today__dot is-${k}`} />
-              {t(key)}
-            </dt>
-            <dd>{counts[k]}</dd>
-          </div>
-        ))}
-      </dl>
     </section>
   );
 }

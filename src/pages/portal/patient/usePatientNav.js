@@ -8,8 +8,7 @@ export function usePatientNav() {
   const unread = session ? getChat(session.id).filter((m) => m.sender === 'doctor' && !m.read).length : 0;
 
   return [
-    { to: '/patient/dashboard', label: t('pnav.today'), icon: Icon.today, end: true },
-    { to: '/patient/compliance', label: t('pnav.compliance'), icon: Icon.compliance },
+    { to: '/patient/dashboard', label: t('pnav.doseTaken'), icon: Icon.today, end: true },
     { to: '/patient/prescription', label: t('pnav.prescription'), icon: Icon.rx },
     { to: '/patient/symptoms', label: t('pnav.symptoms'), icon: Icon.symptom },
     { to: '/patient/chat', label: t('pnav.chat'), icon: Icon.chat, badge: unread },

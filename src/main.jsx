@@ -1,6 +1,6 @@
 import { StrictMode, Suspense, lazy } from 'react'
 import { createRoot } from 'react-dom/client'
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import './index.css'
 import App from './App.jsx'
 import DashboardPage from './pages/dashboard/DashboardPage.jsx'
@@ -36,7 +36,6 @@ const PatientDetail = lazy(() => import('./pages/portal/doctor/PatientDetail.jsx
 const BrewMonitor = lazy(() => import('./pages/portal/doctor/BrewMonitor.jsx'))
 const DoctorChat = lazy(() => import('./pages/portal/doctor/DoctorChat.jsx'))
 const PatientDashboard = lazy(() => import('./pages/portal/patient/PatientDashboard.jsx'))
-const PatientCompliance = lazy(() => import('./pages/portal/patient/PatientCompliance.jsx'))
 const PatientPrescription = lazy(() => import('./pages/portal/patient/PatientPrescription.jsx'))
 const PatientSymptoms = lazy(() => import('./pages/portal/patient/PatientSymptoms.jsx'))
 const PatientChat = lazy(() => import('./pages/portal/patient/PatientChat.jsx'))
@@ -153,7 +152,7 @@ createRoot(document.getElementById('root')).render(
 
           {/* Patient portal */}
           <Route path="/patient/dashboard" element={patientRoute(<PatientDashboard />)} />
-          <Route path="/patient/compliance" element={patientRoute(<PatientCompliance />)} />
+          <Route path="/patient/compliance" element={<Navigate to="/patient/dashboard" replace />} />
           <Route path="/patient/prescription" element={patientRoute(<PatientPrescription />)} />
           <Route path="/patient/symptoms" element={patientRoute(<PatientSymptoms />)} />
           <Route path="/patient/chat" element={patientRoute(<PatientChat />)} />
