@@ -221,8 +221,15 @@ function makePatient(seed) {
     bestStreak: seed.bestStreak ?? 6,
     brews: seed.brews || [],
     symptoms: seed.symptoms || {},
+    // what the doctor recorded at the consultation that started this course
+    clinical: seed.clinical
+      ? { ...seed.clinical, notedBy: seed.doctorName || 'Dr. Meera Nair', notedAt: courseStart(seed.weekOf) }
+      : null,
+    vitals: seed.vitals ? { ...seed.vitals, recordedAt: courseStart(seed.weekOf) } : null,
   };
 }
+
+const courseStart = (weekOf = 3) => Date.now() - (weekOf - 1) * 7 * 86400_000 - 2 * 86400_000;
 
 export function seedStore() {
   const domain = 'apollohospital.com';
@@ -255,6 +262,8 @@ export function seedStore() {
       hospitalDomain: domain, doctorId: doctor.id, doctorName: doctor.name,
       durationWeeks: 8, weekOf: 3, quality: 0.86, bestStreak: 9,
       notes: 'Warm compress after the night dose. Avoid cold, dry foods.',
+      clinical: { symptoms: ['Lower-back pain radiating to the left leg', 'Morning stiffness lasting about 30 minutes', 'Pain worse in cold weather', 'Disturbed sleep from pain'] },
+      vitals: { heightCm: 172, weightKg: 78, bp: '136/86', pulse: 78 },
       brews: [brewSample('Dashamoola Kwatha', 97, 90), brewSample('Dashamoola Kwatha', 94, 1550), brewSample('Dashamoola Kwatha', 91, 3000)],
       symptoms: { [todayYmd()]: { feeling: 'better', note: 'Stiffness easing in the mornings', at: Date.now() - 3600_000 } },
     }),
@@ -269,6 +278,8 @@ export function seedStore() {
         afternoon: { on: false, time: '1:00 PM', food: 'after' },
         night: { on: true, time: '9:00 PM', food: 'after' },
       },
+      clinical: { symptoms: ['Bloating after meals', 'Irregular bowel movements', 'Low appetite in the mornings'] },
+      vitals: { heightCm: 160, weightKg: 56, bp: '112/74', pulse: 72 },
       brews: [brewSample('Triphala Kwatha', 88, 200), brewSample('Triphala Kwatha', 90, 1700)],
     }),
     makePatient({
@@ -277,6 +288,8 @@ export function seedStore() {
       condition: 'Recurrent low-grade fever, fatigue', kashaya: 'Guduchi Kwatha',
       hospitalDomain: domain, doctorId: doctor.id, doctorName: doctor.name,
       durationWeeks: 10, weekOf: 5, quality: 0.93, bestStreak: 15,
+      clinical: { symptoms: ['Evening fever around 99–100°F', 'Tiredness through the day', 'Mild aches in the joints'] },
+      vitals: { heightCm: 168, weightKg: 70, bp: '124/80', pulse: 84 },
       brews: [brewSample('Guduchi Kwatha', 96, 50), brewSample('Guduchi Kwatha', 95, 1500)],
     }),
     makePatient({
@@ -285,11 +298,13 @@ export function seedStore() {
       condition: 'Post-viral joint aches', kashaya: 'Dashamoola Kwatha',
       hospitalDomain: domain, doctorId: doctor.id, doctorName: doctor.name,
       durationWeeks: 4, weekOf: 4, quality: 0.7, bestStreak: 5, active: false,
+      clinical: { symptoms: ['Knee and wrist pain after a viral fever', 'Finger swelling in the mornings'] },
+      vitals: { heightCm: 158, weightKg: 52, bp: '110/70', pulse: 76 },
     }),
   ];
 
   return {
-    version: 5,
+    version: 6,
     doctor,
     patients,
     counters: { patient: 1045 },

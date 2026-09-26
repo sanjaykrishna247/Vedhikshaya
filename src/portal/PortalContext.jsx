@@ -9,7 +9,7 @@ import {
   todayYmd,
 } from './portalData';
 
-const STORE_KEY = 'vedikshaya_portal_store_v5';
+const STORE_KEY = 'vedikshaya_portal_store_v6';
 const SESSION_KEY = 'vedikshaya_portal_session';
 const REFRESH_MS = 30_000;
 
@@ -22,7 +22,7 @@ function loadStore() {
     const raw = localStorage.getItem(STORE_KEY);
     if (raw) {
       const parsed = JSON.parse(raw);
-      if (parsed?.version === 5) return parsed;
+      if (parsed?.version === 6) return parsed;
     }
   } catch {
     /* ignore corrupt / unavailable storage */
