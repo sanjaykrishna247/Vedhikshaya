@@ -63,7 +63,6 @@ export default function PatientPrescription() {
   const k = kashayaByName(rx.kashaya);
   const slots = activeSlots(rx.schedule);
   const weeksLeft = Math.max(0, rx.durationWeeks - rx.weekOf);
-  const progress = Math.min(100, Math.round((rx.weekOf / rx.durationWeeks) * 100));
   const initials = rx.updatedBy.replace(/^Dr\.?\s*/i, '').split(' ').map((w) => w[0]).slice(0, 2).join('');
   const vitals = patient.vitals;
   const bmi = bmiOf(vitals);
@@ -114,14 +113,25 @@ export default function PatientPrescription() {
                   <dt>{t('pp.duration')}</dt>
                   <dd>{t('pp.weeksN', { n: rx.durationWeeks })}</dd>
                 </div>
-                <div className="rxp__facts-progress">
+                <div>
                   <dt>{t('pp.progress')}</dt>
-                  <dd>
-                    {t('pp.weekN', { n: rx.weekOf })} <small>{t('pp.weeksLeft', { n: weeksLeft })}</small>
-                  </dd>
-                  <div className="rxp__bar" aria-hidden="true"><i style={{ width: `${progress}%` }} /></div>
+                  <dd>{t('pp.weekN', { n: rx.weekOf })}</dd>
                 </div>
               </dl>
+
+              <div className="rxp__course">
+                <p className="rxp__sub-title">
+                  {t('pp.courseLabel', { n: rx.durationWeeks })}
+                  <span>{t('pp.weeksLeft', { n: weeksLeft })}</span>
+                </p>
+                <ol className="rxp__weeks" aria-label={`${t('pp.weekN', { n: rx.weekOf })} ${t('pp.of', { n: rx.durationWeeks })}`}>
+                  {Array.from({ length: rx.durationWeeks }, (_, i) => (
+                    <li key={i} className={i + 1 < rx.weekOf ? 'is-done' : i + 1 === rx.weekOf ? 'is-now' : ''}>
+                      {i + 1}
+                    </li>
+                  ))}
+                </ol>
+              </div>
             </div>
 
             <div className="rxp__schedule">

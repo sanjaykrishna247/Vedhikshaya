@@ -1996,7 +1996,7 @@
 .rxp__med-main .rxp__text { margin-top: 8px; }
 .rxp__facts {
   display: grid;
-  grid-template-columns: auto auto minmax(0, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   margin: 20px 0 0;
   border: 1px solid var(--tk-line);
   border-radius: 10px;
@@ -2005,11 +2005,24 @@
 .rxp__facts > div + div { border-left: 1px solid var(--tk-line); }
 .rxp__facts dt { font-size: 0.74rem; font-weight: 600; color: var(--tk-muted); }
 .rxp__facts dd { margin: 4px 0 0; font-size: 1rem; font-weight: 700; color: var(--tk-ink); white-space: nowrap; }
-.rxp__facts dd small { font-size: 0.78rem; font-weight: 500; color: var(--tk-muted); }
-.rxp__facts-progress dd { white-space: normal; }
-.rxp__facts-progress dd small { display: block; margin-top: 1px; }
-.rxp__bar { height: 6px; margin-top: 8px; border-radius: 3px; background: var(--tk-empty); overflow: hidden; }
-.rxp__bar i { display: block; height: 100%; border-radius: 3px; background: #4a8a26; }
+.rxp__course { margin-top: 18px; }
+.rxp__course .rxp__sub-title { display: flex; justify-content: space-between; gap: 12px; }
+.rxp__course .rxp__sub-title span { font-weight: 500; }
+.rxp__weeks { list-style: none; display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; }
+.rxp__weeks li {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--tk-line);
+  background: var(--tk-surface);
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: var(--tk-muted);
+}
+.rxp__weeks li.is-done { background: var(--tk-ink); border-color: var(--tk-ink); color: #ffffff; }
+.rxp__weeks li.is-now { background: #8bc53d; border-color: #8bc53d; color: #0f321d; box-shadow: 0 0 0 3px rgba(139, 197, 61, 0.25); }
 
 .rxp__schedule { padding-left: 24px; border-left: 1px solid #eef1ee; }
 .rxp__schedule ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
@@ -2152,8 +2165,9 @@
   .rxp__page-title h1 { font-size: 1.45rem; }
   .rxp__page-actions .rxp__btn { flex: 1; }
   .rxp__card { padding: 18px 16px; }
-  .rxp__facts { grid-template-columns: 1fr 1fr; }
-  .rxp__facts-progress { grid-column: 1 / -1; border-left: 0 !important; border-top: 1px solid var(--tk-line); }
+  .rxp__facts { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .rxp__facts > div { padding: 10px 12px; }
+  .rxp__weeks li { width: 28px; height: 28px; }
   .rxp__vitals-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
