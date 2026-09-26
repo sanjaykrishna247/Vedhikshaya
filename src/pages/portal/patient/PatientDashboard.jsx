@@ -238,7 +238,7 @@ function WeekHeatmap({ patient, slots, now, t }) {
       <div className="pt-today__heatmap-scroll">
         <div
           className="pt-today__heatmap-grid"
-          style={{ gridTemplateColumns: `104px repeat(${days.length}, minmax(42px, 1fr))` }}
+          style={{ gridTemplateColumns: `62px repeat(${days.length}, minmax(26px, 1fr))` }}
         >
           <div className="pt-today__hm-corner" />
           {days.map((d) => {
