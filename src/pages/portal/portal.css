@@ -1891,7 +1891,6 @@
 }
 
 /* ----- prescription ----- */
-.rxs { max-width: 1080px; }
 .rxs__head {
   display: flex;
   align-items: flex-end;
