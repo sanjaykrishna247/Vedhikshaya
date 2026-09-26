@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { SYMPTOM_OPTIONS, todayYmd } from '../../../portal/portalData';
+import { SYMPTOM_OPTIONS, lastNDates, todayYmd } from '../../../portal/portalData';
 import { usePortal } from '../../../portal/PortalContext';
 import { Loading, useToast, ago } from '../shared';
 import { useDashLang } from '../../dashboard/dashI18n';
@@ -8,6 +8,7 @@ import { usePatient } from './usePatientNav';
 import '../portal.css';
 
 const optByValue = (v) => SYMPTOM_OPTIONS.find((o) => o.value === v);
+const TREND_DAYS = 14;
 
 export default function PatientSymptoms() {
   const patient = usePatient();
@@ -28,6 +29,8 @@ export default function PatientSymptoms() {
       .slice(0, 14);
   }, [patient, tick]);
 
+  const trendDays = useMemo(() => lastNDates(TREND_DAYS), []);
+
   if (!patient) return <PatientShell><Loading /></PatientShell>;
 
   const submit = () => {
@@ -35,6 +38,8 @@ export default function PatientSymptoms() {
     logSymptom(patient.id, feeling, note);
     toast("Today's check-in saved");
   };
+
+  const fmtDate = (d) => new Date(`${d}T00:00:00`).toLocaleDateString([], { weekday: 'short', day: 'numeric', month: 'short' });
 
   return (
     <PatientShell>
@@ -44,30 +49,32 @@ export default function PatientSymptoms() {
       </div>
 
       {todayLog ? (
-        <div className="pt__card">
-          <div style={{ fontSize: '2rem' }}>{optByValue(todayLog.feeling)?.emoji}</div>
-          <div style={{ fontWeight: 700, marginTop: 4 }}>{symLabel(todayLog.feeling)}</div>
-          {todayLog.note && (
-            <p style={{ color: 'var(--pt-body)', fontSize: '0.9rem', marginTop: 8 }}>"{todayLog.note}"</p>
-          )}
-          <p className="pt__sub" style={{ marginTop: 8 }}>{t('ps.loggedAgo', { t: ago(todayLog.at) })}</p>
-        </div>
+        <section className="pt__card pt-sym__logged">
+          <span className={`pt-sym__score is-s${optByValue(todayLog.feeling)?.score}`} />
+          <div>
+            <div className="pt-sym__logged-label">{symLabel(todayLog.feeling)}</div>
+            {todayLog.note && <p className="pt-sym__logged-note">“{todayLog.note}”</p>}
+            <p className="pt-sym__logged-meta">{t('ps.loggedAgo', { t: ago(todayLog.at) })}</p>
+          </div>
+        </section>
       ) : (
-        <div className="pt__card">
-          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-            {SYMPTOM_OPTIONS.map((o) => (
+        <section className="pt__card">
+          <div className="pt-sym__scale" role="radiogroup" aria-label={t('ps.colFeeling')}>
+            {[...SYMPTOM_OPTIONS].reverse().map((o) => (
               <button
                 key={o.value}
+                type="button"
+                role="radio"
+                aria-checked={feeling === o.value}
                 onClick={() => setFeeling(o.value)}
-                className={`pt__badge-card ${feeling === o.value ? '' : 'is-locked'}`}
-                style={{ cursor: 'pointer', flex: '1 1 120px' }}
+                className={`pt-sym__opt is-s${o.score} ${feeling === o.value ? 'is-on' : ''}`}
               >
-                <div className="pt__badge-emoji">{o.emoji}</div>
-                <div className="pt__badge-title">{symLabel(o.value)}</div>
+                <i />
+                {symLabel(o.value)}
               </button>
             ))}
           </div>
-          <div className="pt__field" style={{ marginTop: 14 }}>
+          <div className="pt__field" style={{ marginTop: 18 }}>
             <span className="pt__label">{t('ps.optionalNote')}</span>
             <textarea
               className="pt__textarea"
@@ -76,40 +83,43 @@ export default function PatientSymptoms() {
               placeholder={t('ps.notePlaceholder')}
             />
           </div>
-          <button className="pt__btn pt__btn--primary" style={{ marginTop: 12 }} disabled={!feeling} onClick={submit}>
+          <button className="pt__btn pt__btn--primary" style={{ marginTop: 14 }} disabled={!feeling} onClick={submit}>
             {t('ps.submit')}
           </button>
-        </div>
+        </section>
       )}
 
       <h2 className="pt__h2">{t('ps.recent')}</h2>
-      <div className="pt__table-wrap">
-        <table className="pt__table">
-          <thead>
-            <tr>
-              <th>{t('ps.colDate')}</th>
-              <th>{t('ps.colFeeling')}</th>
-              <th>{t('ps.colNote')}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {history.length === 0 && (
-              <tr>
-                <td colSpan={3} style={{ color: 'var(--pt-muted)' }}>{t('ps.noCheckins')}</td>
-              </tr>
-            )}
+      <section className="pt__card">
+        <div className="pt-sym__trend" aria-hidden="true">
+          {trendDays.map((d) => {
+            const s = optByValue(patient.symptoms?.[d]?.feeling)?.score;
+            return (
+              <span key={d} className="pt-sym__trend-col" title={fmtDate(d)}>
+                <i className={s ? `is-s${s}` : 'is-empty'} style={{ height: s ? `${s * 20}%` : undefined }} />
+                <small>{new Date(`${d}T00:00:00`).getDate()}</small>
+              </span>
+            );
+          })}
+        </div>
+
+        {history.length === 0 ? (
+          <p className="pt-sec__text" style={{ color: 'var(--tk-muted)', marginTop: 16 }}>{t('ps.noCheckins')}</p>
+        ) : (
+          <ul className="pt-sym__list">
             {history.map(([date, s]) => (
-              <tr key={date}>
-                <td>{date}</td>
-                <td>
-                  {optByValue(s.feeling)?.emoji} {symLabel(s.feeling)}
-                </td>
-                <td>{s.note || '—'}</td>
-              </tr>
+              <li key={date}>
+                <span className="pt-sym__list-date">{fmtDate(date)}</span>
+                <span className="pt-sym__list-feel">
+                  <i className={`pt-sym__dot is-s${optByValue(s.feeling)?.score}`} />
+                  {symLabel(s.feeling)}
+                </span>
+                <span className="pt-sym__list-note">{s.note || '—'}</span>
+              </li>
             ))}
-          </tbody>
-        </table>
-      </div>
+          </ul>
+        )}
+      </section>
     </PatientShell>
   );
 }

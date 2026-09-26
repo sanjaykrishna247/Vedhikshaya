@@ -55,12 +55,16 @@ export default function PatientChat() {
       <div className="pt__chat" style={{ gridTemplateColumns: '1fr' }}>
         <div className="pt__chat-panel">
           <div className="pt__chat-head">
-            <div>
+            <span className="pt__chat-avatar">
+              {doctor.name.replace(/^Dr\.?\s*/i, '').split(' ').map((w) => w[0]).slice(0, 2).join('')}
+            </span>
+            <div style={{ flex: 1, minWidth: 0 }}>
               <div className="pt__chat-head-name">{doctor.name}</div>
               <div className="pt__chat-head-sub">{doctor.hospitalName}</div>
             </div>
-            <span className={`pt__pill ${doctor.available ? 'pt__pill--good' : 'pt__pill--bad'}`}>
-              {doctor.available ? `🟢 ${t('pt.available')}` : `🔴 ${t('pt.busy')}`}
+            <span className={`pt__presence ${doctor.available ? 'is-on' : 'is-off'}`}>
+              <i />
+              {doctor.available ? t('pt.available') : t('pt.busy')}
             </span>
           </div>
 

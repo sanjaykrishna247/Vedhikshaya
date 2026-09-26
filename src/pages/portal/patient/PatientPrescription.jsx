@@ -15,6 +15,7 @@ export default function PatientPrescription() {
   const k = kashayaByName(rx.kashaya);
   const slots = activeSlots(rx.schedule);
   const weeksLeft = Math.max(0, rx.durationWeeks - rx.weekOf);
+  const progress = Math.min(100, (rx.weekOf / rx.durationWeeks) * 100);
 
   return (
     <PatientShell>
@@ -23,66 +24,70 @@ export default function PatientPrescription() {
         <p className="pt__sub">{k.sanskrit} · {t('pp.prescribedBy', { name: rx.updatedBy })}</p>
       </div>
 
-      <div className="pt__card">
-        <h2 className="pt__h2" style={{ marginTop: 0 }}>{t('pp.whatItDoes')}</h2>
-        <p style={{ color: 'var(--pt-body)', fontSize: '0.9rem', lineHeight: 1.6 }}>{k.benefit}</p>
-      </div>
+      <div className="pt-rx">
+        <div className="pt-rx__main">
+          <section className="pt__card">
+            <h2 className="pt-sec__title">{t('pp.whatItDoes')}</h2>
+            <p className="pt-sec__text">{k.benefit}</p>
+          </section>
 
-      <h2 className="pt__h2">{t('pp.howToTake')}</h2>
-      <div className="pt__table-wrap">
-        <table className="pt__table">
-          <thead>
-            <tr>
-              <th>{t('pp.colDose')}</th>
-              <th>{t('pp.colTime')}</th>
-              <th>{t('pp.colFood')}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {slots.map((s) => (
-              <tr key={s}>
-                <td>{t(`slot.${s}`)}</td>
-                <td>{rx.schedule[s].time}</td>
-                <td>{t(rx.schedule[s].food === 'before' ? 'slot.beforeFood' : 'slot.afterFood')}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+          <section className="pt__card">
+            <h2 className="pt-sec__title">{t('pp.howToTake')}</h2>
+            <ul className="pt-rx__schedule">
+              {slots.map((s) => {
+                const [clock, ampm] = rx.schedule[s].time.split(' ');
+                return (
+                  <li key={s}>
+                    <span className="pt-rx__time">
+                      <b>{clock}</b>
+                      <small>{ampm}</small>
+                    </span>
+                    <span className="pt-rx__slot">{t(`slot.${s}`)}</span>
+                    <span className="pt-rx__food">
+                      {t(rx.schedule[s].food === 'before' ? 'slot.beforeFood' : 'slot.afterFood')}
+                    </span>
+                  </li>
+                );
+              })}
+            </ul>
+          </section>
 
-      <div className="pt__stats" style={{ marginTop: 18 }}>
-        <div className="pt__stat">
-          <span className="pt__stat-value">{t('pp.weekN', { n: rx.weekOf })}</span>
-          <span className="pt__stat-label">{t('pp.of', { n: rx.durationWeeks })}</span>
+          <section className="pt__card pt-rx__note">
+            <h2 className="pt-sec__title">{t('pp.doctorNotes')}</h2>
+            <p className="pt-rx__note-text">{rx.notes}</p>
+            <p className="pt-rx__note-by">— {rx.updatedBy}</p>
+          </section>
         </div>
-        <div className="pt__stat">
-          <span className="pt__stat-value">{weeksLeft}w</span>
-          <span className="pt__stat-label">{t('pp.remaining')}</span>
-        </div>
-      </div>
 
-      <h2 className="pt__h2">{t('pp.doctorNotes')}</h2>
-      <div className="pt__card">
-        <p style={{ margin: 0, color: 'var(--pt-body)', fontSize: '0.9rem', lineHeight: 1.6 }}>{rx.notes}</p>
-      </div>
+        <aside className="pt-rx__side">
+          <section className="pt__card">
+            <div className="pt-rx__course-top">
+              <span className="pt-rx__course-week">{t('pp.weekN', { n: rx.weekOf })}</span>
+              <span className="pt-rx__course-of">{t('pp.of', { n: rx.durationWeeks })}</span>
+            </div>
+            <div className="pt-rx__bar"><i style={{ width: `${progress}%` }} /></div>
+            <p className="pt-rx__course-left">{weeksLeft}w {t('pp.remaining')}</p>
+          </section>
 
-      <h2 className="pt__h2">{t('pp.ingredients')}</h2>
-      <div className="pt__card">
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-          {k.ingredients.map((i) => (
-            <span key={i} className="pt__pill pt__pill--muted">{i}</span>
-          ))}
-        </div>
-      </div>
+          <section className="pt__card">
+            <h2 className="pt-sec__title">{t('pp.ingredients')}</h2>
+            <div className="pt-rx__chips">
+              {k.ingredients.map((i) => (
+                <span key={i}>{i}</span>
+              ))}
+            </div>
+          </section>
 
-      <h2 className="pt__h2">{t('pp.contra')}</h2>
-      <div className="pt__card">
-        <p style={{ margin: 0, color: 'var(--pt-body)', fontSize: '0.9rem', lineHeight: 1.6 }}>{k.contraindications}</p>
-      </div>
+          <section className="pt__card pt-rx__warn">
+            <h2 className="pt-sec__title">{t('pp.contra')}</h2>
+            <p className="pt-sec__text">{k.contraindications}</p>
+          </section>
 
-      <h2 className="pt__h2">{t('pp.afiSpec')}</h2>
-      <div className="pt__card">
-        <p style={{ margin: 0, color: 'var(--pt-body)', fontSize: '0.9rem', lineHeight: 1.6 }}>{k.afi}</p>
+          <section className="pt__card">
+            <h2 className="pt-sec__title">{t('pp.afiSpec')}</h2>
+            <p className="pt-sec__text pt-sec__text--sm">{k.afi}</p>
+          </section>
+        </aside>
       </div>
     </PatientShell>
   );

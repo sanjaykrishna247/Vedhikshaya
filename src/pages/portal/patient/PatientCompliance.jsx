@@ -5,18 +5,21 @@ import {
   complianceStats,
   currentStreak,
   doseStatus,
-  isPerfectWeek,
-  slotLabel,
 } from '../../../portal/portalLogic';
 import { usePortal } from '../../../portal/PortalContext';
 import { Loading } from '../shared';
 import { useDashLang } from '../../dashboard/dashI18n';
 import PatientShell from './PatientShell';
 import { usePatient } from './usePatientNav';
-import FlameIcon from './FlameIcon';
 import '../portal.css';
 
-const MARK = { taken: '✓', missed: '✗', pending: '●', upcoming: '●', due: '!' };
+const LEGEND = [
+  ['taken', 'ppd.legendTaken'],
+  ['due', 'ppd.legendDue'],
+  ['missed', 'ppd.legendMissed'],
+  ['upcoming', 'ppd.legendUpcoming'],
+  ['unlogged', 'ppd.legendNotLogged'],
+];
 
 export default function PatientCompliance() {
   const patient = usePatient();
@@ -29,7 +32,7 @@ export default function PatientCompliance() {
   if (!patient) return <PatientShell><Loading /></PatientShell>;
 
   const slots = activeSlots(patient.prescription.schedule);
-  const perfect = isPerfectWeek(patient);
+  const todayStr = days[days.length - 1];
 
   return (
     <PatientShell>
@@ -44,52 +47,57 @@ export default function PatientCompliance() {
           <span className="pt__stat-label">{t('pc.weeklyCompliance')}</span>
         </div>
         <div className="pt__stat">
-          <span className="pt__stat-value" style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-            <FlameIcon size={22} lit={streak > 0} />
-            {streak}{t('ppd.dayShort')}
-          </span>
+          <span className="pt__stat-value">{stats.taken}/{stats.scheduled}</span>
+          <span className="pt__stat-label">{t('ppd.dosesTaken')}</span>
+        </div>
+        <div className="pt__stat">
+          <span className="pt__stat-value">{streak}{t('ppd.dayShort')}</span>
           <span className="pt__stat-label">{t('pc.currentStreak')}</span>
         </div>
         <div className="pt__stat">
           <span className="pt__stat-value">{Math.max(streak, patient.bestStreak)}{t('ppd.dayShort')}</span>
           <span className="pt__stat-label">{t('pc.personalBest')}</span>
         </div>
-        <div className="pt__stat">
-          <span className="pt__stat-value">{perfect ? '🏅' : '—'}</span>
-          <span className="pt__stat-label">{perfect ? t('pc.perfectWeek') : t('pc.keepGoing')}</span>
-        </div>
       </div>
 
-      <div className="pt__card" style={{ marginTop: 18 }}>
-        <div className="pt__grid">
+      <div className="pt__card" style={{ marginTop: 14 }}>
+        <div className="pt__grid" style={{ gridTemplateColumns: `96px repeat(${days.length}, minmax(0, 1fr))` }}>
           <div className="pt__grid-h" />
-          {days.map((d) => (
-            <div key={d} className="pt__grid-h">
-              {new Date(d).toLocaleDateString([], { weekday: 'short' })}
-              <br />
-              {d.slice(8)}
-            </div>
-          ))}
+          {days.map((d) => {
+            const dt = new Date(`${d}T00:00:00`);
+            return (
+              <div key={d} className={`pt__grid-h ${d === todayStr ? 'is-today' : ''}`}>
+                <small>{dt.toLocaleDateString([], { weekday: 'short' })}</small>
+                <b>{dt.getDate()}</b>
+              </div>
+            );
+          })}
           {slots.map((slot) => (
             <Fragment key={slot}>
               <div className="pt__grid-rowlabel">{t(`slot.${slot}`)}</div>
               {days.map((d) => {
-                const st = doseStatus(patient, d, slot);
-                return (
-                  <div key={`${slot}-${d}`} className={`pt__cell pt__cell--${st}`} title={`${d} · ${st}`}>
-                    {MARK[st] || '·'}
-                  </div>
-                );
+                const raw = doseStatus(patient, d, slot);
+                const st = raw === 'pending' ? 'unlogged' : raw;
+                return <div key={`${slot}-${d}`} className={`pt__cell pt__cell--${st}`} title={`${d} · ${st}`} />;
               })}
             </Fragment>
           ))}
         </div>
-      </div>
 
-      <p className="pt__sub" style={{ marginTop: 14 }}>
-        {t('pc.legend')}
-        {stats.mostMissed && ` · ${t('pc.mostMissed', { slot: t(`slot.${stats.mostMissed}`) })}`}
-      </p>
+        <div className="pt__grid-foot">
+          <span className="pt__legend">
+            {LEGEND.map(([k, key]) => (
+              <span key={k}>
+                <i className={`pt__legend-dot is-${k}`} />
+                {t(key)}
+              </span>
+            ))}
+          </span>
+          {stats.mostMissed && (
+            <span className="pt__grid-note">{t('pc.mostMissed', { slot: t(`slot.${stats.mostMissed}`) })}</span>
+          )}
+        </div>
+      </div>
     </PatientShell>
   );
 }

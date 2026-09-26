@@ -203,7 +203,7 @@ export function PortalShell({ variant, nav, children }) {
     .toUpperCase();
 
   return (
-    <div className="pt">
+    <div className={`pt pt--${variant}`}>
       <header className="pt__topbar">
         <div className="pt__topbar-left">
           <button
