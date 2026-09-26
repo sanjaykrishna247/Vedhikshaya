@@ -117,18 +117,10 @@ export default function PatientDashboard() {
         })}
       </div>
 
-      <div className="pt-today__stats-pair">
-        <div className="pt-today__stat">
-          <span className="pt-today__stat-value">{stats.taken}/{stats.scheduled}</span>
-          <span className="pt-today__stat-label">{t('ppd.dosesTaken')}</span>
-        </div>
-        <div className="pt-today__stat pt-today__stat--good">
-          <span className="pt-today__stat-value">{stats.pct}%</span>
-          <span className="pt-today__stat-label">{t('ppd.thisWeek')}</span>
-        </div>
+      <div className="pt-today__overview">
+        <WeekHeatmap patient={patient} slots={slots} now={now} t={t} />
+        <WeekSummary patient={patient} slots={slots} now={now} stats={stats} t={t} />
       </div>
-
-      <WeekHeatmap patient={patient} slots={slots} now={now} t={t} />
 
       {confirm && (
         <Modal title={t('ppd.markTitle', { slot: t(`slot.${confirm.slot}`) })} size="sm" onClose={() => setConfirm(null)}>
@@ -201,103 +193,184 @@ const CALENDAR_ICON = (
     <path d="M3.5 9.5h17M8 3v3.4M16 3v3.4" />
   </svg>
 );
+const glyph = (d, stroke, w = 2.8) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke={stroke} strokeWidth={w} strokeLinecap="round" strokeLinejoin="round">
+    {d}
+  </svg>
+);
 const CELL_GLYPH = {
-  taken: (
-    <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#ffffff" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M5 12.5l4.2 4.2L19 6.3" />
-    </svg>
-  ),
-  due: (
-    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#805d00" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="8.2" />
-      <path d="M12 7.5V12l3 2.2" />
-    </svg>
-  ),
-  missed: (
-    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#ffffff" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M6.5 6.5l11 11M17.5 6.5l-11 11" />
-    </svg>
-  ),
+  taken: glyph(<path d="M5 12.5l4.2 4.2L19 6.3" />, '#ffffff'),
+  due: glyph(<><circle cx="12" cy="12" r="8" /><path d="M12 7.5V12l3 2.2" /></>, '#7a5600', 2.4),
+  missed: glyph(<path d="M7 7l10 10M17 7L7 17" />, '#ffffff'),
   upcoming: null,
+  unlogged: null,
+};
+const STATUS_LABEL_KEY = {
+  taken: 'ppd.legendTaken',
+  due: 'ppd.legendDue',
+  missed: 'ppd.legendMissed',
+  upcoming: 'ppd.legendUpcoming',
+  unlogged: 'ppd.legendNotLogged',
 };
 
-function WeekHeatmap({ patient, slots, now, t }) {
+// Past 'pending' means nothing was logged that day — it isn't "upcoming",
+// so it gets its own neutral dashed style instead of the future-dose grey.
+function cellStatus(patient, date, slot, now) {
+  const raw = doseStatus(patient, date, slot, now);
+  return raw === 'pending' ? 'unlogged' : raw;
+}
+
+function useWeekCells(patient, slots, now) {
   const days = useMemo(() => lastNDates(HEATMAP_DAYS), []);
+  const rows = slots.map((slot) => ({
+    slot,
+    cells: days.map((date) => ({ date, status: cellStatus(patient, date, slot, now) })),
+  }));
+  return { days, rows };
+}
+
+function WeekHeatmap({ patient, slots, now, t }) {
+  const { days, rows } = useWeekCells(patient, slots, now);
   const todayStr = days[days.length - 1];
+  const [sel, setSel] = useState(null); // { date, slot, status }
+
+  const selMeta = sel ? patient.compliance?.[sel.date]?.[`${sel.slot}_meta`] : null;
+  const selDate = sel ? new Date(`${sel.date}T00:00:00`) : null;
 
   return (
-    <div className="pt-today__heatmap-card">
-      <div className="pt-today__hm-head">
-        <span className="pt-today__hm-head-icon">{CALENDAR_ICON}</span>
+    <section className="pt-today__card pt-today__hm">
+      <header className="pt-today__card-head">
+        <span className="pt-today__card-icon">{CALENDAR_ICON}</span>
         <div>
-          <div className="pt-today__hm-head-title">{t('ppd.weeklyOverview')}</div>
-          <div className="pt-today__hm-head-sub">{t('ppd.weeklyOverviewSub')}</div>
+          <h3 className="pt-today__card-title">{t('ppd.weeklyOverview')}</h3>
+          <p className="pt-today__card-sub">{t('ppd.weeklyOverviewSub')}</p>
         </div>
+      </header>
+
+      <div className="pt-today__hm-grid" style={{ '--hm-cols': days.length }}>
+        <span />
+        {days.map((d) => {
+          const dt = new Date(`${d}T00:00:00`);
+          return (
+            <span key={d} className={`pt-today__hm-day ${d === todayStr ? 'is-today' : ''}`}>
+              <small>{dt.toLocaleDateString([], { weekday: 'short' })}</small>
+              <b>{dt.getDate()}</b>
+            </span>
+          );
+        })}
+
+        {rows.map(({ slot, cells }) => (
+          <Fragment key={slot}>
+            <span className="pt-today__hm-slot">
+              <i>{SLOT_ICON[slot]}</i>
+              <span>{t(`slot.${slot}`)}</span>
+            </span>
+            {cells.map(({ date, status }) => {
+              const active = sel && sel.date === date && sel.slot === slot;
+              return (
+                <button
+                  key={date}
+                  type="button"
+                  className={`pt-today__hm-cell is-${status} ${active ? 'is-active' : ''}`}
+                  aria-label={`${t(`slot.${slot}`)} ${date}: ${t(STATUS_LABEL_KEY[status])}`}
+                  onClick={() => setSel(active ? null : { date, slot, status })}
+                >
+                  {CELL_GLYPH[status]}
+                </button>
+              );
+            })}
+          </Fragment>
+        ))}
       </div>
 
-      <div className="pt-today__heatmap-scroll">
-        <div
-          className="pt-today__heatmap-grid"
-          style={{ gridTemplateColumns: `62px repeat(${days.length}, minmax(26px, 1fr))` }}
-        >
-          <div className="pt-today__hm-corner" />
-          {days.map((d) => {
-            const dt = new Date(`${d}T00:00:00`);
-            return (
-              <div key={d} className={`pt-today__hm-daylabel ${d === todayStr ? 'is-today' : ''}`}>
-                <span className="pt-today__hm-daylabel-name">{dt.toLocaleDateString([], { weekday: 'short' })}</span>
-                <span className="pt-today__hm-daylabel-num">{dt.getDate()}</span>
-              </div>
-            );
-          })}
+      <div className={`pt-today__hm-detail ${sel ? `is-${sel.status}` : ''}`} aria-live="polite">
+        {sel ? (
+          <>
+            <i className={`pt-today__dot is-${sel.status}`} />
+            <span>
+              <b>
+                {selDate.toLocaleDateString([], { weekday: 'long', day: 'numeric', month: 'short' })} · {t(`slot.${sel.slot}`)}
+              </b>
+              {' — '}
+              {t(STATUS_LABEL_KEY[sel.status])}
+              {sel.status === 'taken' && selMeta?.taken_at
+                ? ` · ${new Date(selMeta.taken_at).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}`
+                : ''}
+            </span>
+          </>
+        ) : (
+          <span className="pt-today__hm-legend">
+            {['taken', 'due', 'missed', 'unlogged'].map((k) => (
+              <span key={k}>
+                <i className={`pt-today__dot is-${k}`} />
+                {t(STATUS_LABEL_KEY[k])}
+              </span>
+            ))}
+          </span>
+        )}
+      </div>
+    </section>
+  );
+}
 
-          {slots.map((slot) => (
-            <Fragment key={slot}>
-              <div className="pt-today__hm-sessionlabel">
-                <span className="pt-today__hm-sessionlabel-icon">{SLOT_ICON[slot]}</span>
-                {t(`slot.${slot}`)}
-              </div>
-              {days.map((d) => {
-                // 'pending' (a grace/unlogged state from seed data) reads the
-                // same as 'upcoming' everywhere else in the app (see
-                // complianceStats) — treat it the same here so it isn't a
-                // blank, uncolored cell.
-                const raw = doseStatus(patient, d, slot, now);
-                const st = raw === 'pending' ? 'upcoming' : raw;
-                return (
-                  <div
-                    key={d}
-                    className={`pt-today__hm-cell pt-today__hm-cell--${st}`}
-                    title={`${t(`slot.${slot}`)} · ${d}`}
-                  >
-                    {CELL_GLYPH[st]}
-                  </div>
-                );
-              })}
-            </Fragment>
-          ))}
+function WeekSummary({ patient, slots, now, stats, t }) {
+  const { rows } = useWeekCells(patient, slots, now);
+  const counts = { taken: 0, missed: 0, due: 0 };
+  rows.forEach((r) => r.cells.forEach((c) => {
+    if (c.status in counts) counts[c.status] += 1;
+  }));
+  const pct = stats.pct;
+  const R = 38;
+  const C = 2 * Math.PI * R;
+  const tone = pct >= 80 ? 'good' : pct >= 50 ? 'warn' : 'bad';
+
+  return (
+    <section className="pt-today__card pt-today__sum">
+      <header className="pt-today__card-head">
+        <div>
+          <h3 className="pt-today__card-title">{t('ppd.adherence')}</h3>
+          <p className="pt-today__card-sub">{t('ppd.last7')}</p>
         </div>
-      </div>
+      </header>
 
-      <div className="pt-today__hm-legend">
-        <span className="pt-today__hm-legend-item">
-          <i className="pt-today__hm-swatch pt-today__hm-cell--taken" />
-          {t('ppd.legendTaken')}
-        </span>
-        <span className="pt-today__hm-legend-item">
-          <i className="pt-today__hm-swatch pt-today__hm-cell--due" />
-          {t('ppd.legendDue')}
-        </span>
-        <span className="pt-today__hm-legend-item">
-          <i className="pt-today__hm-swatch pt-today__hm-cell--missed" />
-          {t('ppd.legendMissed')}
-        </span>
-        <span className="pt-today__hm-legend-item">
-          <i className="pt-today__hm-swatch pt-today__hm-cell--upcoming" />
-          {t('ppd.legendUpcoming')}
-        </span>
+      <div className="pt-today__sum-body">
+        <div className={`pt-today__ring is-${tone}`}>
+          <svg viewBox="0 0 96 96">
+            <circle cx="48" cy="48" r={R} className="pt-today__ring-track" />
+            <circle
+              cx="48"
+              cy="48"
+              r={R}
+              className="pt-today__ring-fill"
+              strokeDasharray={C}
+              strokeDashoffset={C * (1 - pct / 100)}
+            />
+          </svg>
+          <span className="pt-today__ring-value">
+            {pct}
+            <small>%</small>
+          </span>
+        </div>
+
+        <ul className="pt-today__sum-list">
+          <li>
+            <i className="pt-today__dot is-taken" />
+            <span>{t('ppd.legendTaken')}</span>
+            <b>{counts.taken}</b>
+          </li>
+          <li>
+            <i className="pt-today__dot is-missed" />
+            <span>{t('ppd.legendMissed')}</span>
+            <b>{counts.missed}</b>
+          </li>
+          <li>
+            <i className="pt-today__dot is-due" />
+            <span>{t('ppd.legendDue')}</span>
+            <b>{counts.due}</b>
+          </li>
+        </ul>
       </div>
-    </div>
+    </section>
   );
 }
 
