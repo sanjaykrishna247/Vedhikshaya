@@ -1,7 +1,7 @@
 import { Fragment, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { usePortal } from '../../../portal/PortalContext';
-import { KASHAYAS, lastNDates } from '../../../portal/portalData';
+import { KASHAYAS, lastNDates, todayYmd } from '../../../portal/portalData';
 import {
   activeSlots,
   canStartBrew,
@@ -35,7 +35,7 @@ export default function PatientDashboard() {
   if (!patient) return <PatientShell><Loading label="Loading your dashboard…" /></PatientShell>;
 
   const slots = activeSlots(patient.prescription.schedule);
-  const today = new Date().toISOString().slice(0, 10);
+  const today = todayYmd();
 
   const doMark = (slot, scheduledTime, brewId) => {
     markDose(patient.id, slot, { scheduledTime, takenAt: Date.now(), brewSessionId: brewId || null });
@@ -46,73 +46,75 @@ export default function PatientDashboard() {
   return (
     <PatientShell>
       <div className="pt-today">
-      <div className="pt__page-head">
-        <h1 className="pt__h1">{t('ppd.todayDoses')}</h1>
-        <p className="pt__sub">
-          {patient.prescription.kashaya} · {t('pd.week', { a: patient.prescription.weekOf, b: patient.prescription.durationWeeks })}
-        </p>
-      </div>
+      <header className="pt-today__head">
+        <div>
+          <p className="pt-today__eyebrow">
+            {now.toLocaleDateString([], { weekday: 'long', day: 'numeric', month: 'long' })}
+          </p>
+          <h1 className="pt-today__title">{t('ppd.todayDoses')}</h1>
+          <p className="pt-today__lede">{patient.prescription.kashaya}</p>
+        </div>
+        <div className="pt-today__course">
+          <span>{t('pd.week', { a: patient.prescription.weekOf, b: patient.prescription.durationWeeks })}</span>
+          <div className="pt-today__course-bar">
+            <i style={{ width: `${Math.min(100, (patient.prescription.weekOf / patient.prescription.durationWeeks) * 100)}%` }} />
+          </div>
+        </div>
+      </header>
 
-      <div className="pt__doses">
+      <div className="pt-today__doses">
         {slots.map((slot) => {
           const sched = patient.prescription.schedule[slot];
           const st = doseStatus(patient, today, slot, now);
           const meta = patient.compliance?.[today]?.[`${slot}_meta`];
           const mins = minutesUntil(sched.time, now);
           const armed = canStartBrew(patient, slot, now);
+          const [clock, ampm] = sched.time.split(' ');
+
+          let statusText = t('ppd.missed');
+          if (st === 'upcoming') statusText = t('ppd.in', { t: humanCountdown(mins) });
+          if (st === 'due') statusText = t('ppd.overdueBy', { t: humanCountdown(-mins) });
+          if (st === 'taken') {
+            statusText = meta?.taken_at
+              ? t('ppd.takenAt', { t: new Date(meta.taken_at).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) })
+              : t('ppd.taken');
+          }
 
           return (
-            <div key={slot} className={`pt__dose ${st === 'due' ? 'pt__dose--due' : ''} ${st === 'taken' ? 'pt__dose--taken' : ''}`}>
-              <span className="pt__dose-slot">{t(`slot.${slot}`)}</span>
-              <span className="pt__dose-kashaya">{patient.prescription.kashaya}</span>
-              <span className="pt__dose-meta">
-                {sched.time} · {t(sched.food === 'before' ? 'slot.beforeFood' : 'slot.afterFood')}
-              </span>
+            <article key={slot} className={`pt-today__dose is-${st}`}>
+              <div className="pt-today__dose-time">
+                <b>{clock}</b>
+                <small>{ampm}</small>
+              </div>
+
+              <div className="pt-today__dose-body">
+                <span className="pt-today__dose-slot">{t(`slot.${slot}`)}</span>
+                <span className="pt-today__dose-note">
+                  {t(sched.food === 'before' ? 'slot.beforeFood' : 'slot.afterFood')}
+                  {st === 'taken' && meta?.brew_session_id ? ` · ${t('ppd.brewedThis')}` : ''}
+                </span>
+                <span className={`pt-today__dose-status is-${st}`}>{statusText}</span>
+              </div>
 
               {st === 'upcoming' && (
-                <>
-                  <span className="pt__dose-countdown">{t('ppd.in', { t: humanCountdown(mins) })}</span>
-                  <button
-                    className="pt__btn pt__btn--primary pt__btn--block"
-                    disabled={!armed}
-                    onClick={() => setBrew({ slot })}
-                  >
-                    {armed ? t('ppd.startBrew') : t('ppd.startBrewLocked')}
-                  </button>
-                </>
+                <button
+                  className="pt-today__btn"
+                  disabled={!armed}
+                  title={armed ? undefined : t('ppd.startBrewLocked')}
+                  onClick={() => setBrew({ slot })}
+                >
+                  {t('ppd.startBrew')}
+                </button>
               )}
-
               {st === 'due' && (
-                <>
-                  <span className="pt__pill pt__pill--warn">
-                    {t('ppd.overdueBy', { t: humanCountdown(-mins) })}
-                  </span>
-                  <button
-                    className="pt__btn pt__btn--primary pt__btn--block"
-                    onClick={() =>
-                      setConfirm({ slot, scheduled: sched.time, late: true })
-                    }
-                  >
-                    {t('ppd.markLate')}
-                  </button>
-                </>
+                <button
+                  className="pt-today__btn"
+                  onClick={() => setConfirm({ slot, scheduled: sched.time, late: true })}
+                >
+                  {t('ppd.markLate')}
+                </button>
               )}
-
-              {st === 'taken' && (
-                <>
-                  <span className="pt__pill pt__pill--good">
-                    {meta?.taken_at
-                      ? t('ppd.takenAt', { t: new Date(meta.taken_at).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) })
-                      : t('ppd.taken')}
-                  </span>
-                  {meta?.brew_session_id && (
-                    <span className="pt__dose-meta">{t('ppd.brewedThis')}</span>
-                  )}
-                </>
-              )}
-
-              {st === 'missed' && <span className="pt__pill pt__pill--bad">{t('ppd.missed')}</span>}
-            </div>
+            </article>
           );
         })}
       </div>
@@ -187,24 +189,6 @@ const SLOT_ICON = {
     </svg>
   ),
 };
-const CALENDAR_ICON = (
-  <svg viewBox="0 0 24 24" {...HM_ICON_S}>
-    <rect x="3.5" y="5" width="17" height="15.5" rx="2.5" />
-    <path d="M3.5 9.5h17M8 3v3.4M16 3v3.4" />
-  </svg>
-);
-const glyph = (d, stroke, w = 2.8) => (
-  <svg viewBox="0 0 24 24" fill="none" stroke={stroke} strokeWidth={w} strokeLinecap="round" strokeLinejoin="round">
-    {d}
-  </svg>
-);
-const CELL_GLYPH = {
-  taken: glyph(<path d="M5 12.5l4.2 4.2L19 6.3" />, '#ffffff'),
-  due: glyph(<><circle cx="12" cy="12" r="8" /><path d="M12 7.5V12l3 2.2" /></>, '#7a5600', 2.4),
-  missed: glyph(<path d="M7 7l10 10M17 7L7 17" />, '#ffffff'),
-  upcoming: null,
-  unlogged: null,
-};
 const STATUS_LABEL_KEY = {
   taken: 'ppd.legendTaken',
   due: 'ppd.legendDue',
@@ -240,11 +224,8 @@ function WeekHeatmap({ patient, slots, now, t }) {
   return (
     <section className="pt-today__card pt-today__hm">
       <header className="pt-today__card-head">
-        <span className="pt-today__card-icon">{CALENDAR_ICON}</span>
-        <div>
-          <h3 className="pt-today__card-title">{t('ppd.weeklyOverview')}</h3>
-          <p className="pt-today__card-sub">{t('ppd.weeklyOverviewSub')}</p>
-        </div>
+        <h2 className="pt-today__card-title">{t('ppd.weeklyOverview')}</h2>
+        <p className="pt-today__card-sub">{t('ppd.weeklyOverviewSub')}</p>
       </header>
 
       <div className="pt-today__hm-grid" style={{ '--hm-cols': days.length }}>
@@ -274,9 +255,7 @@ function WeekHeatmap({ patient, slots, now, t }) {
                   className={`pt-today__hm-cell is-${status} ${active ? 'is-active' : ''}`}
                   aria-label={`${t(`slot.${slot}`)} ${date}: ${t(STATUS_LABEL_KEY[status])}`}
                   onClick={() => setSel(active ? null : { date, slot, status })}
-                >
-                  {CELL_GLYPH[status]}
-                </button>
+                />
               );
             })}
           </Fragment>
@@ -319,57 +298,41 @@ function WeekSummary({ patient, slots, now, stats, t }) {
   rows.forEach((r) => r.cells.forEach((c) => {
     if (c.status in counts) counts[c.status] += 1;
   }));
-  const pct = stats.pct;
-  const R = 38;
-  const C = 2 * Math.PI * R;
-  const tone = pct >= 80 ? 'good' : pct >= 50 ? 'warn' : 'bad';
+  const total = counts.taken + counts.missed + counts.due || 1;
 
   return (
     <section className="pt-today__card pt-today__sum">
       <header className="pt-today__card-head">
-        <div>
-          <h3 className="pt-today__card-title">{t('ppd.adherence')}</h3>
-          <p className="pt-today__card-sub">{t('ppd.last7')}</p>
-        </div>
+        <h2 className="pt-today__card-title">{t('ppd.adherence')}</h2>
+        <p className="pt-today__card-sub">{t('ppd.last7')}</p>
       </header>
 
-      <div className="pt-today__sum-body">
-        <div className={`pt-today__ring is-${tone}`}>
-          <svg viewBox="0 0 96 96">
-            <circle cx="48" cy="48" r={R} className="pt-today__ring-track" />
-            <circle
-              cx="48"
-              cy="48"
-              r={R}
-              className="pt-today__ring-fill"
-              strokeDasharray={C}
-              strokeDashoffset={C * (1 - pct / 100)}
-            />
-          </svg>
-          <span className="pt-today__ring-value">
-            {pct}
-            <small>%</small>
-          </span>
-        </div>
-
-        <ul className="pt-today__sum-list">
-          <li>
-            <i className="pt-today__dot is-taken" />
-            <span>{t('ppd.legendTaken')}</span>
-            <b>{counts.taken}</b>
-          </li>
-          <li>
-            <i className="pt-today__dot is-missed" />
-            <span>{t('ppd.legendMissed')}</span>
-            <b>{counts.missed}</b>
-          </li>
-          <li>
-            <i className="pt-today__dot is-due" />
-            <span>{t('ppd.legendDue')}</span>
-            <b>{counts.due}</b>
-          </li>
-        </ul>
+      <div className="pt-today__sum-figure">
+        {stats.pct}
+        <span>%</span>
       </div>
+
+      <div className="pt-today__sum-bar" aria-hidden="true">
+        {['taken', 'due', 'missed'].map((k) =>
+          counts[k] ? <i key={k} className={`is-${k}`} style={{ flexGrow: counts[k] / total }} /> : null
+        )}
+      </div>
+
+      <dl className="pt-today__sum-stats">
+        {[
+          ['taken', 'ppd.legendTaken'],
+          ['missed', 'ppd.legendMissed'],
+          ['due', 'ppd.legendDue'],
+        ].map(([k, key]) => (
+          <div key={k}>
+            <dt>
+              <i className={`pt-today__dot is-${k}`} />
+              {t(key)}
+            </dt>
+            <dd>{counts[k]}</dd>
+          </div>
+        ))}
+      </dl>
     </section>
   );
 }
