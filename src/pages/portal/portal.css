@@ -1971,7 +1971,25 @@
   padding-bottom: 14px;
   border-bottom: 1px solid #eef1ee;
 }
-.rxp__head-title { margin: 0; font-size: 0.95rem; font-weight: 700; color: var(--tk-ink); }
+.rxp__head-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  font-family: 'Segoe UI Semibold', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+  font-size: 1.12rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--tk-ink);
+}
+.rxp__head-title::before {
+  content: '';
+  width: 4px;
+  height: 18px;
+  border-radius: 2px;
+  background: #6fae2c;
+}
+.rxp__warn .rxp__head-title::before { background: #d99a1e; }
 .rxp__head-aside { margin-left: auto; font-size: 0.8rem; color: var(--tk-muted); }
 .rxp__sub-title { margin: 0 0 10px; font-size: 0.8rem; font-weight: 600; color: var(--tk-muted); }
 .rxp__text { margin: 0; font-size: 0.9rem; line-height: 1.6; color: var(--tk-body); }
