@@ -1,13 +1,11 @@
-import { useMemo, useState } from 'react';
+import { Fragment, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { usePortal } from '../../../portal/PortalContext';
-import { BADGES, KASHAYAS } from '../../../portal/portalData';
+import { KASHAYAS, lastNDates } from '../../../portal/portalData';
 import {
   activeSlots,
-  badgeProgress,
   canStartBrew,
   complianceStats,
-  currentStreak,
   doseStatus,
   humanCountdown,
   minutesUntil,
@@ -18,7 +16,6 @@ import { useBrewSim } from '../../dashboard/BrewSim';
 import { useDashLang } from '../../dashboard/dashI18n';
 import PatientShell from './PatientShell';
 import { usePatient } from './usePatientNav';
-import FlameIcon from './FlameIcon';
 import '../portal.css';
 
 export default function PatientDashboard() {
@@ -34,8 +31,6 @@ export default function PatientDashboard() {
   const [brew, setBrew] = useState(null); // { slot }
 
   const stats = useMemo(() => (patient ? complianceStats(patient) : null), [patient, tick]);
-  const streak = useMemo(() => (patient ? currentStreak(patient) : 0), [patient, tick]);
-  const badges = badgeProgress(streak);
 
   if (!patient) return <PatientShell><Loading label="Loading your dashboard…" /></PatientShell>;
 
@@ -50,6 +45,7 @@ export default function PatientDashboard() {
 
   return (
     <PatientShell>
+      <div className="pt-today">
       <div className="pt__page-head">
         <h1 className="pt__h1">{t('ppd.todayDoses')}</h1>
         <p className="pt__sub">
@@ -121,49 +117,22 @@ export default function PatientDashboard() {
         })}
       </div>
 
-      <h2 className="pt__h2">{t('ppd.yourStreak')}</h2>
-      <div className="pt__streak-hero">
-        <span className="pt__streak-hero-icon">
-          <FlameIcon size={44} lit={streak > 0} />
-        </span>
-        <div className="pt__streak-hero-body">
-          <span className="pt__streak-hero-value">
-            {streak}
-            <small>{t('ppd.dayShort')}</small>
-          </span>
-          <span className="pt__streak-hero-label">{t('pd.currentStreak')}</span>
-          <span className="pt__streak-hero-next">
-            {badges.next
-              ? t('ppd.toNext', { icon: badges.next.icon, title: t(`badge.${badges.next.days}`) }) +
-                ` · ${badges.toNext}${t('ppd.dayShort')}`
-              : t('ppd.allBadges')}
-          </span>
+      <div className="pt-today__stats-pair">
+        <div className="pt-today__stat">
+          <span className="pt-today__stat-value">{stats.taken}/{stats.scheduled}</span>
+          <span className="pt-today__stat-label">{t('ppd.dosesTaken')}</span>
         </div>
-      </div>
-      <div className="pt__stats pt__stats--pair">
-        <div className="pt__stat">
-          <span className="pt__stat-value">{Math.max(streak, patient.bestStreak)}{t('ppd.dayShort')}</span>
-          <span className="pt__stat-label">{t('ppd.personalBest')}</span>
-        </div>
-        <div className="pt__stat pt__stat--good">
-          <span className="pt__stat-value">{stats.pct}%</span>
-          <span className="pt__stat-label">{t('ppd.thisWeek')}</span>
+        <div className="pt-today__stat pt-today__stat--good">
+          <span className="pt-today__stat-value">{stats.pct}%</span>
+          <span className="pt-today__stat-label">{t('ppd.thisWeek')}</span>
         </div>
       </div>
 
-      <h2 className="pt__h2">{t('ppd.badges')}</h2>
-      <div className="pt__badges">
-        {BADGES.map((b) => {
-          const earned = streak >= b.days;
-          return (
-            <div key={b.days} className={`pt__badge-card ${earned ? '' : 'is-locked'}`}>
-              <div className="pt__badge-emoji">{b.icon}</div>
-              <div className="pt__badge-title">{t(`badge.${b.days}`)}</div>
-              <div className="pt__badge-days">{t('badge.streakDays', { n: b.days })}</div>
-            </div>
-          );
-        })}
+      <div className="pt-today__section-head">
+        <h2 className="pt__h2">{t('ppd.weeklyOverview')}</h2>
+        <p className="pt-today__section-sub">{t('ppd.weeklyOverviewSub')}</p>
       </div>
+      <WeekHeatmap patient={patient} slots={slots} now={now} t={t} />
 
       {confirm && (
         <Modal title={t('ppd.markTitle', { slot: t(`slot.${confirm.slot}`) })} size="sm" onClose={() => setConfirm(null)}>
@@ -203,7 +172,77 @@ export default function PatientDashboard() {
           }}
         />
       )}
+      </div>
     </PatientShell>
+  );
+}
+
+const HEATMAP_DAYS = 7;
+
+function WeekHeatmap({ patient, slots, now, t }) {
+  const days = useMemo(() => lastNDates(HEATMAP_DAYS), []);
+  const todayStr = days[days.length - 1];
+
+  return (
+    <div className="pt-today__heatmap-card">
+      <div className="pt-today__heatmap-scroll">
+        <div
+          className="pt-today__heatmap-grid"
+          style={{ gridTemplateColumns: `88px repeat(${days.length}, minmax(38px, 1fr))` }}
+        >
+          <div className="pt-today__hm-corner" />
+          {days.map((d) => {
+            const dt = new Date(`${d}T00:00:00`);
+            return (
+              <div key={d} className={`pt-today__hm-daylabel ${d === todayStr ? 'is-today' : ''}`}>
+                <span className="pt-today__hm-daylabel-name">{dt.toLocaleDateString([], { weekday: 'short' })}</span>
+                <span className="pt-today__hm-daylabel-num">{dt.getDate()}</span>
+              </div>
+            );
+          })}
+
+          {slots.map((slot) => (
+            <Fragment key={slot}>
+              <div className="pt-today__hm-sessionlabel">{t(`slot.${slot}`)}</div>
+              {days.map((d) => {
+                // 'pending' (a grace/unlogged state from seed data) reads the
+                // same as 'upcoming' everywhere else in the app (see
+                // complianceStats) — treat it the same here so it isn't a
+                // blank, uncolored cell.
+                const raw = doseStatus(patient, d, slot, now);
+                const st = raw === 'pending' ? 'upcoming' : raw;
+                return (
+                  <div
+                    key={d}
+                    className={`pt-today__hm-cell pt-today__hm-cell--${st}`}
+                    title={`${t(`slot.${slot}`)} · ${d}`}
+                  />
+                );
+              })}
+            </Fragment>
+          ))}
+        </div>
+      </div>
+
+      <div className="pt-today__hm-legend">
+        <span className="pt-today__hm-legend-item">
+          <i className="pt-today__hm-swatch pt-today__hm-cell--taken" />
+          {t('ppd.legendTaken')}
+        </span>
+        <span className="pt-today__hm-legend-item">
+          <i className="pt-today__hm-swatch pt-today__hm-cell--due" />
+          {t('ppd.legendDue')}
+        </span>
+        <span className="pt-today__hm-legend-item">
+          <i className="pt-today__hm-swatch pt-today__hm-cell--missed" />
+          {t('ppd.legendMissed')}
+        </span>
+        <span className="pt-today__hm-legend-item">
+          <i className="pt-today__hm-swatch pt-today__hm-cell--upcoming" />
+          {t('ppd.legendUpcoming')}
+        </span>
+      </div>
+    </div>
   );
 }
 

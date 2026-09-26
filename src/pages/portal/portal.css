@@ -1322,3 +1322,201 @@
   .pt__modal { padding: 18px; }
   .pt__modal-actions .pt__btn { flex: 1; }
 }
+
+/* ============================================================
+   Today page — restyled to match the brew console (monitoring
+   dashboard): flat neutral background, white cards, Segoe UI.
+   Scoped to .pt-today so the rest of the portal keeps its look.
+   ============================================================ */
+.pt-today {
+  margin: -26px -30px -64px;
+  padding: 26px 30px 64px;
+  min-height: calc(100vh - 72px);
+  background: #f3f6f2;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+.pt-today .pt__h1,
+.pt-today .pt__h2 {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: var(--forest);
+}
+.pt-today .pt__sub {
+  color: #5f7568;
+}
+.pt-today .pt__h2 {
+  margin-top: 28px;
+}
+
+/* dose cards: white surface instead of the sage tint */
+.pt-today .pt__dose {
+  background: #ffffff;
+  border-color: #dde3dc;
+  box-shadow: 0 1px 2px rgba(1, 47, 19, 0.05);
+}
+.pt-today .pt__dose--due {
+  border-color: #ecd6a8;
+  background: #fdf8ee;
+}
+.pt-today .pt__dose--taken {
+  border-color: #c7dfb8;
+  background: #f3f8ee;
+}
+.pt-today .pt__dose-kashaya {
+  color: var(--forest);
+}
+
+/* ----- stat tiles ----- */
+.pt-today__stats-pair {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+  margin-top: 20px;
+}
+.pt-today__stat {
+  background: #ffffff;
+  border: 1px solid #dde3dc;
+  border-radius: 8px;
+  box-shadow: 0 1px 2px rgba(1, 47, 19, 0.05);
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.pt-today__stat-value {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--forest);
+}
+.pt-today__stat--good .pt-today__stat-value {
+  color: #3f6d15;
+}
+.pt-today__stat-label {
+  font-size: 0.78rem;
+  color: #5f7568;
+}
+
+/* ----- section head ----- */
+.pt-today__section-head {
+  margin-top: 28px;
+  margin-bottom: 14px;
+}
+.pt-today__section-head .pt__h2 {
+  margin-top: 0;
+  margin-bottom: 4px;
+}
+.pt-today__section-sub {
+  font-size: 0.82rem;
+  color: #5f7568;
+}
+
+/* ----- weekly heatmap ----- */
+.pt-today__heatmap-card {
+  background: #ffffff;
+  border: 1px solid #dde3dc;
+  border-radius: 8px;
+  box-shadow: 0 1px 2px rgba(1, 47, 19, 0.05);
+  padding: 20px 22px 18px;
+}
+.pt-today__heatmap-scroll {
+  overflow-x: auto;
+}
+.pt-today__heatmap-grid {
+  display: grid;
+  gap: 6px;
+  align-items: center;
+  min-width: 420px;
+}
+.pt-today__hm-corner {
+  height: 1px;
+}
+.pt-today__hm-daylabel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 4px 0 8px;
+  border-radius: 6px;
+}
+.pt-today__hm-daylabel-name {
+  font-size: 0.66rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: #5f7568;
+}
+.pt-today__hm-daylabel-num {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--forest);
+}
+.pt-today__hm-daylabel.is-today {
+  background: #eef4e7;
+}
+.pt-today__hm-sessionlabel {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--forest);
+  padding-right: 10px;
+}
+.pt-today__hm-cell {
+  aspect-ratio: 1 / 1;
+  min-height: 28px;
+  border-radius: 7px;
+  border: 1px solid transparent;
+  transition: transform 0.15s ease;
+}
+.pt-today__hm-cell:hover {
+  transform: scale(1.08);
+}
+.pt-today__hm-cell--taken {
+  background: #8bc53d;
+  border-color: #6ea82a;
+}
+.pt-today__hm-cell--due {
+  background: #f2b705;
+  border-color: #d29e04;
+}
+.pt-today__hm-cell--missed {
+  background: #e2746a;
+  border-color: #c85c52;
+}
+.pt-today__hm-cell--upcoming {
+  background: #e9edee;
+  border-color: #d7dedf;
+}
+
+.pt-today__hm-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid #eef1ee;
+}
+.pt-today__hm-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.78rem;
+  color: #5f7568;
+}
+.pt-today__hm-swatch {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 4px;
+  border: 1px solid transparent;
+}
+
+@media (max-width: 640px) {
+  .pt-today {
+    margin: -18px -14px -56px;
+    padding: 18px 14px 56px;
+    min-height: calc(100vh - 60px);
+  }
+  .pt-today__stats-pair {
+    grid-template-columns: 1fr 1fr;
+  }
+  .pt-today__heatmap-card {
+    padding: 16px 14px;
+  }
+}
