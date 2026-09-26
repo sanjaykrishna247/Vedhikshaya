@@ -5,7 +5,22 @@ import { Loading } from '../shared';
 import { useDashLang } from '../../dashboard/dashI18n';
 import PatientShell from './PatientShell';
 import { usePatient } from './usePatientNav';
+import { SLOT_ICON } from './slotIcons';
 import '../portal.css';
+
+const LEAF = (
+  <svg viewBox="0 0 120 120" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" aria-hidden="true">
+    <path d="M20 104C24 58 52 24 104 16c-4 50-34 84-84 88Z" />
+    <path d="M20 104 78 44M44 80c8-2 18-2 28 1M56 66c6-3 14-4 22-3M34 92c6-1 12 0 18 2" />
+  </svg>
+);
+
+const WARN = (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M12 3.5 2.8 19.5h18.4z" />
+    <path d="M12 10v4.2M12 17.2h.01" />
+  </svg>
+);
 
 export default function PatientPrescription() {
   const patient = usePatient();
@@ -17,106 +32,98 @@ export default function PatientPrescription() {
   const k = kashayaByName(rx.kashaya);
   const slots = activeSlots(rx.schedule);
   const weeksLeft = Math.max(0, rx.durationWeeks - rx.weekOf);
-  const issued = new Date(rx.updatedAt || Date.now()).toLocaleDateString([], { day: 'numeric', month: 'long', year: 'numeric' });
+  const initials = rx.updatedBy.replace(/^Dr\.?\s*/i, '').split(' ').map((w) => w[0]).slice(0, 2).join('');
 
   return (
     <PatientShell>
-      <article className="rx-slip">
-        <header className="rx-slip__letterhead">
-          <div>
-            <p className="rx-slip__hospital">{doctor.hospitalName}</p>
-            <p className="rx-slip__doctor">
-              {rx.updatedBy}
-              {doctor.speciality ? ` · ${doctor.speciality}` : ''}
-            </p>
+      <div className="rxb">
+        <section className="rxb__card rxb__hero">
+          <span className="rxb__hero-leaf">{LEAF}</span>
+          <p className="rxb__hero-kicker">{t('pp.patientLabel')}: {patient.name} · {patient.condition}</p>
+          <h1 className="rxb__hero-name">{k.name}</h1>
+          {/* the native name is stored in Devanagari only, so it's shown for Hindi */}
+          {lang === 'hi' && k.sanskrit && <p className="rxb__hero-native">{k.sanskrit}</p>}
+          <p className="rxb__hero-benefit">{k.benefit}</p>
+          <div className="rxb__doctor">
+            <span className="rxb__doctor-avatar">{initials}</span>
+            <span>
+              <b>{t('pp.prescribedBy', { name: rx.updatedBy })}</b>
+              <small>{doctor.speciality} · {doctor.hospitalName}</small>
+            </span>
           </div>
-          <p className="rx-slip__date">{issued}</p>
-        </header>
+        </section>
 
-        <dl className="rx-slip__patient">
-          <div>
-            <dt>{t('pp.patientLabel')}</dt>
-            <dd>
-              {patient.name}
-              <span>
-                {patient.age} · {patient.gender} · {patient.id}
-              </span>
-            </dd>
-          </div>
-          <div>
-            <dt>{t('pp.conditionLabel')}</dt>
-            <dd>{patient.condition}</dd>
-          </div>
-        </dl>
+        <section className="rxb__card rxb__course">
+          <h2 className="rxb__title">{t('pp.courseLabel', { n: rx.durationWeeks })}</h2>
+          <p className="rxb__course-now">
+            {t('pp.weekN', { n: rx.weekOf })}
+            <span>{t('pp.of', { n: rx.durationWeeks })}</span>
+          </p>
+          <ol className="rxb__weeks" aria-hidden="true">
+            {Array.from({ length: rx.durationWeeks }, (_, i) => (
+              <li key={i} className={i + 1 < rx.weekOf ? 'is-done' : i + 1 === rx.weekOf ? 'is-now' : ''}>
+                {i + 1}
+              </li>
+            ))}
+          </ol>
+          <p className="rxb__muted">{t('pp.weeksLeft', { n: weeksLeft })}</p>
+        </section>
 
-        <section className="rx-slip__body">
-          <span className="rx-slip__mark" aria-hidden="true">℞</span>
-          <div className="rx-slip__med">
-            <h1 className="rx-slip__name">{k.name}</h1>
-            {/* the native name is stored in Devanagari only, so it's shown for Hindi */}
-            {lang === 'hi' && k.sanskrit && <p className="rx-slip__native">{k.sanskrit}</p>}
-            <p className="rx-slip__benefit">{k.benefit}</p>
-
-            <table className="rx-slip__table">
-              <thead>
-                <tr>
-                  <th>{t('pp.colDose')}</th>
-                  <th>{t('pp.colTime')}</th>
-                  <th>{t('pp.colFood')}</th>
-                </tr>
-              </thead>
-              <tbody>
-                {slots.map((s) => (
-                  <tr key={s}>
-                    <td>{t(`slot.${s}`)}</td>
-                    <td className="rx-slip__time">{rx.schedule[s].time}</td>
-                    <td>{t(rx.schedule[s].food === 'before' ? 'slot.beforeFood' : 'slot.afterFood')}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-
-            <div className="rx-slip__course">
-              <p>
-                {t('pp.courseLabel', { n: rx.durationWeeks })}
-                <span>
-                  {t('pp.weekN', { n: rx.weekOf })} · {t('pp.weeksLeft', { n: weeksLeft })}
-                </span>
-              </p>
-              <ol className="rx-slip__weeks" aria-hidden="true">
-                {Array.from({ length: rx.durationWeeks }, (_, i) => (
-                  <li key={i} className={i + 1 < rx.weekOf ? 'is-done' : i + 1 === rx.weekOf ? 'is-now' : ''}>
-                    {i + 1}
-                  </li>
-                ))}
-              </ol>
-            </div>
+        <section className="rxb__card rxb__schedule">
+          <h2 className="rxb__title">{t('pp.howToTake')}</h2>
+          <div className="rxb__doses">
+            {slots.map((s) => {
+              const [clock, ampm] = rx.schedule[s].time.split(' ');
+              return (
+                <div key={s} className={`rxb__dose is-${s}`}>
+                  <span className="rxb__dose-icon">{SLOT_ICON[s]}</span>
+                  <span className="rxb__dose-slot">{t(`slot.${s}`)}</span>
+                  <span className="rxb__dose-time">
+                    {clock}
+                    <small>{ampm}</small>
+                  </span>
+                  <span className="rxb__dose-food">
+                    {t(rx.schedule[s].food === 'before' ? 'slot.beforeFood' : 'slot.afterFood')}
+                  </span>
+                </div>
+              );
+            })}
           </div>
         </section>
 
         {rx.notes && (
-          <section className="rx-slip__notes">
-            <h2>{t('pp.doctorNotes')}</h2>
-            <p className="rx-slip__notes-text">{rx.notes}</p>
-            <p className="rx-slip__sign">{rx.updatedBy}</p>
+          <section className="rxb__card rxb__note">
+            <h2 className="rxb__title">{t('pp.doctorNotes')}</h2>
+            <p className="rxb__note-text">{rx.notes}</p>
+            <p className="rxb__note-by">— {rx.updatedBy}</p>
           </section>
         )}
 
-        <footer className="rx-slip__fine">
-          <div>
-            <h2>{t('pp.ingredients')}</h2>
-            <p>{k.ingredients.join(', ')}</p>
-          </div>
-          <div className="rx-slip__caution">
-            <h2>{t('pp.contra')}</h2>
-            <p>{k.contraindications}</p>
-          </div>
-          <div>
-            <h2>{t('pp.afiSpec')}</h2>
-            <p>{k.afi}</p>
-          </div>
-        </footer>
-      </article>
+        <section className="rxb__card rxb__ingredients">
+          <h2 className="rxb__title">
+            {t('pp.ingredients')}
+            <span className="rxb__count">{k.ingredients.length}</span>
+          </h2>
+          <ul>
+            {k.ingredients.map((i) => (
+              <li key={i}>{i}</li>
+            ))}
+          </ul>
+        </section>
+
+        <section className="rxb__card rxb__caution">
+          <h2 className="rxb__title">
+            <span className="rxb__caution-icon">{WARN}</span>
+            {t('pp.contra')}
+          </h2>
+          <p>{k.contraindications}</p>
+        </section>
+
+        <section className="rxb__card rxb__afi">
+          <h2 className="rxb__title">{t('pp.afiSpec')}</h2>
+          <p>{k.afi}</p>
+        </section>
+      </div>
     </PatientShell>
   );
 }
