@@ -1890,278 +1890,106 @@
   color: #a8740a;
 }
 
-/* ----- prescription: bento cards ----- */
-.rxb {
-  display: grid;
-  grid-template-columns: repeat(12, minmax(0, 1fr));
-  gap: 14px;
-}
-.rxb__card {
-  position: relative;
-  min-width: 0;
-  overflow: hidden;
-  padding: 24px 26px;
-  border-radius: 14px;
-  background: var(--tk-surface);
-  border: 1px solid var(--tk-line);
-}
-.rxb__title {
+/* ----- prescription ----- */
+.rxs { max-width: 1080px; }
+.rxs__head {
   display: flex;
-  align-items: center;
-  gap: 8px;
-  margin: 0 0 16px;
-  font-family: var(--font-display);
-  font-size: 1.08rem;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 32px;
+  margin-bottom: 24px;
+}
+.pt--patient .rxs__name {
+  margin: 0;
+  font-size: 1.75rem;
   font-weight: 600;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
   color: var(--tk-ink);
 }
-.rxb__muted { margin: 0; font-size: 0.84rem; color: var(--tk-muted); }
+.rxs__native { margin: 2px 0 0; font-size: 0.95rem; color: var(--tk-body); }
+.rxs__by { margin: 6px 0 0; font-size: 0.9rem; color: var(--tk-muted); }
 
-/* hero */
-.rxb__hero {
-  grid-column: span 8;
-  padding: 30px 32px 26px;
-  border: 0;
-  background: linear-gradient(140deg, #174a2b 0%, #0f321d 100%);
-  color: #e6efdf;
-}
-.rxb__hero-leaf {
-  position: absolute;
-  right: -18px;
-  bottom: -26px;
-  width: 210px;
-  color: rgba(139, 197, 61, 0.2);
-  pointer-events: none;
-}
-.rxb__hero-kicker {
-  position: relative;
-  margin: 0;
-  font-size: 0.84rem;
-  color: rgba(255, 255, 255, 0.62);
-}
-.rxb__hero-name {
-  position: relative;
-  margin: 8px 0 0;
-  font-family: var(--font-display);
-  font-size: 2.5rem;
-  font-weight: 600;
-  letter-spacing: -0.025em;
-  line-height: 1.08;
-  color: #ffffff;
-}
-.rxb__hero-native { position: relative; margin: 6px 0 0; font-size: 1rem; color: rgba(255, 255, 255, 0.75); }
-.rxb__hero-benefit {
-  position: relative;
-  max-width: 54ch;
-  margin: 14px 0 0;
-  font-size: 0.95rem;
-  line-height: 1.65;
-  color: rgba(255, 255, 255, 0.82);
-}
-.rxb__doctor {
-  position: relative;
+.rxs__progress { width: 240px; flex-shrink: 0; }
+.rxs__progress p {
   display: flex;
-  align-items: center;
+  justify-content: space-between;
   gap: 12px;
-  margin-top: 24px;
-  padding-top: 18px;
-  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  margin: 0 0 8px;
+  font-size: 0.84rem;
 }
-.rxb__doctor-avatar {
-  width: 38px;
-  height: 38px;
-  flex-shrink: 0;
-  border-radius: 50%;
-  display: grid;
-  place-items: center;
-  background: #8bc53d;
-  color: #0f321d;
-  font-size: 0.8rem;
-  font-weight: 700;
-}
-.rxb__doctor b { display: block; font-size: 0.92rem; font-weight: 600; color: #ffffff; }
-.rxb__doctor small { display: block; margin-top: 1px; font-size: 0.8rem; color: rgba(255, 255, 255, 0.6); }
+.rxs__progress b { font-weight: 600; color: var(--tk-ink); }
+.rxs__progress span { color: var(--tk-muted); }
+.rxs__bar { height: 6px; border-radius: 3px; background: #e2e8e2; overflow: hidden; }
+.rxs__bar i { display: block; height: 100%; border-radius: 3px; background: #4a8a26; }
 
-/* course */
-.rxb__course { grid-column: span 4; display: flex; flex-direction: column; }
-.rxb__course-now {
-  margin: 0;
-  font-family: var(--font-display);
-  font-size: 2.6rem;
-  font-weight: 500;
-  letter-spacing: -0.03em;
-  line-height: 1;
-  color: var(--tk-ink);
+.rxs__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+  gap: 16px;
+  align-items: start;
 }
-.rxb__course-now span {
-  margin-left: 6px;
-  font-family: var(--font-body);
-  font-size: 0.95rem;
+.rxs__col { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+.rxs__card {
+  padding: 20px 22px;
+  border: 1px solid var(--tk-line);
+  border-radius: 8px;
+  background: var(--tk-surface);
+}
+.rxs__card--warn { border-left: 3px solid #d99a1e; }
+.pt--patient .rxs__label {
+  margin: 0 0 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
   letter-spacing: 0;
   color: var(--tk-muted);
 }
-.rxb__weeks {
-  list-style: none;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin: 20px 0 16px;
-  padding: 0;
-}
-.rxb__weeks li {
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  display: grid;
-  place-items: center;
-  border: 1px solid var(--tk-line);
-  font-size: 0.74rem;
-  font-weight: 600;
-  color: var(--tk-muted);
-}
-.rxb__weeks li.is-done { background: var(--tk-ink); border-color: var(--tk-ink); color: #ffffff; }
-.rxb__weeks li.is-now { background: #8bc53d; border-color: #8bc53d; color: #0f321d; }
-.rxb__course .rxb__muted { margin-top: auto; }
+.rxs__text { margin: 0; font-size: 0.92rem; line-height: 1.6; color: var(--tk-body); }
+.rxs__text--lg { font-size: 1rem; color: var(--tk-ink); }
+.rxs__text--sm { font-size: 0.85rem; }
+.rxs__meta { margin: 10px 0 0; font-size: 0.82rem; color: var(--tk-muted); }
 
-/* schedule */
-.rxb__schedule { grid-column: span 7; }
-.rxb__doses {
+.rxs__doses { list-style: none; margin: 0; padding: 0; }
+.rxs__doses li {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  grid-template-columns: 1fr 110px 120px;
+  align-items: baseline;
   gap: 12px;
+  padding: 12px 0;
+  border-top: 1px solid var(--tk-line);
+  font-size: 0.95rem;
 }
-.rxb__dose {
-  display: flex;
-  flex-direction: column;
-  padding: 18px 18px 16px;
-  border-radius: 12px;
-  background: var(--tk-soft);
-}
-.rxb__dose.is-morning { background: #fbf3e1; --dose-ic: #b7791f; }
-.rxb__dose.is-afternoon { background: #fcefe4; --dose-ic: #c0652a; }
-.rxb__dose.is-night { background: #eaeff7; --dose-ic: #3d5a8a; }
-.rxb__dose-icon {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  display: grid;
-  place-items: center;
-  background: rgba(255, 255, 255, 0.75);
-  color: var(--dose-ic, var(--tk-ink));
-}
-.rxb__dose-icon svg { width: 18px; height: 18px; }
-.rxb__dose-slot { margin-top: 14px; font-size: 0.86rem; font-weight: 600; color: var(--tk-body); }
-.rxb__dose-time {
-  margin-top: 2px;
-  font-family: var(--font-display);
-  font-size: 2.1rem;
-  font-weight: 500;
-  letter-spacing: -0.02em;
-  line-height: 1.1;
-  color: var(--tk-ink);
-}
-.rxb__dose-time small {
-  margin-left: 4px;
-  font-family: var(--font-body);
-  font-size: 0.78rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  color: var(--tk-muted);
-}
-.rxb__dose-food { margin-top: 6px; font-size: 0.84rem; color: var(--tk-muted); }
+.rxs__doses li:first-child { border-top: 0; padding-top: 0; }
+.rxs__doses li:last-child { padding-bottom: 0; }
+.rxs__dose-slot { font-weight: 600; color: var(--tk-ink); }
+.rxs__dose-time { font-weight: 500; color: var(--tk-ink); font-variant-numeric: tabular-nums; }
+.rxs__dose-food { display: inline-block; font-size: 0.88rem; color: var(--tk-muted); }
+.rxs__dose-food::first-letter { text-transform: uppercase; }
 
-/* doctor's note */
-.rxb__note {
-  grid-column: span 5;
-  border: 0;
-  background: #e8f1df;
-}
-.rxb__note::before {
-  content: '\201D';
-  position: absolute;
-  top: -6px;
-  right: 18px;
-  font-family: var(--font-display);
-  font-size: 6rem;
-  line-height: 1;
-  color: rgba(63, 125, 30, 0.22);
-}
-.rxb__note-text {
-  position: relative;
-  margin: 0;
-  font-family: var(--font-display);
-  font-size: 1.22rem;
-  font-style: italic;
-  line-height: 1.5;
-  color: var(--tk-ink);
-}
-.rxb__note-by { margin: 16px 0 0; font-size: 0.85rem; font-weight: 600; color: #3f7d1e; }
-
-/* ingredients */
-.rxb__ingredients { grid-column: span 5; }
-.rxb__count {
-  padding: 1px 8px;
-  border-radius: 999px;
-  background: var(--tk-soft);
-  font-family: var(--font-body);
-  font-size: 0.72rem;
-  font-weight: 600;
-  color: var(--tk-muted);
-}
-.rxb__ingredients ul {
+.rxs__ingredients {
   list-style: none;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
   margin: 0;
   padding: 0;
+  columns: 2;
+  column-gap: 20px;
 }
-.rxb__ingredients li {
-  padding: 5px 12px;
-  border-radius: 999px;
-  background: var(--tk-soft);
-  border: 1px solid var(--tk-line);
-  font-size: 0.82rem;
-  font-weight: 500;
+.rxs__ingredients li {
+  padding: 5px 0;
+  font-size: 0.9rem;
   color: var(--tk-body);
+  break-inside: avoid;
 }
 
-/* cautions */
-.rxb__caution {
-  grid-column: span 4;
-  background: #fdf6e6;
-  border-color: #f0e0b8;
+@media (max-width: 900px) {
+  .rxs__grid { grid-template-columns: 1fr; }
 }
-.rxb__caution .rxb__title { color: #85580a; }
-.rxb__caution-icon {
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
-  display: grid;
-  place-items: center;
-  background: #f6e5bb;
-  color: #85580a;
-}
-.rxb__caution-icon svg { width: 14px; height: 14px; }
-.rxb__caution p { margin: 0; font-size: 0.88rem; line-height: 1.6; color: #6b5220; }
-
-/* AFI */
-.rxb__afi { grid-column: span 3; }
-.rxb__afi p {
-  margin: 0;
-  font-family: 'DM Mono', ui-monospace, monospace !important;
-  font-size: 0.8rem;
-  line-height: 1.65;
-  color: var(--tk-body);
-}
-
-@media (max-width: 1100px) {
-  .rxb { grid-auto-flow: row dense; }
-  .rxb__hero, .rxb__schedule { grid-column: span 12; }
-  .rxb__course, .rxb__note { grid-column: span 6; }
-  .rxb__ingredients { grid-column: span 12; }
-  .rxb__caution, .rxb__afi { grid-column: span 6; }
+@media (max-width: 640px) {
+  .rxs__head { flex-direction: column; align-items: stretch; gap: 16px; margin-bottom: 18px; }
+  .rxs__progress { width: 100%; }
+  .pt--patient .rxs__name { font-size: 1.5rem; }
+  .rxs__card { padding: 18px 16px; }
+  .rxs__doses li { grid-template-columns: 1fr auto; gap: 2px 12px; }
+  .rxs__dose-food { grid-column: 1; }
 }
 
 /* ----- symptoms ----- */
@@ -2369,12 +2197,7 @@
 .pt--patient .pt-today__dose-slot,
 .pt--patient .pt-sec__title,
 .pt--patient .pt-sym__logged-label,
-.pt--patient .pt__chat-head-name,
-.pt--patient .rxb__hero-name,
-.pt--patient .rxb__title,
-.pt--patient .rxb__course-now,
-.pt--patient .rxb__dose-time,
-.pt--patient .rxb__note-text {
+.pt--patient .pt__chat-head-name {
   font-family: var(--font-display);
 }
 .pt--patient .pt__h1,
@@ -2423,12 +2246,4 @@
   .pt--patient .pt__stats .pt__stat:nth-child(n + 3) { border-top: 1px solid var(--tk-line); }
 }
 @media (max-width: 640px) {
-  .rxb > .rxb__card { grid-column: span 12; padding: 20px 18px; }
-  .rxb__hero-name { font-size: 1.9rem; }
-  .rxb__hero-leaf { width: 140px; }
-  .rxb__course-now { font-size: 2.1rem; }
-  .rxb__weeks li { width: 28px; height: 28px; }
-  .rxb__doses { grid-template-columns: 1fr 1fr; gap: 8px; }
-  .rxb__dose { padding: 14px; }
-  .rxb__dose-time { font-size: 1.7rem; }
 }
