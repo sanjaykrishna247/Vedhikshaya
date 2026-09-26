@@ -296,7 +296,7 @@ const STRINGS = {
   'pc.mostMissed': { en: 'most missed slot: {slot}', hi: 'सबसे अधिक छूटा: {slot}', ta: 'அதிகம் தவறியது: {slot}' },
 
   // ---- patient prescription ----
-  'pp.prescribedBy': { en: 'prescribed by {name}', hi: '{name} द्वारा निर्धारित', ta: '{name} பரிந்துரைத்தார்' },
+  'pp.prescribedBy': { en: 'Prescribed by {name}', hi: '{name} द्वारा निर्धारित', ta: '{name} பரிந்துரைத்தார்' },
   'pp.whatItDoes': { en: 'What it does for your body', hi: 'यह आपके शरीर के लिए क्या करता है', ta: 'இது உங்கள் உடலுக்கு என்ன செய்கிறது' },
   'pp.howToTake': { en: 'How to take it', hi: 'इसे कैसे लें', ta: 'இதை எப்படி எடுப்பது' },
   'pp.doctorNotes': { en: "Doctor's notes", hi: 'डॉक्टर की टिप्पणियाँ', ta: 'மருத்துவரின் குறிப்புகள்' },
@@ -306,6 +306,9 @@ const STRINGS = {
   'pp.weekN': { en: 'Week {n}', hi: 'सप्ताह {n}', ta: 'வாரம் {n}' },
   'pp.of': { en: 'of {n}', hi: '{n} में से', ta: '{n} இல்' },
   'pp.remaining': { en: 'remaining', hi: 'शेष', ta: 'மீதம்' },
+  'pp.yourPrescription': { en: 'Your prescription', hi: 'आपका नुस्खा', ta: 'உங்கள் மருந்துச்சீட்டு' },
+  'pp.updated': { en: 'updated {t}', hi: '{t} अपडेट', ta: '{t} புதுப்பிக்கப்பட்டது' },
+  'pp.weeksLeft': { en: '{n} weeks left in your course', hi: 'कोर्स में {n} सप्ताह शेष', ta: 'பாடநெறியில் {n} வாரங்கள் மீதம்' },
   'pp.colDose': { en: 'Dose', hi: 'खुराक', ta: 'அளவு' },
   'pp.colTime': { en: 'Time', hi: 'समय', ta: 'நேரம்' },
   'pp.colFood': { en: 'Food', hi: 'भोजन', ta: 'உணவு' },

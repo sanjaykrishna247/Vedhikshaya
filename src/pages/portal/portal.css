@@ -1891,27 +1891,95 @@
 }
 
 /* ----- prescription ----- */
+.pt-rx__hero {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 32px;
+  padding: 28px 32px;
+  margin-bottom: 14px;
+  border-radius: 12px;
+  background: #e9f1e1;
+}
+.pt-rx__eyebrow {
+  margin: 0 0 8px;
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #4a7d23;
+}
+.pt-rx__name {
+  margin: 0;
+  font-size: 2.1rem;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+  color: var(--tk-ink);
+}
+.pt-rx__native {
+  margin: 6px 0 0;
+  font-size: 1rem;
+  color: var(--tk-body);
+}
+.pt-rx__meta {
+  margin: 10px 0 0;
+  font-size: 0.88rem;
+  color: #5d7263;
+}
+.pt-rx__course { width: 260px; flex-shrink: 0; }
+.pt-rx__course-label {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #5d7263;
+}
+.pt-rx__course-label b {
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--tk-ink);
+  margin-right: 2px;
+}
+.pt-rx__weeks {
+  display: flex;
+  gap: 4px;
+  margin: 12px 0 10px;
+}
+.pt-rx__weeks i {
+  flex: 1;
+  height: 8px;
+  border-radius: 2px;
+  background: rgba(16, 48, 28, 0.12);
+}
+.pt-rx__weeks i.is-done { background: var(--tk-ink); }
+.pt-rx__weeks i.is-now { background: var(--tk-taken); }
+.pt-rx__course-left { margin: 0; font-size: 0.8rem; color: #5d7263; }
+
 .pt-rx {
   display: grid;
   grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr);
   gap: 14px;
   align-items: start;
 }
-.pt-rx__main,
-.pt-rx__side { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.pt-rx__main { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
 
 .pt-rx__schedule { list-style: none; margin: 0; padding: 0; }
 .pt-rx__schedule li {
-  display: grid;
-  grid-template-columns: 84px 1fr auto;
+  display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 14px 0;
+  gap: 24px;
+  padding: 16px 0;
   border-top: 1px solid var(--tk-line);
 }
-.pt-rx__schedule li:first-child { border-top: 0; padding-top: 4px; }
+.pt-rx__schedule li:first-child { border-top: 0; padding-top: 2px; }
+.pt-rx__schedule li:last-child { padding-bottom: 0; }
+.pt-rx__time {
+  min-width: 96px;
+  padding-right: 24px;
+  border-right: 1px solid var(--tk-line);
+}
 .pt-rx__time b {
-  font-size: 1.35rem;
+  font-size: 1.6rem;
   font-weight: 600;
   letter-spacing: -0.02em;
   color: var(--tk-ink);
@@ -1919,64 +1987,99 @@
 }
 .pt-rx__time small {
   margin-left: 4px;
-  font-size: 0.68rem;
+  font-size: 0.7rem;
   font-weight: 600;
   letter-spacing: 0.06em;
   color: var(--tk-muted);
 }
-.pt-rx__slot { font-size: 0.95rem; font-weight: 700; color: var(--tk-ink); }
-.pt-rx__food {
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: var(--tk-body);
-  background: var(--tk-soft);
-  padding: 4px 10px;
-  border-radius: 6px;
-}
+.pt-rx__slot { display: flex; flex-direction: column; gap: 2px; }
+.pt-rx__slot b { font-size: 1rem; font-weight: 700; color: var(--tk-ink); }
+.pt-rx__slot small { font-size: 0.85rem; color: var(--tk-muted); }
 
-.pt-rx__note { border-left: 4px solid var(--tk-taken); }
+.pt-rx__note {
+  position: relative;
+  padding: 24px 28px 22px 60px;
+  border-radius: 10px;
+  background: var(--tk-ink);
+  color: #ffffff;
+}
+.pt-rx__note::before {
+  content: '\201C';
+  position: absolute;
+  left: 22px;
+  top: 12px;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 3.4rem;
+  line-height: 1;
+  color: #8bc53d;
+}
+.pt-rx__note-label {
+  margin: 0 0 8px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.6);
+}
 .pt-rx__note-text {
   margin: 0;
-  font-size: 1rem;
-  line-height: 1.65;
-  color: var(--tk-ink);
+  font-size: 1.08rem;
+  line-height: 1.6;
+  color: #ffffff;
 }
 .pt-rx__note-by {
-  margin: 10px 0 0;
-  font-size: 0.82rem;
+  margin: 12px 0 0;
+  font-size: 0.84rem;
   font-weight: 600;
-  color: var(--tk-muted);
+  color: rgba(255, 255, 255, 0.7);
 }
 
-.pt-rx__course-top { display: flex; align-items: baseline; gap: 8px; }
-.pt-rx__course-week {
-  font-size: 1.9rem;
-  font-weight: 600;
-  letter-spacing: -0.03em;
+.pt--patient .pt__card.pt-rx__details { padding: 0; }
+.pt-rx__detail { padding: 22px 24px; }
+.pt-rx__detail + .pt-rx__detail { border-top: 1px solid var(--tk-line); }
+.pt-rx__detail-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 12px;
+  font-size: 0.92rem;
+  font-weight: 700;
   color: var(--tk-ink);
 }
-.pt-rx__course-of { font-size: 0.95rem; color: var(--tk-muted); }
-.pt-rx__bar {
-  margin: 14px 0 10px;
-  height: 6px;
-  border-radius: 3px;
-  background: var(--tk-empty);
-  overflow: hidden;
-}
-.pt-rx__bar i { display: block; height: 100%; background: var(--tk-ink); border-radius: 3px; }
-.pt-rx__course-left { margin: 0; font-size: 0.82rem; color: var(--tk-muted); }
-
-.pt-rx__chips { display: flex; flex-wrap: wrap; gap: 6px; }
-.pt-rx__chips span {
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: var(--tk-body);
+.pt-rx__detail-title span {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--tk-muted);
   background: var(--tk-soft);
-  border: 1px solid var(--tk-line);
-  padding: 5px 10px;
-  border-radius: 6px;
+  border-radius: 4px;
+  padding: 1px 6px;
 }
-.pt-rx__warn { border-left: 4px solid var(--tk-due); }
+.pt-rx__detail-title svg { width: 16px; height: 16px; }
+.pt-rx__detail--warn .pt-rx__detail-title { color: #93650a; }
+.pt-rx__ingredients {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px 16px;
+}
+.pt-rx__ingredients li {
+  position: relative;
+  padding-left: 14px;
+  font-size: 0.86rem;
+  color: var(--tk-body);
+}
+.pt-rx__ingredients li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.55em;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--tk-taken);
+}
 
 /* ----- symptoms ----- */
 .pt--patient { --sym-5: #4f8f22; --sym-4: #8dbf55; --sym-3: #b9c4bc; --sym-2: #e39a7f; --sym-1: #cf5b48; }
@@ -2157,8 +2260,15 @@
   .pt--patient .pt__grid { gap: 4px; grid-template-columns: 64px repeat(7, minmax(0, 1fr)) !important; }
   .pt--patient .pt__grid-rowlabel { font-size: 0.74rem; }
   .pt--patient .pt__cell { height: 32px; }
-  .pt-rx__schedule li { grid-template-columns: 72px 1fr; }
-  .pt-rx__food { grid-column: 2; justify-self: start; }
+  .pt-rx__hero { flex-direction: column; align-items: stretch; gap: 20px; padding: 22px 20px; }
+  .pt-rx__name { font-size: 1.65rem; }
+  .pt-rx__course { width: 100%; }
+  .pt-rx__schedule li { gap: 16px; }
+  .pt-rx__time { min-width: 84px; padding-right: 16px; }
+  .pt-rx__time b { font-size: 1.35rem; }
+  .pt-rx__note { padding: 20px 20px 18px 50px; }
+  .pt-rx__note::before { left: 16px; }
+  .pt-rx__detail { padding: 18px 16px; }
   .pt-sym__scale { grid-template-columns: 1fr; gap: 6px; }
   .pt-sym__opt { flex-direction: row; align-items: center; gap: 12px; padding: 12px 14px; }
   .pt-sym__opt i { width: 4px; height: 18px; }
