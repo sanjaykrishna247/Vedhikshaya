@@ -210,7 +210,11 @@ export default function PatientPrescription() {
 
         <section className="rxp__card rxp__third rxp__warn">
           <CardHead title={t('pp.contra')} />
-          <p className="rxp__text">{k.contraindications}</p>
+          <ul className="rxp__bullets rxp__bullets--warn">
+            {k.contraindications.map((c) => (
+              <li key={c}>{c}</li>
+            ))}
+          </ul>
         </section>
 
         <section className="rxp__card rxp__vitals">
@@ -376,7 +380,9 @@ function PrescriptionPaper({ patient, doctor, kashaya: k, slots, bmi, lang, t, o
 
           <section className="rx-paper__block">
             <h3>{t('pp.contra')}</h3>
-            <p>{k.contraindications}</p>
+            <ul>
+              {k.contraindications.map((c) => <li key={c}>{c}</li>)}
+            </ul>
           </section>
 
           <footer className="rx-paper__sign">

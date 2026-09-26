@@ -14,7 +14,11 @@ export const KASHAYAS = [
       'Bilva', 'Agnimantha', 'Shyonaka', 'Gambhari', 'Patala',
       'Shalaparni', 'Prishniparni', 'Brihati', 'Kantakari', 'Gokshura',
     ],
-    contraindications: 'Avoid in high pitta states with acute burning; not during acute fever spikes above 102°F.',
+    contraindications: [
+      'Avoid in high pitta states with acute burning; not during acute fever spikes above 102°F.',
+      'Consult your doctor before use during pregnancy or while breastfeeding.',
+      'Do not combine with other herbal decoctions or blood-thinning medicines without medical advice.',
+    ],
     afi: 'AFI Part I — 4:1 reduction, 85–90°C draw, single fresh dose within 30 min.',
   },
   {
@@ -24,7 +28,11 @@ export const KASHAYAS = [
     benefit:
       'Three-fruit decoction that gently regulates digestion and elimination, supports the eyes and acts as a mild daily detox without harsh purgation.',
     ingredients: ['Haritaki', 'Bibhitaki', 'Amalaki'],
-    contraindications: 'Avoid during diarrhoea, dehydration and first trimester of pregnancy.',
+    contraindications: [
+      'Avoid during diarrhoea, dehydration and the first trimester of pregnancy.',
+      'Keep a 2-hour gap from other medicines, as it can reduce their absorption.',
+      'Use with caution if you have low blood sugar or take diabetes medicines.',
+    ],
     afi: 'AFI Part I — 4:1 reduction, 85–90°C draw, taken warm on an empty stomach.',
   },
   {
@@ -34,7 +42,11 @@ export const KASHAYAS = [
     benefit:
       'Single-herb decoction of Tinospora that supports immune resilience, helps clear low-grade fevers and steadies blood sugar and joint comfort over time.',
     ingredients: ['Guduchi (Tinospora cordifolia) stem'],
-    contraindications: 'Use cautiously with immunosuppressant therapy and in pregnancy.',
+    contraindications: [
+      'Use cautiously with immunosuppressant therapy and in pregnancy.',
+      'May lower blood sugar — monitor your levels if you take diabetes medicines.',
+      'Avoid in autoimmune conditions unless your doctor advises it.',
+    ],
     afi: 'AFI Part I — 4:1 reduction, 85–90°C draw, twice daily as prescribed.',
   },
 ];
