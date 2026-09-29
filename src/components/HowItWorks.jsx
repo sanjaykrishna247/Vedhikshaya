@@ -1,6 +1,20 @@
 import Reveal from './Reveal';
 import Divider from './Divider';
+import MachineCutaway from './MachineCutaway';
 import './HowItWorks.css';
+
+// numbering matches the markers in MachineCutaway
+const PARTS = [
+  ['Steam vent', 'Releases vapour during the 4:1 reduction.'],
+  ['Pod filter', 'Holds the herb pod; perforated for even extraction.'],
+  ['Stirrer', 'Motor-driven paddle keeps the decoction uniform.'],
+  ['Water inlet', 'Delivers a measured 400 mL from the tank.'],
+  ['Insulated vessel', 'Steel pot in a ceramic-fibre jacket holds 85–90°C.'],
+  ['Heater & sensor', 'Heating plate with a temperature probe for closed-loop control.'],
+  ['Water tank', 'Refillable side reservoir.'],
+  ['Cooling fan', 'Keeps the electronics at a safe temperature.'],
+  ['Control board', 'Microcontroller and power supply that run the brew.'],
+];
 
 const STEPS = [
   {
@@ -60,6 +74,26 @@ export default function HowItWorks() {
             From pod to cup, Vedikshaya automates the entire classical brewing process.
           </p>
         </Reveal>
+
+        <div className="how__machine">
+          <Reveal className="how__machine-art">
+            <MachineCutaway />
+          </Reveal>
+          <Reveal delay={120} className="how__machine-parts">
+            <h3 className="how__machine-title">Inside the Machine</h3>
+            <ol>
+              {PARTS.map(([name, desc], i) => (
+                <li key={name}>
+                  <span className="how__part-num">{i + 1}</span>
+                  <span>
+                    <b>{name}</b>
+                    {desc}
+                  </span>
+                </li>
+              ))}
+            </ol>
+          </Reveal>
+        </div>
 
         <div className="how__flow">
           <div className="how__line" aria-hidden="true" />

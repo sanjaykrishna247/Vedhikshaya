@@ -3,6 +3,60 @@
   padding: 100px 0 0;
 }
 
+/* machine cutaway + parts list */
+.how__machine {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  align-items: center;
+  gap: 48px;
+  margin: 8px 0 72px;
+}
+.how__machine-art { display: flex; justify-content: center; }
+.mc { width: 100%; max-width: 480px; height: auto; }
+.mc__marker circle { fill: #8bc53d; stroke: #ffffff; stroke-width: 2; }
+.mc__marker text { fill: #0f321d; font-size: 11px; font-weight: 700; font-family: var(--font-body); }
+
+.how__machine-title {
+  margin-bottom: 18px;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--forest);
+}
+.how__machine-parts ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.how__machine-parts li {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: rgba(1, 47, 19, 0.75);
+}
+.how__machine-parts li b {
+  display: block;
+  font-weight: 700;
+  color: var(--forest);
+}
+.how__part-num {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  margin-top: 2px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: #8bc53d;
+  color: #0f321d;
+  font-size: 0.74rem;
+  font-weight: 700;
+}
+
 .how__flow {
   position: relative;
   display: grid;
@@ -81,6 +135,12 @@
 }
 
 @media (max-width: 900px) {
+  .how__machine {
+    grid-template-columns: 1fr;
+    gap: 28px;
+    margin-bottom: 56px;
+  }
+  .mc { max-width: 380px; }
   .how__flow {
     grid-template-columns: 1fr;
     gap: 46px;
