@@ -105,13 +105,20 @@ export default function MachineCutaway() {
       <circle cx="196" cy="128" r="9" fill="#9aa3aa" stroke="#5a6268" />
       <circle cx="196" cy="128" r="4.5" fill="#2e3338" />
 
-      {/* wiring + power supply / control board */}
-      <path d="M318 434 V462 M328 434 V462" stroke="#c0392b" strokeWidth="1.5" />
-      <path d="M338 434 V462" stroke="#2f6fd0" strokeWidth="1.5" />
+      {/* power supply / control board */}
       <rect x="244" y="458" width="176" height="42" rx="3" fill="#b3babf" stroke="#7c848a" />
       <path d="M352 466v26M360 466v26M368 466v26M376 466v26M384 466v26M392 466v26M400 466v26M408 466v26" stroke="#8d959b" strokeWidth="1.5" />
       <rect x="252" y="465" width="88" height="28" rx="2" fill="#1f6b3a" />
-      <path d="M258 472h10M258 478h16M258 485h12M284 470v18M296 470v18M310 472h22M310 480h14" stroke="#e0b64a" strokeWidth="2" />
+      <path d="M258 472h10M258 478h16M258 485h12M284 470v18M296 470v18M306 486h26" stroke="#e0b64a" strokeWidth="2" />
+      {/* terminal block the drive's wires land on */}
+      <rect x="306" y="468" width="30" height="9" rx="1.5" fill="#15181a" />
+      <circle cx="313" cy="472.5" r="1.8" fill="#9aa3aa" />
+      <circle cx="321" cy="472.5" r="1.8" fill="#9aa3aa" />
+      <circle cx="329" cy="472.5" r="1.8" fill="#9aa3aa" />
+
+      {/* wiring: drive -> terminal block, kept within the drive's width */}
+      <path d="M313 434 V470.5 M321 434 V470.5" stroke="#c0392b" strokeWidth="1.6" />
+      <path d="M329 434 V470.5" stroke="#2f6fd0" strokeWidth="1.6" />
 
       {/* part markers — keep numbering in sync with PARTS in HowItWorks */}
       <Marker x={404} y={40} n={1} />
