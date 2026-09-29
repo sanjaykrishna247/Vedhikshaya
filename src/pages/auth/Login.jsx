@@ -19,6 +19,27 @@ const TAIL_TRIM = 1.0; // seconds of the clip's tail (steam thinning out) to nev
 // DR2024@apollohospital.com / PT1042@apollohospital.com style logins
 const PORTAL_LIKE = /^(dr|pt)\d/i;
 
+// Laptop/desktop gets a split layout on a plain background; phones keep
+// the brewing-video background. Tracked in JS so desktop never downloads
+// the video at all.
+const DESKTOP_QUERY = '(min-width: 901px)';
+function useIsDesktop() {
+  const [isDesktop, setIsDesktop] = useState(() => window.matchMedia(DESKTOP_QUERY).matches);
+  useEffect(() => {
+    const mq = window.matchMedia(DESKTOP_QUERY);
+    const onChange = (e) => setIsDesktop(e.matches);
+    mq.addEventListener('change', onChange);
+    return () => mq.removeEventListener('change', onChange);
+  }, []);
+  return isDesktop;
+}
+
+const PANEL_POINTS = [
+  'Live brew monitoring from pod scan to dispense',
+  'Doctor-prescribed kashayas with dose tracking',
+  'AI assistant grounded in physician-reviewed notes',
+];
+
 export default function Login() {
   const { login } = useAuth();
   const { portalLogin } = usePortal();
@@ -30,6 +51,7 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [slowHint, setSlowHint] = useState(false);
   const [activeVideo, setActiveVideo] = useState('a');
+  const isDesktop = useIsDesktop();
   const videoARef = useRef(null);
   const videoBRef = useRef(null);
 
@@ -42,7 +64,7 @@ export default function Login() {
   useEffect(() => {
     const a = videoARef.current;
     const b = videoBRef.current;
-    if (!a || !b) return;
+    if (!a || !b) return undefined;
 
     let rafId;
     let offsetApplied = false;
@@ -107,7 +129,7 @@ export default function Login() {
       window.removeEventListener('pointerdown', onFirstInteract);
       window.removeEventListener('touchstart', onFirstInteract);
     };
-  }, []);
+  }, [isDesktop]);
 
   const fillDemoCredentials = () => {
     setEmail(DEMO_EMAIL);
@@ -152,48 +174,89 @@ export default function Login() {
   };
 
   return (
-    <div className="auth auth--video">
-      <video
-        ref={videoARef}
-        className={`auth__video ${activeVideo === 'a' ? 'auth__video--active' : ''}`}
-        autoPlay
-        loop
-        muted
-        playsInline
-        preload="auto"
-        poster="/videos/brew-overhead-poster.jpg"
-      >
-        <source src="/videos/brew-overhead-v4.mp4" type="video/mp4" />
-      </video>
-      <video
-        ref={videoBRef}
-        className={`auth__video ${activeVideo === 'b' ? 'auth__video--active' : ''}`}
-        autoPlay
-        loop
-        muted
-        playsInline
-        preload="auto"
-        poster="/videos/brew-overhead-poster.jpg"
-      >
-        <source src="/videos/brew-overhead-v4.mp4" type="video/mp4" />
-      </video>
-      {/* poster still shows through when a phone blocks video autoplay */}
-      <div
-        className="auth__video-poster"
-        style={{ backgroundImage: 'url(/videos/brew-overhead-poster.jpg)' }}
-        aria-hidden="true"
-      />
-      <div className="auth__video-overlay" />
+    <div className={isDesktop ? 'auth auth--split' : 'auth auth--video'}>
+      {isDesktop ? (
+        <aside className="auth__panel">
+          <div className="auth__panel-brand">
+            <img src={logo} alt="" className="auth__panel-logo" aria-hidden="true" />
+            <span className="auth__wordmark auth__wordmark--light">
+              Vediks<span>haya</span>
+            </span>
+          </div>
 
-      <div className="auth__card auth__card--glass">
-        <div className="auth__brand">
-          <img src={logo} alt="" className="auth__logo-img" aria-hidden="true" />
-          <span className="auth__wordmark">
-            Vediks<span>haya</span>
-          </span>
-        </div>
+          <div className="auth__panel-body">
+            <p className="auth__panel-eyebrow">Smart Ayurvedic Brewing</p>
+            <h2 className="auth__panel-title">Classical kashayas, brewed with clinical precision.</h2>
+            <ul className="auth__panel-points">
+              {PANEL_POINTS.map((point) => (
+                <li key={point}>{point}</li>
+              ))}
+            </ul>
+          </div>
+
+          <dl className="auth__panel-stats">
+            <div>
+              <dt>Brew time</dt>
+              <dd>20 min</dd>
+            </div>
+            <div>
+              <dt>Reduction</dt>
+              <dd>4 : 1</dd>
+            </div>
+            <div>
+              <dt>Temperature</dt>
+              <dd>85–90°C</dd>
+            </div>
+          </dl>
+        </aside>
+      ) : (
+        <>
+          <video
+            ref={videoARef}
+            className={`auth__video ${activeVideo === 'a' ? 'auth__video--active' : ''}`}
+            autoPlay
+            loop
+            muted
+            playsInline
+            preload="auto"
+            poster="/videos/brew-overhead-poster.jpg"
+          >
+            <source src="/videos/brew-overhead-v4.mp4" type="video/mp4" />
+          </video>
+          <video
+            ref={videoBRef}
+            className={`auth__video ${activeVideo === 'b' ? 'auth__video--active' : ''}`}
+            autoPlay
+            loop
+            muted
+            playsInline
+            preload="auto"
+            poster="/videos/brew-overhead-poster.jpg"
+          >
+            <source src="/videos/brew-overhead-v4.mp4" type="video/mp4" />
+          </video>
+          {/* poster still shows through when a phone blocks video autoplay */}
+          <div
+            className="auth__video-poster"
+            style={{ backgroundImage: 'url(/videos/brew-overhead-poster.jpg)' }}
+            aria-hidden="true"
+          />
+          <div className="auth__video-overlay" />
+        </>
+      )}
+
+      <div className={isDesktop ? 'auth__card auth__card--plain' : 'auth__card auth__card--glass'}>
+        {!isDesktop && (
+          <div className="auth__brand">
+            <img src={logo} alt="" className="auth__logo-img" aria-hidden="true" />
+            <span className="auth__wordmark">
+              Vediks<span>haya</span>
+            </span>
+          </div>
+        )}
 
         <h1 className="auth__title">Welcome back</h1>
+        {isDesktop && <p className="auth__sub">Log in to continue to your Vedikshaya account.</p>}
 
         {error && <div className="auth__error">{error}</div>}
 
