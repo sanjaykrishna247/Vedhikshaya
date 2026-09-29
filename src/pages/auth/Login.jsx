@@ -23,6 +23,34 @@ const PORTAL_LIKE = /^(dr|pt)\d/i;
 // the brewing-video background. Tracked in JS so desktop never downloads
 // the video at all.
 const DESKTOP_QUERY = '(min-width: 901px)';
+
+// Shown beside the form on desktop so evaluators can try every role.
+const DEMO_ACCOUNTS = [
+  {
+    role: 'Brew console',
+    opens: 'Scan pods, live brewing dashboard and the AI assistant',
+    email: DEMO_EMAIL,
+    password: DEMO_PASSWORD,
+  },
+  {
+    role: 'Doctor portal',
+    opens: 'Dr. Meera Nair — patients, compliance, brew monitor, chat',
+    email: 'DR2024@apollohospital.com',
+    password: '123456',
+  },
+  {
+    role: 'Patient portal',
+    opens: 'Anand Rao — doses, prescription, symptoms, chat',
+    email: 'PT1042@apollohospital.com',
+    password: '123456',
+  },
+  {
+    role: 'Admin console',
+    opens: 'Users, complaints and platform overview',
+    email: 'admin@vedikshaya.com',
+    password: 'admin1234',
+  },
+];
 function useIsDesktop() {
   const [isDesktop, setIsDesktop] = useState(() => window.matchMedia(DESKTOP_QUERY).matches);
   useEffect(() => {
@@ -132,6 +160,12 @@ export default function Login() {
     setError('');
   };
 
+  const fillAccount = (acc) => {
+    setEmail(acc.email);
+    setPassword(acc.password);
+    setError('');
+  };
+
   // Surface a reassuring hint once a login has been hanging a few seconds —
   // that's almost always the free-tier backend waking up, not a real stall.
   useEffect(() => {
@@ -196,9 +230,6 @@ export default function Login() {
             placeholder="you@example.com"
             required
           />
-          {isDesktop && (
-            <span className="auth__field-note">Doctors and patients: use your hospital ID, e.g. PT1042@apollohospital.com</span>
-          )}
         </div>
         <div className="auth__field">
           <label htmlFor="password">Password</label>
@@ -223,13 +254,17 @@ export default function Login() {
         )}
       </form>
 
-      <div className="auth__divider">
-        <span>or</span>
-      </div>
+      {!isDesktop && (
+        <>
+          <div className="auth__divider">
+            <span>or</span>
+          </div>
 
-      <button type="button" className="auth__demo-cta auth__demo-cta--light" onClick={fillDemoCredentials}>
-        Use Demo Account
-      </button>
+          <button type="button" className="auth__demo-cta auth__demo-cta--light" onClick={fillDemoCredentials}>
+            Use Demo Account
+          </button>
+        </>
+      )}
 
       <p className="auth__switch">
         Don't have an account? <Link to="/signup">Sign up</Link>
@@ -256,7 +291,37 @@ export default function Login() {
             <Link to="/" className="auth__top-link">← Back to home</Link>
           </header>
           <main className="auth__side">
-            {formCard}
+            <div className="auth__layout">
+              <section className="auth__demo" aria-labelledby="demo-title">
+                <h2 id="demo-title" className="auth__demo-title">Demo accounts</h2>
+                <p className="auth__demo-sub">
+                  For evaluation. Pick an account to fill the login form, then log in.
+                </p>
+                <ul className="auth__demo-list">
+                  {DEMO_ACCOUNTS.map((acc) => {
+                    const active = email.trim().toLowerCase() === acc.email.toLowerCase();
+                    return (
+                      <li key={acc.email} className={active ? 'is-active' : ''}>
+                        <div className="auth__demo-info">
+                          <p className="auth__demo-role">{acc.role}</p>
+                          <p className="auth__demo-opens">{acc.opens}</p>
+                          <dl className="auth__demo-creds">
+                            <dt>Email</dt>
+                            <dd>{acc.email}</dd>
+                            <dt>Password</dt>
+                            <dd>{acc.password}</dd>
+                          </dl>
+                        </div>
+                        <button type="button" className="auth__demo-use" onClick={() => fillAccount(acc)}>
+                          {active ? 'Selected' : 'Use'}
+                        </button>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </section>
+              {formCard}
+            </div>
             <p className="auth__foot">© 2026 Vedikshaya · Smart India Hackathon</p>
           </main>
         </>
