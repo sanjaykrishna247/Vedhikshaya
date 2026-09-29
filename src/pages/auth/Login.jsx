@@ -34,11 +34,6 @@ function useIsDesktop() {
   return isDesktop;
 }
 
-const PANEL_POINTS = [
-  'Live brew monitoring from pod scan to dispense',
-  'Doctor-prescribed kashayas with dose tracking',
-  'AI assistant grounded in physician-reviewed notes',
-];
 
 export default function Login() {
   const { login } = useAuth();
@@ -173,42 +168,100 @@ export default function Login() {
     }
   };
 
+  const formCard = (
+    <div className={isDesktop ? 'auth__card auth__card--plain' : 'auth__card auth__card--glass'}>
+      {!isDesktop && (
+        <div className="auth__brand">
+          <img src={logo} alt="" className="auth__logo-img" aria-hidden="true" />
+          <span className="auth__wordmark">
+            Vediks<span>haya</span>
+          </span>
+        </div>
+      )}
+
+      {isDesktop && <img src={logo} alt="" className="auth__form-logo" aria-hidden="true" />}
+      <h1 className="auth__title">{isDesktop ? 'Log in to Vedikshaya' : 'Welcome back'}</h1>
+      {isDesktop && <p className="auth__sub">Welcome back. Enter your details to continue.</p>}
+
+      {error && <div className="auth__error">{error}</div>}
+
+      <form onSubmit={handleSubmit}>
+        <div className="auth__field">
+          <label htmlFor="email">Email</label>
+          <input
+            id="email"
+            type="email"
+            autoComplete="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="you@example.com"
+            required
+          />
+          {isDesktop && (
+            <span className="auth__field-note">Doctors and patients: use your hospital ID, e.g. PT1042@apollohospital.com</span>
+          )}
+        </div>
+        <div className="auth__field">
+          <label htmlFor="password">Password</label>
+          <input
+            id="password"
+            type="password"
+            autoComplete="current-password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="••••••••"
+            required
+          />
+        </div>
+
+        <button type="submit" className="auth__submit" disabled={loading}>
+          {loading ? 'Logging in…' : 'Log In'}
+        </button>
+        {slowHint && (
+          <p className="auth__hint" role="status">
+            Still connecting — the server can take up to a minute to wake up on its first request.
+          </p>
+        )}
+      </form>
+
+      <div className="auth__divider">
+        <span>or</span>
+      </div>
+
+      <button type="button" className="auth__demo-cta auth__demo-cta--light" onClick={fillDemoCredentials}>
+        Use Demo Account
+      </button>
+
+      <p className="auth__switch">
+        Don't have an account? <Link to="/signup">Sign up</Link>
+      </p>
+      <Link to="/" className="auth__back">
+        ← Back to home
+      </Link>
+    </div>
+  );
+
   return (
     <div className={isDesktop ? 'auth auth--split' : 'auth auth--video'}>
       {isDesktop ? (
-        <aside className="auth__panel">
-          <div className="auth__panel-brand">
-            <img src={logo} alt="" className="auth__panel-logo" aria-hidden="true" />
-            <span className="auth__wordmark auth__wordmark--light">
-              Vediks<span>haya</span>
-            </span>
-          </div>
-
-          <div className="auth__panel-body">
-            <p className="auth__panel-eyebrow">Smart Ayurvedic Brewing</p>
-            <h2 className="auth__panel-title">Classical kashayas, brewed with clinical precision.</h2>
-            <ul className="auth__panel-points">
-              {PANEL_POINTS.map((point) => (
-                <li key={point}>{point}</li>
-              ))}
-            </ul>
-          </div>
-
-          <dl className="auth__panel-stats">
-            <div>
-              <dt>Brew time</dt>
-              <dd>20 min</dd>
+        <>
+          <aside className="auth__photo" style={{ backgroundImage: 'url(/videos/brew-overhead-poster.jpg)' }}>
+            <div className="auth__photo-brand">
+              <img src={logo} alt="" className="auth__photo-logo" aria-hidden="true" />
+              <span className="auth__wordmark auth__wordmark--light">
+                Vediks<span>haya</span>
+              </span>
             </div>
-            <div>
-              <dt>Reduction</dt>
-              <dd>4 : 1</dd>
-            </div>
-            <div>
-              <dt>Temperature</dt>
-              <dd>85–90°C</dd>
-            </div>
-          </dl>
-        </aside>
+            <figure className="auth__photo-caption">
+              <blockquote>Classical kashayas, brewed with clinical precision.</blockquote>
+              <figcaption>Dashamoola Kwatha · 4:1 reduction at 85–90°C · 20-minute brew</figcaption>
+            </figure>
+          </aside>
+          <main className="auth__side">
+            {formCard}
+            <p className="auth__foot">© 2026 Vedikshaya · Smart India Hackathon</p>
+          </main>
+        </>
       ) : (
         <>
           <video
@@ -242,75 +295,9 @@ export default function Login() {
             aria-hidden="true"
           />
           <div className="auth__video-overlay" />
+          {formCard}
         </>
       )}
-
-      <div className={isDesktop ? 'auth__card auth__card--plain' : 'auth__card auth__card--glass'}>
-        {!isDesktop && (
-          <div className="auth__brand">
-            <img src={logo} alt="" className="auth__logo-img" aria-hidden="true" />
-            <span className="auth__wordmark">
-              Vediks<span>haya</span>
-            </span>
-          </div>
-        )}
-
-        <h1 className="auth__title">Welcome back</h1>
-        {isDesktop && <p className="auth__sub">Log in to continue to your Vedikshaya account.</p>}
-
-        {error && <div className="auth__error">{error}</div>}
-
-        <form onSubmit={handleSubmit}>
-          <div className="auth__field">
-            <label htmlFor="email">Email</label>
-            <input
-              id="email"
-              type="email"
-              autoComplete="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="you@example.com"
-              required
-            />
-          </div>
-          <div className="auth__field">
-            <label htmlFor="password">Password</label>
-            <input
-              id="password"
-              type="password"
-              autoComplete="current-password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
-              required
-            />
-          </div>
-
-          <button type="submit" className="auth__submit" disabled={loading}>
-            {loading ? 'Logging in…' : 'Log In'}
-          </button>
-          {slowHint && (
-            <p className="auth__hint" role="status">
-              Still connecting — the server can take up to a minute to wake up on its first request.
-            </p>
-          )}
-        </form>
-
-        <div className="auth__divider">
-          <span>or</span>
-        </div>
-
-        <button type="button" className="auth__demo-cta auth__demo-cta--light" onClick={fillDemoCredentials}>
-          Use Demo Account
-        </button>
-
-        <p className="auth__switch">
-          Don't have an account? <Link to="/signup">Sign up</Link>
-        </p>
-        <Link to="/" className="auth__back">
-          ← Back to home
-        </Link>
-      </div>
     </div>
   );
 }
