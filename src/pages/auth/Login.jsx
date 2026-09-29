@@ -179,7 +179,6 @@ export default function Login() {
         </div>
       )}
 
-      {isDesktop && <img src={logo} alt="" className="auth__form-logo" aria-hidden="true" />}
       <h1 className="auth__title">{isDesktop ? 'Log in to Vedikshaya' : 'Welcome back'}</h1>
       {isDesktop && <p className="auth__sub">Welcome back. Enter your details to continue.</p>}
 
@@ -235,28 +234,27 @@ export default function Login() {
       <p className="auth__switch">
         Don't have an account? <Link to="/signup">Sign up</Link>
       </p>
-      <Link to="/" className="auth__back">
-        ← Back to home
-      </Link>
+      {!isDesktop && (
+        <Link to="/" className="auth__back">
+          ← Back to home
+        </Link>
+      )}
     </div>
   );
 
   return (
-    <div className={isDesktop ? 'auth auth--split' : 'auth auth--video'}>
+    <div className={isDesktop ? 'auth auth--plain' : 'auth auth--video'}>
       {isDesktop ? (
         <>
-          <aside className="auth__photo" style={{ backgroundImage: 'url(/videos/brew-overhead-poster.jpg)' }}>
-            <div className="auth__photo-brand">
-              <img src={logo} alt="" className="auth__photo-logo" aria-hidden="true" />
-              <span className="auth__wordmark auth__wordmark--light">
+          <header className="auth__top">
+            <Link to="/" className="auth__top-brand">
+              <img src={logo} alt="" className="auth__top-logo" aria-hidden="true" />
+              <span className="auth__wordmark">
                 Vediks<span>haya</span>
               </span>
-            </div>
-            <figure className="auth__photo-caption">
-              <blockquote>Classical kashayas, brewed with clinical precision.</blockquote>
-              <figcaption>Dashamoola Kwatha · 4:1 reduction at 85–90°C · 20-minute brew</figcaption>
-            </figure>
-          </aside>
+            </Link>
+            <Link to="/" className="auth__top-link">← Back to home</Link>
+          </header>
           <main className="auth__side">
             {formCard}
             <p className="auth__foot">© 2026 Vedikshaya · Smart India Hackathon</p>
